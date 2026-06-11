@@ -1,0 +1,13 @@
+# Sistema / temporários
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.~lock*
+
+# Screenshots de verificação (gerados localmente, não publicar)
+_shot_*.png
+_h*.png
+_v*.png
+_final*.png
+_preview_*.png
