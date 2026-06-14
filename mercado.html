@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LIV · Mercado de Marcas Registradas — compre e venda marcas com pagamento em custódia</title>
-<meta name="description" content="Marketplace e corretora de marcas registradas da LIV: compre e venda marcas no INPI com pagamento em custódia (escrow) e transferência de titularidade averbada na RPI.">
+<title>LIV · Mercado de Marcas Registradas — compre e venda marcas com pagamento seguro</title>
+<meta name="description" content="Marketplace e intermediação de compra e venda de marcas registradas da LIV: negocie marcas no INPI com pagamento seguro e transferência de titularidade averbada na RPI.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@200;300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -40,10 +40,8 @@ h1,h2,h3,h4{color:var(--creme)}
 
 /* ===== LOGO ===== */
 .logo{display:flex;align-items:center;gap:13px}
-.liv-mark{height:42px;width:auto;flex-shrink:0;display:block}
-.logo-txt{line-height:1}
-.logo-txt b{font-family:var(--serif);font-size:27px;font-weight:400;letter-spacing:.06em;display:block;color:var(--creme)}
-.logo-txt span{display:block;font-size:8.5px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:var(--stone-soft);margin-top:3px}
+.liv-mark{height:46px;width:auto;flex-shrink:0;display:block}
+.logo-txt{line-height:1.25;font-size:12px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--stone-soft);max-width:130px}
 
 /* ===== NAV ===== */
 header{position:fixed;top:0;left:0;right:0;z-index:100;transition:.4s;padding:20px 0}
@@ -252,8 +250,8 @@ footer{background:var(--midnight-deep);padding:64px 0 30px;border-top:1px solid 
 <header id="header">
   <div class="wrap nav">
     <a href="#" class="logo" aria-label="LIV">
-      <img class="liv-mark" src="liv_mark_light.png" alt="LIV" width="52" height="42">
-      <span class="logo-txt"><b>LIV</b><span>Mercado de Marcas</span></span>
+      <img class="liv-mark" src="liv_mark_light.png" alt="LIV">
+      <span class="logo-txt">Mercado de Marcas</span>
     </a>
     <nav class="nav-links" id="navLinks">
       <a href="#marketplace">Marcas à venda</a>
@@ -271,12 +269,12 @@ footer{background:var(--midnight-deep);padding:64px 0 30px;border-top:1px solid 
   <div class="wrap hero-grid">
     <div class="hero-copy reveal">
       <div class="badge-row">
-        <span class="minibadge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Pagamento em custódia</span>
+        <span class="minibadge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Pagamento seguro</span>
         <span class="minibadge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Situação no INPI verificada</span>
         <span class="minibadge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Transferência averbada</span>
       </div>
       <h1>Compre e venda <em>marcas registradas</em> sem medo de golpe.</h1>
-      <p class="lead">A LIV é a corretora que segura o pagamento em custódia e conduz a transferência de titularidade no INPI, do começo ao fim. Você só libera o dinheiro quando a transferência da marca está garantida.</p>
+      <p class="lead">A LIV é a intermediária que mantém o seu pagamento seguro (retido com a gente) e conduz a transferência de titularidade no INPI, do começo ao fim. Você só libera o dinheiro quando a transferência da marca está garantida.</p>
       <div class="hero-cta">
         <a href="#marketplace" class="btn btn-brass">Explorar marcas à venda
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -300,15 +298,16 @@ footer{background:var(--midnight-deep);padding:64px 0 30px;border-top:1px solid 
         <span class="ep-live"><span class="d"></span>Ao vivo</span>
       </div>
       <div class="ep-value">
-        <div><small>Em custódia</small><b>R$ 8.400</b></div>
+        <div><small>Retido com a LIV</small><b>R$ 8.400</b></div>
         <span class="lock"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Protegido</span>
       </div>
       <ul class="ep-track">
         <li class="done"><span class="ck">✓</span><div><b>Marca verificada e anunciada</b><span>situação no INPI conferida</span></div></li>
-        <li class="done"><span class="ck">✓</span><div><b>Comprador pagou — valor em custódia</b><span>ninguém recebe ainda</span></div></li>
-        <li class="now"><span class="ck">•</span><div><b>Transferência de titularidade</b><span>instrumento de cessão + protocolo no INPI</span></div></li>
-        <li class="wait"><span class="ck">4</span><div><b>Anotação na RPI</b><span>publicação da transferência</span></div></li>
-        <li class="wait"><span class="ck">5</span><div><b>Pagamento liberado ao vendedor</b><span>negócio concluído</span></div></li>
+        <li class="done"><span class="ck">✓</span><div><b>Negociação — proposta aceita</b><span>preço acordado pelas partes</span></div></li>
+        <li class="done"><span class="ck">✓</span><div><b>Pagamento seguro</b><span>valor fica retido com a LIV</span></div></li>
+        <li class="now"><span class="ck">•</span><div><b>Transferência de titularidade</b><span>cessão protocolada no INPI</span></div></li>
+        <li class="wait"><span class="ck">5</span><div><b>Anotação na RPI</b><span>publicação da transferência</span></div></li>
+        <li class="wait"><span class="ck">6</span><div><b>Pagamento liberado ao vendedor</b><span>negócio concluído</span></div></li>
       </ul>
     </div>
   </div>
@@ -400,21 +399,21 @@ footer{background:var(--midnight-deep);padding:64px 0 30px;border-top:1px solid 
   <div class="wrap">
     <div class="sec-head center reveal">
       <span class="eyebrow">Como funciona</span>
-      <h2>Custódia do início ao fim.</h2>
+      <h2>Pagamento seguro do início ao fim.</h2>
       <p>O vendedor só recebe depois que a transferência da marca está protocolada e garantida. Simples e seguro para os dois lados.</p>
     </div>
     <div class="timeline">
       <div class="tl reveal"><div class="dot">1</div><h4>Anúncio verificado</h4><p>A LIV avalia a marca, confere a situação no INPI e publica no marketplace.</p></div>
       <div class="tl reveal" style="transition-delay:.06s"><div class="dot">2</div><h4>Proposta aceita</h4><p>Comprador e vendedor fecham o preço e definem quem paga a comissão.</p></div>
-      <div class="tl reveal" style="transition-delay:.12s"><div class="dot">3</div><h4>Pagamento em custódia</h4><p>O comprador paga e o valor fica retido. Ninguém recebe ainda.</p></div>
+      <div class="tl reveal" style="transition-delay:.12s"><div class="dot">3</div><h4>Pagamento seguro</h4><p>O comprador paga e o valor fica retido com a LIV. Ninguém recebe ainda.</p></div>
       <div class="tl reveal" style="transition-delay:.18s"><div class="dot">4</div><h4>Transferência</h4><p>Instrumento de cessão e protocolo da transferência no INPI.</p></div>
       <div class="tl reveal" style="transition-delay:.24s"><div class="dot">5</div><h4>Liberação</h4><p>Anotada a transferência na RPI, o vendedor recebe. Concluído.</p></div>
     </div>
 
     <div class="guarantee">
-      <div class="g reveal"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div><b>Dinheiro protegido</b><p>O pagamento fica em custódia e só é liberado após a transferência garantida.</p></div></div>
+      <div class="g reveal"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div><b>Dinheiro protegido</b><p>O pagamento fica retido com a LIV e só é liberado após a transferência garantida.</p></div></div>
       <div class="g reveal" style="transition-delay:.06s"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><div><b>Cessão averbada no INPI</b><p>A transferência é formal, protocolada e publicada na RPI — propriedade real e definitiva.</p></div></div>
-      <div class="g reveal" style="transition-delay:.12s"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span><div><b>Respaldo de quem cuida de PI</b><p>Conduzido por uma consultoria especialista em propriedade intelectual, não por um intermediário qualquer.</p></div></div>
+      <div class="g reveal" style="transition-delay:.12s"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span><div><b>Credenciada no INPI</b><p>Conduzido por uma consultoria especialista em propriedade intelectual, com os mais altos padrões de transparência.</p></div></div>
     </div>
   </div>
 </section>
@@ -430,7 +429,7 @@ footer{background:var(--midnight-deep);padding:64px 0 30px;border-top:1px solid 
       </div>
       <ul class="tlist">
         <li><span class="pico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span><div><b>1 · Instrumento de cessão</b><span>Contrato formal entre cedente e cessionário, com a marca cedida identificada.</span><span class="pill">Acordo documentado</span></div></li>
-        <li><span class="pico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></span><div><b>2 · GRU & protocolo</b><span>Pagamento da GRU e protocolo da petição de transferência no INPI.</span><span class="pill">Petição protocolada</span></div></li>
+        <li><span class="pico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></span><div><b>2 · GRU & protocolo</b><span>A LIV paga a GRU e protocola a petição no INPI. A GRU já está inclusa no preço.</span><span class="pill">GRU por nossa conta</span></div></li>
         <li><span class="pico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span><div><b>3 · Análise de viabilidade</b><span>Compatibilidade de atividade e abrangência de marcas afins conferidas.</span><span class="pill">Sem surpresas</span></div></li>
         <li><span class="pico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><div><b>4 · Anotação na RPI</b><span>A transferência é publicada e a marca passa a ser, oficialmente, do comprador.</span><span class="pill">Propriedade transferida</span></div></li>
       </ul>
@@ -439,7 +438,7 @@ footer{background:var(--midnight-deep);padding:64px 0 30px;border-top:1px solid 
     <!-- Calculadora -->
     <div id="calculadora" class="calc reveal" style="transition-delay:.1s">
       <h3>Simule a comissão</h3>
-      <p class="csub">Estimativa ilustrativa da taxa de corretagem por faixa de valor.</p>
+      <p class="csub">Estimativa ilustrativa da taxa de intermediação por faixa de valor.</p>
       <label>Situação da marca</label>
       <div class="seg" id="segType">
         <button class="on" data-rate="0.10" data-min="500">Marca registrada</button>
@@ -453,7 +452,7 @@ footer{background:var(--midnight-deep);padding:64px 0 30px;border-top:1px solid 
         <div class="row"><span>Comissão LIV (<span id="rPct">10%</span>)</span><span id="rFee">R$ 840</span></div>
         <div class="row total"><span>Vendedor recebe</span><b id="rNet">R$ 7.560</b></div>
       </div>
-      <p class="note">Valores ilustrativos para simulação. A comissão final depende da marca, do valor e de quem a assume (comprador, vendedor ou dividida) e é confirmada na proposta.</p>
+      <p class="note">Valores ilustrativos. A comissão final é combinada com transparência antes de fechar; a GRU do INPI já está inclusa no preço (a LIV paga pra você).</p>
     </div>
   </div>
 </section>
@@ -464,7 +463,7 @@ footer{background:var(--midnight-deep);padding:64px 0 30px;border-top:1px solid 
     <div class="sellcta reveal">
       <span class="eyebrow" style="justify-content:center">Anuncie com a LIV</span>
       <h2>Tem uma marca registrada para vender?</h2>
-      <p>Avaliamos sua marca, anunciamos no marketplace e conduzimos a venda com pagamento em custódia e transferência averbada no INPI. Você cuida do seu negócio; a gente cuida do resto.</p>
+      <p>Avaliamos sua marca, anunciamos no marketplace e conduzimos a venda com pagamento seguro e transferência averbada no INPI. Você cuida do seu negócio; a gente cuida do resto.</p>
       <a href="#" class="btn btn-brass" id="waSell">Avaliar minha marca no WhatsApp
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.4A11.8 11.8 0 0 0 2.1 17.6L1 23l5.5-1.4A11.8 11.8 0 1 0 20.5 3.4z"/></svg>
       </a>
@@ -480,11 +479,11 @@ footer{background:var(--midnight-deep);padding:64px 0 30px;border-top:1px solid 
       <h2>O que você precisa saber.</h2>
     </div>
     <div class="faq">
-      <details class="qa reveal"><summary>O que é "pagamento em custódia"?</summary><div class="a">É quando o valor da negociação fica retido por um intermediário neutro (escrow) e só é liberado ao vendedor depois que a transferência da marca é protocolada e garantida no INPI. Protege os dois lados.</div></details>
+      <details class="qa reveal"><summary>O que é "pagamento seguro"?</summary><div class="a">É quando o valor da negociação fica retido com a LIV (a intermediária) e só é liberado ao vendedor depois que a transferência da marca é protocolada e garantida no INPI. Protege os dois lados.</div></details>
       <details class="qa reveal"><summary>Como funciona a transferência de uma marca?</summary><div class="a">Por cessão: assinamos um instrumento de cessão entre as partes, pagamos a GRU e protocolamos a petição de transferência de titularidade no INPI. A transferência é então anotada e publicada na RPI (Revista da Propriedade Industrial) — e a marca passa a ser oficialmente do comprador.</div></details>
       <details class="qa reveal"><summary>É seguro comprar uma marca já registrada?</summary><div class="a">Sim — é um dos ativos mais seguros que existem, porque a marca registrada é propriedade real e oponível a terceiros, registrada no INPI. Conferimos a situação e a titularidade antes de anunciar e conduzimos toda a cessão. Comprar uma marca pronta economiza anos de processo.</div></details>
-      <details class="qa reveal"><summary>Qual a comissão da LIV?</summary><div class="a">A comissão varia por marca e valor, normalmente na faixa de 5% a 10%, e pode ser paga pelo comprador, pelo vendedor ou dividida. O valor é sempre confirmado na proposta, sem surpresas. Use a calculadora acima para uma estimativa.</div></details>
-      <details class="qa reveal"><summary>E se algo der errado na transferência?</summary><div class="a">Como o pagamento fica em custódia, o vendedor não recebe enquanto a transferência não estiver garantida. Em caso de divergência, mediamos antes de qualquer liberação.</div></details>
+      <details class="qa reveal"><summary>Qual a comissão da LIV?</summary><div class="a">A LIV cobra uma comissão sobre o valor da venda, combinada com transparência antes de fechar — e a GRU do INPI já está inclusa no preço (a gente paga pra você). Use a calculadora acima para simular.</div></details>
+      <details class="qa reveal"><summary>E se algo der errado na transferência?</summary><div class="a">Como o pagamento fica retido com a LIV, o vendedor não recebe enquanto a transferência não estiver garantida. Em caso de divergência, mediamos antes de qualquer liberação.</div></details>
     </div>
   </div>
 </section>
@@ -495,10 +494,10 @@ footer{background:var(--midnight-deep);padding:64px 0 30px;border-top:1px solid 
     <div class="foot-grid">
       <div class="foot-brand">
         <div class="logo">
-          <img class="liv-mark" src="liv_mark_light.png" alt="LIV" width="52" height="42">
-          <span class="logo-txt"><b>LIV</b><span>Mercado de Marcas</span></span>
+          <img class="liv-mark" src="liv_mark_light.png" alt="LIV">
+          <span class="logo-txt">Mercado de Marcas</span>
         </div>
-        <p>Corretagem de marcas registradas com pagamento em custódia e transferência de titularidade averbada no INPI.</p>
+        <p>Intermediação de compra e venda de marcas registradas, com pagamento seguro e transferência averbada no INPI.</p>
         <div class="foot-dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </div>
       <div class="foot-col"><h5>Comprar</h5><a href="#marketplace">Alimentação</a><a href="#marketplace">Moda</a><a href="#marketplace">Serviços</a><a href="#marketplace">Tecnologia</a></div>
@@ -506,7 +505,7 @@ footer{background:var(--midnight-deep);padding:64px 0 30px;border-top:1px solid 
       <div class="foot-col"><h5>Contato</h5><a href="#" id="waFoot">WhatsApp</a><a href="mailto:contato@livpi.com.br">contato@livpi.com.br</a><a href="https://instagram.com/livpi" target="_blank" rel="noopener">Instagram</a></div>
     </div>
     <div class="foot-bottom">
-      <p class="disclaimer">A LIV atua como consultoria em propriedade intelectual e como <strong>intermediadora</strong> nas negociações de marcas. A transferência de titularidade é formalizada por instrumento de cessão, protocolada no INPI e publicada na RPI. A atuação jurídica é conduzida por advocacia especializada e independente, em conformidade com as normas da OAB. Os dados do INPI refletem a situação na data da consulta. Marcas, valores e simulações exibidos são ilustrativos.</p>
+      <p class="disclaimer">A LIV atua como consultoria em propriedade intelectual e como <strong>intermediária</strong> nas negociações de marcas, <strong>credenciada no INPI</strong> e em conformidade com a legislação de propriedade industrial. A transferência de titularidade é formalizada por instrumento de cessão, protocolada no INPI e publicada na RPI. Os dados do INPI refletem a situação na data da consulta. Marcas, valores e simulações exibidos são ilustrativos.</p>
       <div class="copy"><span>© 2026 LIV Propriedade Intelectual. Todos os direitos reservados.</span><span>Lages/SC · www.livpi.com.br</span></div>
     </div>
   </div>
