@@ -231,6 +231,13 @@ section{position:relative}
 .sell-block{display:none;margin:6px 0 4px;padding:18px 18px 4px;border:1px dashed var(--line);border-radius:14px;background:rgba(184,147,90,.05)}
 .sell-block.show{display:block;animation:pop .35s ease}
 .sell-block .sb-title{font-size:12.5px;font-weight:600;color:var(--brass);margin-bottom:14px;letter-spacing:.02em}
+.term-box{margin:4px 0 8px;padding:16px 16px 8px;border:1px solid var(--brass);border-radius:12px;background:rgba(184,147,90,.07)}
+.term-title{font-size:12.5px;font-weight:700;color:var(--brass);margin-bottom:6px;letter-spacing:.02em}
+.term-text{font-size:12.5px;color:var(--stone);margin-bottom:10px;line-height:1.55}
+.term-box .radio{display:flex;gap:9px;align-items:flex-start;font-size:13px;font-weight:500;color:var(--midnight);padding:7px 0;cursor:pointer}
+.term-box .radio input{width:auto;margin-top:2px;accent-color:var(--brass)}
+.term-no{display:none;font-size:12.5px;color:var(--midnight);background:rgba(184,147,90,.14);border-radius:8px;padding:10px 12px;margin-top:4px}
+.term-no.show{display:block}
 .form-card .btn{width:100%;justify-content:center;margin-top:6px;font-size:16px;padding:15px}
 .form-note{font-size:12px;color:var(--stone);text-align:center;margin-top:14px;line-height:1.5}
 .form-success{display:none;text-align:center;padding:14px 0}
@@ -444,7 +451,7 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
         <span class="badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></span>
         <div class="num">Passo 02</div>
         <h4>GRU & protocolo</h4>
-        <p>A LIV paga a GRU e protocola a petição de transferência no INPI. A <strong>GRU já está inclusa no preço</strong> — sem burocracia pra você.</p>
+        <p>A LIV paga a GRU e protocola a transferência no INPI. A taxa do INPI — que varia conforme o porte (ME, MEI e pessoa física têm desconto) — <strong>já está inclusa no preço</strong>.</p>
         <span class="tag-strong">GRU por nossa conta</span>
       </div>
       <div class="tcard reveal" style="transition-delay:.16s">
@@ -485,7 +492,7 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
       <span class="shield"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
       <p><strong>O que é "pagamento seguro":</strong> o valor combinado fica retido com a <strong>LIV</strong>, que atua como intermediária, e só é liberado ao vendedor depois que a marca é transferida. Assim ninguém é passado pra trás — nem quem compra, nem quem vende.</p>
     </div>
-    <p class="fee-note reveal"><strong>Quanto custa:</strong> a LIV cobra uma comissão sobre o valor da venda, sempre combinada com transparência antes de fechar — e a <strong>GRU do INPI já está inclusa no preço</strong> (a gente paga pra você, sem burocracia).</p>
+    <p class="fee-note reveal"><strong>Quanto custa:</strong> a LIV cobra uma comissão sobre o valor da venda, sempre combinada com transparência antes de fechar. As <strong>taxas do INPI já estão inclusas no preço</strong> (a gente paga pra você) e variam conforme o porte da empresa.</p>
   </div>
 </section>
 
@@ -593,8 +600,9 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
       <p>Quer registrar, comprar ou vender uma marca? Conte o que você tem em mente. Respondemos com um diagnóstico e os próximos passos — sem custo.</p>
       <ul class="analise-steps">
         <li><span class="n">1</span><div><b>Você descreve a marca</b><span>Nome, classe/segmento e o que deseja fazer.</span></div></li>
-        <li><span class="n">2</span><div><b>Avaliamos e verificamos</b><span>Viabilidade no INPI, preço de mercado e situação da marca.</span></div></li>
-        <li><span class="n">3</span><div><b>Conduzimos com segurança</b><span>Da proposta à anotação na RPI, com pagamento protegido.</span></div></li>
+        <li><span class="n">2</span><div><b>Avaliamos e fazemos a proposta</b><span>Análise manual e, para quem vende, uma proposta de valuation da marca.</span></div></li>
+        <li><span class="n">3</span><div><b>Você decide</b><span>Concordou? Assina o termo de ciência e seguimos. Não concordou? Encerramos, sem compromisso.</span></div></li>
+        <li><span class="n">4</span><div><b>Conduzimos a transferência</b><span>Da cessão à anotação na RPI, com pagamento seguro.</span></div></li>
       </ul>
     </div>
 
@@ -626,6 +634,22 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
           <div class="field"><label for="qDivida">A marca pertence a uma empresa com dívidas ou pendências?</label><input type="text" id="qDivida" placeholder="Sim / Não — pode explicar"></div>
           <div class="field"><label for="qParou">Por que a marca deixou de ser usada (ou nunca foi)?</label><input type="text" id="qParou" placeholder="Ex.: troquei de ramo / só registrei e não abri"></div>
           <div class="field"><label for="qPreco">Por quanto você gostaria de vendê-la?</label><input type="text" id="qPreco" placeholder="Ex.: R$ 8.000 (ou 'quero uma avaliação')"></div>
+          <div class="field"><label for="qPorte">Porte (define a taxa do INPI)</label>
+            <select id="qPorte">
+              <option value="">Selecione</option>
+              <option>Pessoa física</option>
+              <option>MEI</option>
+              <option>ME / EPP (pequeno porte)</option>
+              <option>Empresa (demais portes)</option>
+            </select>
+          </div>
+          <div class="term-box">
+            <p class="term-title">Termo de ciência — venda de marca</p>
+            <p class="term-text">Ao seguir, você declara que é o legítimo titular da marca, que ela não está em litígio nem penhorada, e que está ciente de que deseja vendê-la. Vamos avaliar e enviar uma <strong>proposta de valuation</strong> — você decide se aceita.</p>
+            <label class="radio"><input type="radio" name="consent" value="concordo"> Concordo e estou ciente — quero receber a proposta</label>
+            <label class="radio"><input type="radio" name="consent" value="nao"> Não concordo — não quero seguir</label>
+            <p class="term-no" id="termNo">Tudo bem! Sem a concordância, a negociação não terá continuidade. Se mudar de ideia, é só voltar aqui. 🙂</p>
+          </div>
         </div>
 
         <div class="field"><label for="nome">Seu nome *</label><input type="text" id="nome" placeholder="Como podemos te chamar"></div>
@@ -725,6 +749,9 @@ const intencaoSel = document.getElementById('intencao');
 const sellBlock = document.getElementById('sellBlock');
 const isSell = () => /vender/i.test(intencaoSel.value);
 intencaoSel.addEventListener('change', () => sellBlock.classList.toggle('show', isSell()));
+document.querySelectorAll('input[name="consent"]').forEach(r => r.addEventListener('change', () => {
+  document.getElementById('termNo').classList.toggle('show', r.value === 'nao' && r.checked);
+}));
 
 const waBase = msg => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
 document.getElementById('waFloat').href = waBase("Olá! Vim pelo site da LIV.");
@@ -746,12 +773,17 @@ submitBtn.addEventListener('click', () => {
 • Marca: ${ativo}${segmento ? `\n• Segmento/classe: ${segmento}` : ''}`;
 
   if (isSell()) {
-    const uso = v('qUso'), faliu = v('qFaliu'), divida = v('qDivida'), parou = v('qParou'), preco = v('qPreco');
+    const consent = document.querySelector('input[name="consent"]:checked');
+    if (!consent) { alert('No termo de ciência, marque "Concordo" ou "Não concordo".'); return; }
+    if (consent.value === 'nao') { alert('Sem a concordância, a negociação não terá continuidade. Se mudar de ideia, estamos por aqui. 🙂'); return; }
+    const uso = v('qUso'), faliu = v('qFaliu'), divida = v('qDivida'), parou = v('qParou'), preco = v('qPreco'), porte = v('qPorte');
     if (uso)    msg += `\n• Já foi utilizada?: ${uso}`;
     if (faliu)  msg += `\n• A empresa faliu?: ${faliu}`;
     if (divida) msg += `\n• Empresa com dívidas/pendências?: ${divida}`;
     if (parou)  msg += `\n• Por que parou de usar / não usou: ${parou}`;
+    if (porte)  msg += `\n• Porte (taxa INPI): ${porte}`;
     if (preco)  msg += `\n• Quanto gostaria de vender: ${preco}`;
+    msg += `\n• Termo de ciência: concordo em receber a proposta de valuation`;
   }
 
   msg += `\n• Nome: ${nome}\n• Contato: ${contato}`;

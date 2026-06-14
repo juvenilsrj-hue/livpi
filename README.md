@@ -8,12 +8,11 @@ titularidade averbada no INPI.
 
 | Arquivo | Página |
 |---|---|
-| `index.html` | Site institucional (registro + corretagem de marcas) — **home** |
-| `mercado.html` | Marketplace de marcas (tema escuro) — `/mercado.html` |
+| `index.html` | Site único: registro + intermediação de compra e venda de marcas (inclui o marketplace) |
 | `liv_mark_dark.png` | Logo (marca) tinta navy, para fundos claros |
 | `liv_mark_light.png` | Logo (marca) tinta creme, para fundos escuros |
 
-Sites estáticos, um arquivo por página (HTML + CSS/JS inline). Abrem direto no navegador.
+Site estático, página única (HTML + CSS/JS inline). Abre direto no navegador.
 
 ## Contato configurado
 
