@@ -208,6 +208,16 @@ section{position:relative}
 .trust-card h4{font-size:15px;margin:8px 0 6px}
 .trust-card p{font-size:13px;color:var(--stone);font-weight:300}
 
+/* ===== COMO AVALIAMOS ===== */
+.val-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.val-card{background:var(--creme);border:1px solid var(--line);border-radius:16px;padding:28px 26px;transition:transform .35s,box-shadow .35s}
+.val-card:hover{transform:translateY(-5px);box-shadow:0 24px 50px -30px rgba(15,37,54,.28)}
+.val-card .vi{width:46px;height:46px;border-radius:12px;background:var(--midnight);color:var(--brass-light);display:grid;place-items:center;margin-bottom:16px}
+.val-card h4{font-size:17px;margin-bottom:8px}
+.val-card p{font-size:13.5px;color:var(--stone);font-weight:300}
+@media(max-width:980px){.val-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.val-grid{grid-template-columns:1fr}}
+
 /* ===== FORM ===== */
 #contato{background:var(--creme-warm)}
 .analise-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:58px;align-items:start}
@@ -306,6 +316,7 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
       <a href="#registro">Registro</a>
       <a href="#intermediacao">Intermediação</a>
       <a href="#como-funciona">Como funciona</a>
+      <a href="#como-avaliamos">Como avaliamos</a>
       <a href="#marketplace">Marcas à venda</a>
       <a href="#contato" class="btn btn-primary">Falar com a LIV</a>
     </nav>
@@ -492,7 +503,50 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
       <span class="shield"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
       <p><strong>O que é "pagamento seguro":</strong> o valor combinado fica retido com a <strong>LIV</strong>, que atua como intermediária, e só é liberado ao vendedor depois que a marca é transferida. Assim ninguém é passado pra trás — nem quem compra, nem quem vende.</p>
     </div>
-    <p class="fee-note reveal"><strong>Quanto custa:</strong> a LIV cobra uma comissão sobre o valor da venda, sempre combinada com transparência antes de fechar. As <strong>taxas do INPI já estão inclusas no preço</strong> (a gente paga pra você) e variam conforme o porte da empresa.</p>
+    <p class="fee-note reveal"><strong>Quanto custa:</strong> o valor da intermediação é apresentado <strong>durante a negociação</strong>, de forma transparente, conforme a marca e o tamanho do negócio. As taxas do INPI já entram no preço (a gente paga pra você) e variam conforme o porte da empresa.</p>
+  </div>
+</section>
+
+<!-- ========================= COMO AVALIAMOS ========================= -->
+<section id="como-avaliamos" class="pad" style="background:var(--creme-warm)">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Como avaliamos</span>
+      <h2>O que define o valor de uma marca.</h2>
+      <p>Cada marca é única. Antes de fazer a proposta de valuation, olhamos para um conjunto de fatores — estes são os principais.</p>
+    </div>
+    <div class="val-grid">
+      <div class="val-card reveal">
+        <span class="vi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <h4>Histórico de uso</h4>
+        <p>Se a marca já foi usada no mercado, sua reputação, tempo de operação e clientela contam a favor do valor.</p>
+      </div>
+      <div class="val-card reveal" style="transition-delay:.05s">
+        <span class="vi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z"/></svg></span>
+        <h4>Distintividade</h4>
+        <p>Marcas de fantasia ou arbitrárias valem mais que as evocativas ou descritivas — quanto mais única, mais forte e defensável.</p>
+      </div>
+      <div class="val-card reveal" style="transition-delay:.1s">
+        <span class="vi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg></span>
+        <h4>Estágio no INPI</h4>
+        <p>Marca já registrada vale mais. Também pesa quanto falta para a concessão e o tempo de vigência restante do registro.</p>
+      </div>
+      <div class="val-card reveal">
+        <span class="vi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>
+        <h4>Ramo de atuação</h4>
+        <p>Setores com menos conflito de marcas e boa demanda deixam a transferência mais tranquila e valorizam o ativo.</p>
+      </div>
+      <div class="val-card reveal" style="transition-delay:.05s">
+        <span class="vi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg></span>
+        <h4>Identidade visual</h4>
+        <p>A riqueza e a qualidade da identidade visual — um logo bem construído, uma marca mista forte — agregam valor.</p>
+      </div>
+      <div class="val-card reveal" style="transition-delay:.1s">
+        <span class="vi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg></span>
+        <h4>Abrangência de classes</h4>
+        <p>Quantas classes (NCL) a marca protege e a amplitude dessa proteção também entram na conta da avaliação.</p>
+      </div>
+    </div>
   </div>
 </section>
 
