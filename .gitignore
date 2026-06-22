@@ -11,3 +11,15 @@ _h*.png
 _v*.png
 _final*.png
 _preview_*.png
+
+# RPI: downloads/cache pesados e binarios (nao versionar)
+inpi-api/_amostra/
+inpi-api/_cache/
+inpi-api/cloudflared.exe
+*.zip
+*.xml
+*.pdf
+
+# Credenciais (nunca versionar)
+.env
+inpi-api/.env
