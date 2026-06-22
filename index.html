@@ -108,6 +108,30 @@ section{position:relative}
 .about-card p{font-size:13.5px;color:var(--stone);margin:0}
 .about-card:nth-child(even){margin-top:32px}
 
+/* ===== NAV: item "em breve" ===== */
+.nav-links a.nav-soon{display:inline-flex;align-items:center;gap:7px;color:var(--stone)}
+.nav-links a.nav-soon:hover{color:var(--midnight)}
+.soon-tag{font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--brass);background:rgba(184,147,90,.14);padding:3px 7px;border-radius:50px}
+
+/* ===== COMO ATUAMOS (3 cards) ===== */
+.atua-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.atua-card{position:relative;background:var(--creme);border:1px solid var(--line);border-radius:18px;padding:36px 32px;transition:all .4s cubic-bezier(.2,.7,.3,1);overflow:hidden}
+.atua-card::before{content:"";position:absolute;top:0;left:0;width:0;height:3px;background:var(--brass);transition:width .45s}
+.atua-card:hover{transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(15,37,54,.35)}
+.atua-card:hover::before{width:100%}
+.atua-card .ai{width:56px;height:56px;border-radius:15px;background:var(--midnight);color:var(--brass-light);display:grid;place-items:center;margin-bottom:18px}
+.atua-card h3{font-family:var(--serif);font-weight:400;font-size:25px;margin-bottom:10px}
+.atua-card p{color:var(--stone);font-size:14.5px;font-weight:300}
+.atua-card .soon-pill{position:absolute;top:24px;right:24px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--brass);background:rgba(184,147,90,.12);border:1px solid rgba(184,147,90,.3);padding:4px 10px;border-radius:50px}
+
+/* ===== HISTÓRIA (story) ===== */
+.story{max-width:760px;margin:0 auto}
+.story p{font-size:17px;color:var(--stone);font-weight:300;margin-bottom:18px;line-height:1.7}
+.story p strong{color:var(--midnight);font-weight:600}
+.story .lead-line{font-family:var(--serif);font-style:italic;font-size:23px;color:var(--brass);margin:28px 0;text-align:center}
+.story .closing{font-family:var(--serif);font-size:22px;color:var(--midnight);font-style:italic;margin-top:26px;line-height:1.4}
+@media(max-width:980px){.atua-grid{grid-template-columns:1fr}}
+
 /* ===== REGISTRO (passos, seção escura) ===== */
 #registro{background:var(--midnight);color:var(--creme);overflow:hidden}
 #registro .eyebrow{color:var(--brass-light)}
@@ -238,8 +262,8 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
       <a href="#quem-somos">Quem somos</a>
       <a href="#registro">Registro</a>
       <a href="#defesa">Defesa &amp; Recursos</a>
+      <a href="#atuacao" class="nav-soon">Compra e venda <span class="soon-tag">em breve</span></a>
       <a href="#blog">Blog</a>
-      <a href="#viabilidade">Viabilidade</a>
       <a href="#" class="btn btn-primary" id="navWa">Falar com a LIV</a>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -254,20 +278,6 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
       <span class="eyebrow">Propriedade Intelectual · INPI</span>
       <h1>Proteja sua marca <em>desde o primeiro dia</em>.</h1>
       <p class="lead">No Brasil, a marca é de quem registra primeiro. A LIV registra e defende a sua marca no INPI — com estratégia, agilidade e transparência. Comece agora com uma <strong style="color:var(--midnight);font-weight:600">análise de viabilidade gratuita</strong>.</p>
-      <div class="hero-cta">
-        <a href="#viabilidade" class="btn btn-brass">Fazer viabilidade grátis
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-        <a href="#" class="btn btn-ghost" id="heroWa">Falar com a LIV</a>
-      </div>
-      <div class="cred-row">
-        <span class="cred-badge"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg> Credenciada no INPI</span>
-      </div>
-      <div class="hero-trust">
-        <div class="stat"><b>45</b><span>classes de proteção (Nice)</span></div>
-        <div class="stat"><b>1ª</b><span>quem registra, garante</span></div>
-        <div class="stat"><b>R$ 0</b><span>análise de viabilidade</span></div>
-      </div>
     </div>
 
     <!-- hero card: viabilidade -->
@@ -285,39 +295,53 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
   </div>
 </section>
 
+<!-- ========================= COMO ATUAMOS (3 cards) ========================= -->
+<section id="atuacao" class="pad" style="padding-top:56px">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Como atuamos</span>
+      <h2>Três frentes para cuidar da sua marca.</h2>
+      <p>Do registro à defesa — e, em breve, a intermediação de compra e venda de marcas.</p>
+    </div>
+    <div class="atua-grid">
+      <div class="atua-card reveal">
+        <span class="soon-pill">Em breve</span>
+        <span class="ai"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13"/><path d="M14 5l3 3-3 3"/><path d="M20 16H7"/><path d="M10 13l-3 3 3 3"/></svg></span>
+        <h3>Compra e venda de marcas</h3>
+        <p>Conectamos quem tem uma marca registrada parada a quem precisa de uma marca pronta para seguir adiante — com mais agilidade e segurança.</p>
+      </div>
+      <div class="atua-card reveal" style="transition-delay:.08s">
+        <span class="ai"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
+        <h3>Defesa &amp; Recursos</h3>
+        <p>Oposição, recurso contra indeferimento, nulidade e caducidade. Quando a sua marca é ameaçada, agimos com estratégia.</p>
+      </div>
+      <div class="atua-card reveal" style="transition-delay:.16s">
+        <span class="ai"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M9 14.5 7.5 22 12 19l4.5 3L15 14.5"/></svg></span>
+        <h3>Registro de marca</h3>
+        <p>Da análise de viabilidade ao acompanhamento no INPI, conduzimos todo o processo para proteger o seu nome.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ========================= QUEM SOMOS ========================= -->
-<section id="quem-somos" class="pad">
-  <div class="wrap about-grid">
-    <div class="about-text reveal">
+<section id="quem-somos" class="pad" style="background:var(--creme-warm)">
+  <div class="wrap">
+    <div class="sec-head center reveal" style="margin-bottom:34px">
       <span class="eyebrow">Nossa história</span>
       <h2>Nascemos para proteger o que você constrói.</h2>
-      <p>Toda marca começa pequena: um nome rabiscado, um logo no caderno, uma ideia que ainda nem saiu do papel. Foi vendo empreendedores investirem anos em um nome para, mais tarde, descobrirem que <strong>ele já pertencia a outra pessoa</strong> — que a LIV nasceu.</p>
-      <p>Acreditamos que <strong>marca é ativo</strong> e que ninguém deveria construir um negócio sobre um chão que não é seu. Por isso cuidamos do ciclo completo da sua marca no INPI: protegemos o nome <strong>desde o primeiro dia</strong>, conduzimos o registro com estratégia e defendemos a sua marca quando alguém tenta copiá-la.</p>
-      <p>Sem juridiquês, com proximidade e com a clareza de quem trata o seu nome como trataria o próprio.</p>
-      <div class="about-note">Atuamos <strong>credenciados no INPI</strong>, com os mais altos padrões de agilidade e transparência e em total conformidade com a legislação de propriedade industrial.</div>
     </div>
-    <div class="about-visual reveal" style="transition-delay:.12s">
-      <div class="about-card">
-        <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
-        <h4>Estratégia primeiro</h4>
-        <p>Análise antes da ação. Você decide com a informação na mão.</p>
-      </div>
-      <div class="about-card">
-        <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>
-        <h4>Foco em resultado</h4>
-        <p>Registro nas classes certas, evitando indeferimento e retrabalho.</p>
-      </div>
-      <div class="about-card">
-        <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-        <h4>Acompanhamento contínuo</h4>
-        <p>Monitoramento de marcas semelhantes e dos prazos do INPI.</p>
-      </div>
-      <div class="about-card">
-        <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-8 0v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-        <h4>Atendimento próximo</h4>
-        <p>Linguagem clara, sem juridiquês. Você entende cada passo.</p>
-      </div>
+    <div class="story reveal">
+      <p>A <strong>LIV Propriedade Intelectual</strong> nasceu para sanar uma necessidade real do mercado: aproximar quem tem uma marca registrada e não utiliza mais de quem precisa de uma marca pronta para seguir adiante.</p>
+      <p>Muitos empreendedores registram uma marca, mas, em algum momento da jornada, mudam de rota, encerram projetos ou simplesmente deixam aquela marca sem uso. Ao mesmo tempo, existem empresas e negócios que precisam de uma marca já registrada, com mais agilidade, sem necessariamente passar por todo o tempo de espera de um novo processo no INPI.</p>
+      <p>Foi olhando para esse espaço pouco explorado que a LIV Propriedade Intelectual surgiu: para intermediar, orientar e dar mais segurança na compra e venda de marcas registradas, criando pontes entre quem tem um ativo parado e quem enxerga nele uma oportunidade estratégica.</p>
+      <p class="lead-line">Mas a nossa atuação não para aí.</p>
+      <p>Também ajudamos empreendedores, empresas e titulares de marcas que iniciaram o processo no INPI e foram surpreendidos por uma oposição ou por um indeferimento.</p>
+      <p>Nesses momentos, agir com estratégia faz toda a diferença. A LIV Propriedade Intelectual analisa o cenário, orienta os caminhos possíveis e atua na construção de recursos e manifestações à oposição, conduzindo cada etapa com técnica, clareza e responsabilidade.</p>
+      <p>E, para quem ainda está no começo, também oferecemos suporte completo no registro de marca: da análise de viabilidade ao acompanhamento do processo no INPI, sempre com linguagem acessível e foco na proteção de um dos ativos mais importantes de qualquer negócio.</p>
+      <p class="closing">Porque uma marca não é apenas um nome. É história, reputação, posicionamento e valor construído ao longo do tempo.</p>
     </div>
+    <div class="about-note reveal" style="max-width:760px;margin:30px auto 0">Atuamos <strong>credenciados no INPI</strong>, com os mais altos padrões de agilidade e transparência e em total conformidade com a legislação de propriedade industrial.</div>
   </div>
 </section>
 
