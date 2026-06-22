@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LIV Propriedade Intelectual — Registro e intermediação de compra e venda de marcas</title>
-<meta name="description" content="LIV Propriedade Intelectual: registro de marcas no INPI (com análise de viabilidade gratuita) e intermediação de compra e venda de marcas registradas, com pagamento seguro e transferência de titularidade averbada no INPI.">
+<title>LIV Propriedade Intelectual — Registro e defesa de marcas no INPI</title>
+<meta name="description" content="LIV Propriedade Intelectual: registro de marcas no INPI, defesa em oposições e recursos, e análise de viabilidade gratuita. Proteja sua marca desde o primeiro dia.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@200;300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@ img{max-width:100%;display:block}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);display:inline-flex;align-items:center;gap:10px}
 .eyebrow::before{content:"";width:28px;height:1px;background:var(--brass)}
 
-/* ===== LOGO (só a marca oficial — LIV com o V verificado — + descritor) ===== */
+/* ===== LOGO ===== */
 .logo{display:flex;align-items:center;gap:13px}
 .liv-mark{height:46px;width:auto;flex-shrink:0;display:block}
 .logo-txt{line-height:1.25;font-size:12px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--stone);max-width:130px}
@@ -43,11 +43,10 @@ img{max-width:100%;display:block}
 header{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .4s ease,box-shadow .4s ease,padding .4s ease;padding:18px 0}
 header.scrolled{background:rgba(250,248,244,.9);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line);padding:11px 0}
 .nav{display:flex;align-items:center;justify-content:space-between}
-.nav-links{display:flex;align-items:center;gap:30px}
+.nav-links{display:flex;align-items:center;gap:28px}
 .nav-links a{font-size:14.5px;font-weight:500;color:var(--midnight);transition:color .25s;position:relative}
 .nav-links a:not(.btn)::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--brass);transition:width .3s}
 .nav-links a:not(.btn):hover::after{width:100%}
-.nav-links a.btn-primary{color:var(--creme)}
 .btn{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:14.5px;padding:12px 24px;border-radius:50px;transition:all .3s cubic-bezier(.2,.7,.3,1);cursor:pointer;border:none;font-family:var(--sans)}
 .btn-primary{background:var(--midnight);color:var(--creme)}
 .btn-primary:hover{background:var(--brass);transform:translateY(-2px);box-shadow:0 12px 30px -10px rgba(184,147,90,.6)}
@@ -55,60 +54,39 @@ header.scrolled{background:rgba(250,248,244,.9);backdrop-filter:blur(14px);box-s
 .btn-brass:hover{background:var(--brass-light);transform:translateY(-2px);box-shadow:0 12px 30px -10px rgba(184,147,90,.55)}
 .btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--midnight)}
 .btn-ghost:hover{border-color:var(--midnight);transform:translateY(-2px)}
-.btn-light{background:var(--creme);color:var(--midnight)}
-.btn-light:hover{background:#fff;transform:translateY(-2px)}
+/* botão "Falar com a LIV" no cabeçalho — menor e mais discreto */
+.nav-links a.btn-primary{color:var(--creme);font-size:13px;font-weight:600;padding:9px 18px}
 .nav-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px}
 .nav-toggle span{width:24px;height:2px;background:var(--midnight);transition:.3s}
 
 /* ===== HERO ===== */
 .hero{padding:185px 0 110px;position:relative;overflow:hidden}
 .hero::before{content:"";position:absolute;top:-20%;right:-10%;width:55vw;height:55vw;max-width:760px;max-height:760px;background:radial-gradient(circle,rgba(184,147,90,.10) 0%,transparent 62%);pointer-events:none}
+.hero .reg-mark{position:absolute;right:-3%;bottom:-12%;font-family:var(--serif);font-size:30vw;line-height:.8;color:rgba(184,147,90,.05);pointer-events:none;user-select:none;z-index:0}
 .hero-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:56px;align-items:center;position:relative}
 .hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(42px,5.6vw,76px);line-height:1.02;letter-spacing:-.01em;margin:24px 0 22px}
 .hero h1 em{font-style:italic;color:var(--brass)}
 .hero p.lead{font-size:19px;color:var(--stone);max-width:540px;margin-bottom:34px;font-weight:300}
 .hero-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-.hero-trust{margin-top:38px;display:flex;gap:32px;flex-wrap:wrap}
-.hero-trust .stat b{font-family:var(--serif);font-size:32px;display:block;line-height:1}
-.hero-trust .stat span{font-size:12.5px;color:var(--stone)}
 .cred-row{margin-top:24px}
 .cred-badge{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--brass);background:rgba(184,147,90,.10);border:1px solid rgba(184,147,90,.32);padding:8px 15px;border-radius:50px}
-.hero .reg-mark{position:absolute;right:-3%;bottom:-12%;font-family:var(--serif);font-size:30vw;line-height:.8;color:rgba(184,147,90,.05);pointer-events:none;user-select:none;z-index:0}
-.hero-card{background:var(--midnight);color:var(--creme);border-radius:20px;padding:32px 30px;position:relative;box-shadow:0 40px 80px -40px rgba(15,37,54,.5);overflow:hidden}
+.hero-trust{margin-top:34px;display:flex;gap:32px;flex-wrap:wrap}
+.hero-trust .stat b{font-family:var(--serif);font-size:32px;display:block;line-height:1}
+.hero-trust .stat span{font-size:12.5px;color:var(--stone)}
+/* hero card = teaser de viabilidade */
+.hero-card{background:var(--midnight);color:var(--creme);border-radius:20px;padding:34px 32px;position:relative;box-shadow:0 40px 80px -40px rgba(15,37,54,.5);overflow:hidden}
 .hero-card::after{content:"";position:absolute;bottom:-50px;right:-50px;width:190px;height:190px;border:1px solid var(--line-light);border-radius:50%}
-.hero-card .tag{font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass-light);font-weight:600;display:flex;align-items:center;gap:8px}
-.hero-card .tag .dot{width:8px;height:8px;border-radius:50%;background:#3FD17A;box-shadow:0 0 0 4px rgba(63,209,122,.18);animation:pulse 2s infinite}
-@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(63,209,122,0)}}
-.hero-card h3{font-family:var(--serif);font-size:25px;font-weight:400;margin:14px 0 6px;line-height:1.15}
-.hero-card .sub{font-size:13.5px;color:var(--stone-soft);margin-bottom:20px;font-weight:300}
-.flow{list-style:none;position:relative}
-.flow li{display:flex;gap:13px;align-items:flex-start;padding:9px 0;position:relative}
-.flow li .ck{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-size:11px;font-weight:600}
-.flow li.done .ck{background:var(--brass);color:var(--midnight)}
-.flow li.now .ck{background:rgba(63,209,122,.18);color:#3FD17A;border:1.5px solid #3FD17A}
-.flow li.wait .ck{background:rgba(250,248,244,.06);color:var(--stone-soft);border:1px solid var(--line-light)}
-.flow li b{font-size:14px;display:block;color:var(--creme);font-weight:500}
-.flow li span{font-size:12px;color:var(--stone-soft)}
-.flow::before{content:"";position:absolute;left:10.5px;top:22px;bottom:22px;width:1px;background:var(--line-light)}
-.hero-card .escrow-bar{margin-top:18px;background:rgba(184,147,90,.12);border:1px solid rgba(184,147,90,.3);border-radius:12px;padding:13px 15px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
-.hero-card .escrow-bar b{font-family:var(--serif);font-size:18px;color:var(--brass-light);font-weight:400}
-
-/* ===== PILARES ===== */
-.pillars{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
-.pillar{border:1px solid var(--line);border-radius:18px;padding:34px 30px;background:var(--creme);transition:all .4s cubic-bezier(.2,.7,.3,1);position:relative;overflow:hidden}
-.pillar::before{content:"";position:absolute;top:0;left:0;width:0;height:3px;background:var(--brass);transition:width .45s}
-.pillar:hover{transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(15,37,54,.35)}
-.pillar:hover::before{width:100%}
-.pillar .pic{width:48px;height:48px;border-radius:12px;background:var(--midnight);color:var(--brass-light);display:grid;place-items:center;margin-bottom:18px}
-.pillar h3{font-family:var(--serif);font-weight:400;font-size:26px;margin-bottom:8px}
-.pillar p{color:var(--stone);font-size:15px;font-weight:300;margin-bottom:16px}
-.pillar ul{list-style:none}
-.pillar li{font-size:13.5px;padding:6px 0;display:flex;gap:9px;align-items:flex-start;color:var(--midnight)}
-.pillar li svg{flex-shrink:0;margin-top:3px;color:var(--brass)}
+.hero-card .tag{font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass-light);font-weight:600}
+.hero-card h3{font-family:var(--serif);font-size:26px;font-weight:400;margin:13px 0 10px;line-height:1.15}
+.hero-card p.cd{font-size:14.5px;color:var(--stone-soft);margin-bottom:22px;font-weight:300}
+.hero-card ul{list-style:none;margin-bottom:26px}
+.hero-card li{font-size:14.5px;padding:9px 0;border-top:1px solid var(--line-light);display:flex;gap:11px;align-items:flex-start}
+.hero-card li svg{flex-shrink:0;margin-top:3px;color:var(--brass-light)}
+.hero-card .btn{width:100%;justify-content:center}
 
 /* ===== SECTION GENERIC ===== */
 section{position:relative}
-.sec-head{max-width:700px;margin-bottom:50px}
+.sec-head{max-width:720px;margin-bottom:50px}
 .sec-head.center{margin:0 auto 54px;text-align:center}
 .sec-head.center .eyebrow{justify-content:center}
 .sec-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4vw,52px);line-height:1.08;margin:16px 0 16px;letter-spacing:-.01em}
@@ -117,7 +95,7 @@ section{position:relative}
 
 /* ===== QUEM SOMOS ===== */
 #quem-somos{background:var(--creme-warm)}
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.about-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center}
 .about-text h2{font-family:var(--serif);font-weight:400;font-size:clamp(30px,3.6vw,46px);line-height:1.1;margin:16px 0 20px}
 .about-text p{color:var(--stone);font-size:16.5px;margin-bottom:16px;font-weight:300}
 .about-text strong{color:var(--midnight);font-weight:600}
@@ -130,100 +108,35 @@ section{position:relative}
 .about-card p{font-size:13.5px;color:var(--stone);margin:0}
 .about-card:nth-child(even){margin-top:32px}
 
-/* ===== COMO FUNCIONA ===== */
-#como-funciona{background:var(--midnight);color:var(--creme);overflow:hidden}
-#como-funciona .eyebrow{color:var(--brass-light)}
-#como-funciona .eyebrow::before{background:var(--brass-light)}
-#como-funciona .sec-head h2{color:var(--creme)}
-#como-funciona .sec-head p{color:var(--stone-soft)}
+/* ===== REGISTRO (passos, seção escura) ===== */
+#registro{background:var(--midnight);color:var(--creme);overflow:hidden}
+#registro .eyebrow{color:var(--brass-light)}
+#registro .eyebrow::before{background:var(--brass-light)}
+#registro .sec-head h2{color:var(--creme)}
+#registro .sec-head p{color:var(--stone-soft)}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .step{background:rgba(250,248,244,.04);border:1px solid var(--line-light);border-radius:16px;padding:30px 26px;position:relative;transition:all .4s cubic-bezier(.2,.7,.3,1)}
 .step:hover{background:rgba(250,248,244,.07);transform:translateY(-5px);border-color:rgba(184,147,90,.4)}
 .step .n{font-family:var(--serif);font-size:15px;color:var(--midnight);background:var(--brass-light);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:600;margin-bottom:18px}
 .step h4{font-size:18px;color:var(--creme);margin-bottom:8px}
 .step p{font-size:14px;color:var(--stone-soft);font-weight:300}
-.step .meta{margin-top:14px;font-size:11.5px;letter-spacing:.04em;color:var(--brass-light);display:inline-flex;align-items:center;gap:6px;background:rgba(184,147,90,.12);padding:5px 11px;border-radius:50px}
-.escrow-note{margin-top:42px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:center;background:linear-gradient(120deg,rgba(184,147,90,.14),rgba(184,147,90,.03));border:1px solid rgba(184,147,90,.28);border-radius:18px;padding:26px 34px}
-.escrow-note .shield{width:48px;height:48px;border-radius:12px;background:rgba(184,147,90,.18);color:var(--brass-light);display:grid;place-items:center;flex-shrink:0}
-.escrow-note p{font-size:14.5px;color:var(--stone-soft);max-width:760px;font-weight:300}
-.escrow-note p strong{color:var(--creme);font-weight:600}
-.fee-note{margin-top:18px;text-align:center;font-size:14.5px;color:var(--stone-soft);font-weight:300;max-width:820px;margin-left:auto;margin-right:auto}
-.fee-note strong{color:var(--brass-light);font-weight:600}
+.callout{margin-top:42px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:center;background:linear-gradient(120deg,rgba(184,147,90,.14),rgba(184,147,90,.03));border:1px solid rgba(184,147,90,.28);border-radius:18px;padding:26px 34px}
+.callout .shield{width:48px;height:48px;border-radius:12px;background:rgba(184,147,90,.18);color:var(--brass-light);display:grid;place-items:center;flex-shrink:0}
+.callout p{font-size:15px;color:var(--stone-soft);max-width:780px;font-weight:300}
+.callout p strong{color:var(--creme);font-weight:600}
 
-/* ===== TRANSFERÊNCIA INPI ===== */
-.transfer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:8px}
-.tcard{border:1px solid var(--line);border-radius:16px;padding:28px 24px;background:var(--creme);transition:transform .35s,box-shadow .35s}
-.tcard:hover{transform:translateY(-5px);box-shadow:0 24px 50px -30px rgba(15,37,54,.3)}
-.tcard .badge{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;margin-bottom:16px;color:var(--midnight);background:var(--brass)}
-.tcard .num{font-family:var(--serif);font-size:14px;color:var(--brass);font-weight:600;margin-bottom:6px}
-.tcard h4{font-size:17px;margin-bottom:8px}
-.tcard p{font-size:13.5px;color:var(--stone);font-weight:300;margin-bottom:12px}
-.tcard .tag-strong{display:inline-block;margin-top:2px;font-size:11px;font-weight:600;color:var(--brass);letter-spacing:.04em}
-
-/* ===== SERVIÇOS MARCA ===== */
+/* ===== CARDS DE SERVIÇO (defesa) ===== */
 .services{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
-.service{background:var(--creme);border:1px solid var(--line);border-radius:18px;padding:36px 32px;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.2,.7,.3,1)}
+.service{background:var(--creme);border:1px solid var(--line);border-radius:18px;padding:34px 32px;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.2,.7,.3,1)}
 .service::before{content:"";position:absolute;top:0;left:0;width:0;height:3px;background:var(--brass);transition:width .45s}
 .service:hover{transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(15,37,54,.35);border-color:transparent}
 .service:hover::before{width:100%}
-.service .num{font-family:var(--serif);font-size:18px;color:var(--brass);margin-bottom:16px}
-.service h3{font-family:var(--serif);font-weight:400;font-size:25px;margin-bottom:10px}
+.service .ico{width:46px;height:46px;border-radius:12px;background:var(--midnight);color:var(--brass-light);display:grid;place-items:center;margin-bottom:16px}
+.service h3{font-family:var(--serif);font-weight:400;font-size:24px;margin-bottom:10px}
 .service p{color:var(--stone);font-size:14.5px;font-weight:300}
 
-/* ===== MARKETPLACE ===== */
-#marketplace{background:var(--midnight);color:var(--creme)}
-#marketplace .eyebrow{color:var(--brass-light)}
-#marketplace .eyebrow::before{background:var(--brass-light)}
-#marketplace .sec-head h2{color:var(--creme)}
-#marketplace .sec-head p{color:var(--stone-soft)}
-.market-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px}
-.market-filters{display:flex;gap:10px;flex-wrap:wrap}
-.chip{font-size:13px;font-weight:500;padding:8px 16px;border-radius:50px;border:1px solid var(--line-light);color:var(--stone-soft);cursor:pointer;transition:all .25s;background:transparent;font-family:var(--sans)}
-.chip:hover{color:var(--creme);border-color:var(--brass-light)}
-.chip.active{background:var(--brass);color:var(--midnight);border-color:var(--brass)}
-.market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
-.mark-card{background:rgba(250,248,244,.04);border:1px solid var(--line-light);border-radius:16px;padding:24px;transition:all .4s cubic-bezier(.2,.7,.3,1);position:relative;overflow:hidden}
-.mark-card:hover{background:rgba(250,248,244,.07);transform:translateY(-5px);border-color:rgba(184,147,90,.4)}
-.mark-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.plat{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--stone-soft)}
-.plat .pico{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:var(--brass);color:var(--midnight)}
-.verified{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:50px;background:rgba(63,209,122,.14);color:#5fdd95;display:inline-flex;align-items:center;gap:5px}
-.verified.exam{background:rgba(184,147,90,.16);color:var(--brass-light)}
-.mark-card .mark-name{font-family:var(--serif);font-size:26px;margin:2px 0 3px;color:var(--creme)}
-.mark-card .mark-niche{font-size:13px;color:var(--stone-soft);margin-bottom:18px}
-.mark-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-.mark-stats div{background:rgba(250,248,244,.04);border-radius:9px;padding:9px 11px}
-.mark-stats b{display:block;font-size:15px;color:var(--creme);font-family:var(--serif);font-weight:400}
-.mark-stats span{font-size:11px;color:var(--stone-soft)}
-.mark-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line-light);padding-top:16px}
-.mark-foot .price small{display:block;font-size:10.5px;color:var(--stone-soft)}
-.mark-foot .price b{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--brass-light)}
-.mark-foot a{font-size:12.5px;font-weight:600;color:var(--creme);display:inline-flex;align-items:center;gap:6px}
-.market-sell{margin-top:44px;background:linear-gradient(120deg,rgba(184,147,90,.14),rgba(184,147,90,.03));border:1px solid rgba(184,147,90,.28);border-radius:18px;padding:36px;display:flex;justify-content:space-between;align-items:center;gap:30px;flex-wrap:wrap}
-.market-sell h3{font-family:var(--serif);font-weight:400;font-size:26px;color:var(--creme);margin-bottom:8px}
-.market-sell p{color:var(--stone-soft);font-size:15px;max-width:580px;font-weight:300}
-
-/* ===== CONFIANÇA ===== */
-.trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-.trust-card{text-align:center;padding:30px 22px;border:1px solid var(--line);border-radius:16px;background:var(--creme);transition:transform .35s}
-.trust-card:hover{transform:translateY(-5px)}
-.trust-card .ico{width:50px;height:50px;border-radius:13px;background:rgba(184,147,90,.12);color:var(--brass);display:grid;place-items:center;margin:0 auto 16px}
-.trust-card b{font-family:var(--serif);font-size:30px;display:block;line-height:1;color:var(--midnight)}
-.trust-card h4{font-size:15px;margin:8px 0 6px}
-.trust-card p{font-size:13px;color:var(--stone);font-weight:300}
-
-/* ===== COMO AVALIAMOS ===== */
-.val-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.val-card{background:var(--creme);border:1px solid var(--line);border-radius:16px;padding:28px 26px;transition:transform .35s,box-shadow .35s}
-.val-card:hover{transform:translateY(-5px);box-shadow:0 24px 50px -30px rgba(15,37,54,.28)}
-.val-card .vi{width:46px;height:46px;border-radius:12px;background:var(--midnight);color:var(--brass-light);display:grid;place-items:center;margin-bottom:16px}
-.val-card h4{font-size:17px;margin-bottom:8px}
-.val-card p{font-size:13.5px;color:var(--stone);font-weight:300}
-@media(max-width:980px){.val-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:680px){.val-grid{grid-template-columns:1fr}}
-
-/* ===== FORM ===== */
-#contato{background:var(--creme-warm)}
+/* ===== VIABILIDADE (form) ===== */
+#viabilidade{background:var(--creme-warm)}
 .analise-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:58px;align-items:start}
 .analise-copy h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4vw,50px);line-height:1.08;margin:16px 0 18px}
 .analise-copy p{color:var(--stone);font-size:16.5px;margin-bottom:22px;font-weight:300}
@@ -238,20 +151,9 @@ section{position:relative}
 .form-card .fc-sub{font-size:14px;color:var(--stone);margin-bottom:24px}
 .field{margin-bottom:16px}
 .field label{display:block;font-size:13px;font-weight:600;margin-bottom:7px}
-.field input,.field select,.field textarea{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:11px;background:#fff;font-family:var(--sans);font-size:15px;color:var(--midnight);transition:border .25s,box-shadow .25s}
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px rgba(184,147,90,.14)}
-.field textarea{resize:vertical;min-height:64px}
+.field input{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:11px;background:#fff;font-family:var(--sans);font-size:15px;color:var(--midnight);transition:border .25s,box-shadow .25s}
+.field input:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px rgba(184,147,90,.14)}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.sell-block{display:none;margin:6px 0 4px;padding:18px 18px 4px;border:1px dashed var(--line);border-radius:14px;background:rgba(184,147,90,.05)}
-.sell-block.show{display:block;animation:pop .35s ease}
-.sell-block .sb-title{font-size:12.5px;font-weight:600;color:var(--brass);margin-bottom:14px;letter-spacing:.02em}
-.term-box{margin:4px 0 8px;padding:16px 16px 8px;border:1px solid var(--brass);border-radius:12px;background:rgba(184,147,90,.07)}
-.term-title{font-size:12.5px;font-weight:700;color:var(--brass);margin-bottom:6px;letter-spacing:.02em}
-.term-text{font-size:12.5px;color:var(--stone);margin-bottom:10px;line-height:1.55}
-.term-box .radio{display:flex;gap:9px;align-items:flex-start;font-size:13px;font-weight:500;color:var(--midnight);padding:7px 0;cursor:pointer}
-.term-box .radio input{width:auto;margin-top:2px;accent-color:var(--brass)}
-.term-no{display:none;font-size:12.5px;color:var(--midnight);background:rgba(184,147,90,.14);border-radius:8px;padding:10px 12px;margin-top:4px}
-.term-no.show{display:block}
 .form-card .btn{width:100%;justify-content:center;margin-top:6px;font-size:16px;padding:15px}
 .form-note{font-size:12px;color:var(--stone);text-align:center;margin-top:14px;line-height:1.5}
 .form-success{display:none;text-align:center;padding:14px 0}
@@ -261,13 +163,27 @@ section{position:relative}
 .form-success p{font-size:14.5px;color:var(--stone);margin-bottom:22px}
 @keyframes pop{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
 
+/* ===== BLOG ===== */
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.post{background:var(--creme);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .35s,box-shadow .35s;display:flex;flex-direction:column}
+.post:hover{transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(15,37,54,.3)}
+.post .cover{height:150px;background:linear-gradient(135deg,var(--midnight),var(--brass));position:relative;display:grid;place-items:center}
+.post .cover svg{color:rgba(250,248,244,.85)}
+.post .body{padding:24px 24px 26px;display:flex;flex-direction:column;flex:1}
+.post .cat{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);margin-bottom:10px}
+.post h3{font-family:var(--serif);font-weight:400;font-size:21px;line-height:1.2;margin-bottom:10px}
+.post p{font-size:14px;color:var(--stone);font-weight:300;margin-bottom:16px;flex:1}
+.post .more{font-size:13px;font-weight:600;color:var(--midnight);display:inline-flex;align-items:center;gap:7px}
+.blog-soon{margin-top:34px;text-align:center;font-size:14px;color:var(--stone)}
+
 /* ===== FOOTER ===== */
 footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32px}
-.foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;margin-bottom:46px}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.1fr;gap:40px;margin-bottom:42px}
 .foot-brand .logo-txt{color:var(--stone-soft)}
 .foot-brand p{font-size:14px;margin:18px 0;max-width:320px;font-weight:300}
-.foot-dots{display:flex;gap:7px;margin-top:6px}
-.foot-dots i{width:7px;height:7px;border-radius:50%;background:var(--brass);opacity:.8}
+.foot-social{display:flex;gap:12px;margin-top:18px}
+.foot-social a{width:40px;height:40px;border-radius:11px;border:1px solid var(--line-light);display:grid;place-items:center;color:var(--stone-soft);transition:all .25s}
+.foot-social a:hover{color:var(--midnight);background:var(--brass-light);border-color:var(--brass-light);transform:translateY(-2px)}
 .foot-col h5{color:var(--creme);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;font-weight:600}
 .foot-col a{display:block;font-size:14px;padding:6px 0;transition:color .25s;font-weight:300}
 .foot-col a:hover{color:var(--brass-light)}
@@ -281,32 +197,31 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
 .wa-float:hover{transform:scale(1.08)}
 .wa-float .wa-label{position:absolute;right:70px;top:50%;transform:translateY(-50%) translateX(6px);white-space:nowrap;background:var(--midnight);color:var(--creme);font-size:13px;font-weight:600;padding:8px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 10px 24px -10px rgba(0,0,0,.45)}
 .wa-float:hover .wa-label{opacity:1;transform:translateY(-50%) translateX(0)}
-@media(max-width:680px){.wa-float .wa-label{display:none}}
 
 @media(max-width:980px){
   .hero-grid,.about-grid,.analise-grid{grid-template-columns:1fr;gap:44px}
-  .pillars,.services{grid-template-columns:1fr}
-  .steps{grid-template-columns:1fr}
-  .transfer-grid,.trust-grid{grid-template-columns:1fr 1fr}
-  .market-grid{grid-template-columns:1fr 1fr}
+  .services{grid-template-columns:1fr}
+  .steps,.blog-grid{grid-template-columns:1fr}
   .foot-grid{grid-template-columns:1fr 1fr;gap:34px}
   .about-card:nth-child(even){margin-top:0}
 }
 @media(max-width:680px){
   .wrap{padding:0 22px}
-  .nav-links{position:fixed;top:0;right:0;height:100vh;width:80%;max-width:320px;background:var(--midnight);flex-direction:column;align-items:flex-start;justify-content:center;padding:40px;gap:24px;transform:translateX(100%);transition:transform .4s cubic-bezier(.2,.7,.3,1);z-index:200}
+  .nav-links{position:fixed;top:0;right:0;height:100vh;width:80%;max-width:320px;background:var(--midnight);flex-direction:column;align-items:flex-start;justify-content:center;padding:40px;gap:22px;transform:translateX(100%);transition:transform .4s cubic-bezier(.2,.7,.3,1);z-index:200}
   .nav-links.open{transform:none}
   .nav-links a{color:var(--creme);font-size:18px}
+  .nav-links a.btn-primary{font-size:16px;padding:12px 22px}
   .nav-toggle{display:flex;z-index:201}
   .nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg);background:var(--creme)}
   .nav-toggle.open span:nth-child(2){opacity:0}
   .nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);background:var(--creme)}
-  .transfer-grid,.trust-grid,.market-grid,.field-row{grid-template-columns:1fr}
+  .field-row{grid-template-columns:1fr}
   .pad{padding:74px 0}
   .hero{padding:140px 0 70px}
-  .market-sell,.foot-bottom .copy{flex-direction:column;align-items:flex-start}
+  .foot-bottom .copy{flex-direction:column;align-items:flex-start}
   .hero-trust{gap:22px}
   .form-card{padding:26px 22px}
+  .wa-float .wa-label{display:none}
 }
 </style>
 </head>
@@ -320,12 +235,12 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
       <span class="logo-txt">Propriedade Intelectual</span>
     </a>
     <nav class="nav-links" id="navLinks">
+      <a href="#quem-somos">Quem somos</a>
       <a href="#registro">Registro</a>
-      <a href="#intermediacao">Intermediação</a>
-      <a href="#como-funciona">Como funciona</a>
-      <a href="#como-avaliamos">Como avaliamos</a>
-      <a href="#marketplace">Marcas à venda</a>
-      <a href="#contato" class="btn btn-primary">Falar com a LIV</a>
+      <a href="#defesa">Defesa &amp; Recursos</a>
+      <a href="#blog">Blog</a>
+      <a href="#viabilidade">Viabilidade</a>
+      <a href="#" class="btn btn-primary" id="navWa">Falar com a LIV</a>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
@@ -336,67 +251,36 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
   <span class="reg-mark" aria-hidden="true">®</span>
   <div class="wrap hero-grid">
     <div class="hero-copy reveal">
-      <span class="eyebrow">Propriedade Intelectual · Intermediação de marcas</span>
-      <h1>Sua marca é um <em>ativo</em>. A LIV registra, protege e <em>negocia</em>.</h1>
-      <p class="lead">Registramos a sua marca no INPI com <strong style="color:var(--midnight);font-weight:600">análise de viabilidade gratuita</strong> — e também intermediamos a compra e venda de marcas registradas, com <strong style="color:var(--midnight);font-weight:600">pagamento seguro</strong> e transferência de titularidade averbada no INPI.</p>
+      <span class="eyebrow">Propriedade Intelectual · INPI</span>
+      <h1>Proteja sua marca <em>desde o primeiro dia</em>.</h1>
+      <p class="lead">No Brasil, a marca é de quem registra primeiro. A LIV registra e defende a sua marca no INPI — com estratégia, agilidade e transparência. Comece agora com uma <strong style="color:var(--midnight);font-weight:600">análise de viabilidade gratuita</strong>.</p>
       <div class="hero-cta">
-        <a href="#marketplace" class="btn btn-brass">Ver marcas à venda
+        <a href="#viabilidade" class="btn btn-brass">Fazer viabilidade grátis
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
-        <a href="#contato" class="btn btn-ghost">Registrar ou vender minha marca</a>
+        <a href="#" class="btn btn-ghost" id="heroWa">Falar com a LIV</a>
       </div>
       <div class="cred-row">
         <span class="cred-badge"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg> Credenciada no INPI</span>
       </div>
       <div class="hero-trust">
-        <div class="stat"><b>100%</b><span>pagamento seguro</span></div>
-        <div class="stat"><b>INPI</b><span>transferência averbada na RPI</span></div>
+        <div class="stat"><b>45</b><span>classes de proteção (Nice)</span></div>
+        <div class="stat"><b>1ª</b><span>quem registra, garante</span></div>
         <div class="stat"><b>R$ 0</b><span>análise de viabilidade</span></div>
       </div>
     </div>
 
-    <!-- Painel: transação protegida -->
+    <!-- hero card: viabilidade -->
     <div class="hero-card reveal" style="transition-delay:.12s">
-      <span class="tag"><span class="dot"></span>Transação protegida · ao vivo</span>
-      <h3>Marca “Volpe” · NCL 25</h3>
-      <p class="sub">Vestuário · registrada · marca mista</p>
-      <ul class="flow">
-        <li class="done"><span class="ck">✓</span><div><b>Marca verificada e anunciada</b><span>situação no INPI conferida</span></div></li>
-        <li class="done"><span class="ck">✓</span><div><b>Negociação</b><span>proposta aceita pelas partes</span></div></li>
-        <li class="done"><span class="ck">✓</span><div><b>Pagamento seguro</b><span>valor fica retido com a LIV</span></div></li>
-        <li class="now"><span class="ck">•</span><div><b>Transferência de titularidade</b><span>cessão protocolada no INPI</span></div></li>
-        <li class="wait"><span class="ck">5</span><div><b>Anotação na RPI</b><span>publicação da transferência</span></div></li>
-        <li class="wait"><span class="ck">6</span><div><b>Liberação ao vendedor</b><span>negócio concluído</span></div></li>
+      <span class="tag">Análise de viabilidade</span>
+      <h3>Descubra se o nome da sua marca ainda está livre</h3>
+      <p class="cd">Em poucos passos verificamos a disponibilidade no INPI, o risco de conflito e as classes certas pro seu negócio.</p>
+      <ul>
+        <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Verificação de anterioridades no INPI</li>
+        <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Definição das classes corretas</li>
+        <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Diagnóstico de risco — sem custo</li>
       </ul>
-      <div class="escrow-bar"><span>Retido com a LIV</span><b>R$ 8.400</b></div>
-    </div>
-  </div>
-</section>
-
-<!-- ========================= PILARES ========================= -->
-<section class="pad" style="padding-top:30px">
-  <div class="wrap">
-    <div class="pillars">
-      <div class="pillar reveal">
-        <span class="pic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
-        <h3>Registro & Proteção</h3>
-        <p>O ativo mais valioso da sua empresa é o nome e a identidade visual: a sua marca. Cuidamos dela no INPI — do registro à defesa.</p>
-        <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Registro de marca com análise de viabilidade gratuita</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Monitoramento de marcas semelhantes</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Defesa, oposição e recursos no INPI</li>
-        </ul>
-      </div>
-      <div class="pillar reveal" style="transition-delay:.1s">
-        <span class="pic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>
-        <h3>Intermediação de compra e venda</h3>
-        <p>Conectamos quem tem uma marca registrada parada a quem precisa dela — com pagamento seguro e transferência averbada no INPI.</p>
-        <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Pagamento seguro: o valor fica retido com a LIV</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Verificação da situação no INPI</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Transferência só após o pagamento</li>
-        </ul>
-      </div>
+      <a href="#viabilidade" class="btn btn-brass">Começar agora</a>
     </div>
   </div>
 </section>
@@ -405,333 +289,195 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
 <section id="quem-somos" class="pad">
   <div class="wrap about-grid">
     <div class="about-text reveal">
-      <span class="eyebrow">Quem somos</span>
-      <h2>A LIV nasceu de um gap no mercado de marcas.</h2>
-      <p>De um lado, encontramos <strong>marcas registradas paradas</strong>: empresas que deixaram de usar o nome e ficaram com um ativo — e um dinheiro — estacionado. De outro, <strong>empreendedores tentando registrar uma marca que já estava no INPI</strong> — e, não raras vezes, uma marca que sequer estava sendo usada.</p>
-      <p>A LIV conecta esses dois lados: dá liquidez a quem tem uma marca parada e um caminho mais rápido a quem precisa de uma marca pronta. Fazemos isso com segurança em cada etapa — a marca é verificada, o <strong>pagamento fica retido com a LIV</strong> e só vai ao vendedor depois que a transferência é averbada no INPI. E, claro, também <strong>registramos a sua marca do zero, com análise de viabilidade gratuita</strong>.</p>
+      <span class="eyebrow">Nossa história</span>
+      <h2>Nascemos para proteger o que você constrói.</h2>
+      <p>Toda marca começa pequena: um nome rabiscado, um logo no caderno, uma ideia que ainda nem saiu do papel. Foi vendo empreendedores investirem anos em um nome para, mais tarde, descobrirem que <strong>ele já pertencia a outra pessoa</strong> — que a LIV nasceu.</p>
+      <p>Acreditamos que <strong>marca é ativo</strong> e que ninguém deveria construir um negócio sobre um chão que não é seu. Por isso cuidamos do ciclo completo da sua marca no INPI: protegemos o nome <strong>desde o primeiro dia</strong>, conduzimos o registro com estratégia e defendemos a sua marca quando alguém tenta copiá-la.</p>
+      <p>Sem juridiquês, com proximidade e com a clareza de quem trata o seu nome como trataria o próprio.</p>
       <div class="about-note">Atuamos <strong>credenciados no INPI</strong>, com os mais altos padrões de agilidade e transparência e em total conformidade com a legislação de propriedade industrial.</div>
     </div>
     <div class="about-visual reveal" style="transition-delay:.12s">
       <div class="about-card">
-        <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-        <h4>Pagamento seguro</h4>
-        <p>O dinheiro fica retido com a LIV e só vai ao vendedor após a transferência.</p>
+        <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+        <h4>Estratégia primeiro</h4>
+        <p>Análise antes da ação. Você decide com a informação na mão.</p>
       </div>
       <div class="about-card">
-        <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
-        <h4>Verificação real</h4>
-        <p>Conferimos a situação no INPI, a titularidade e a viabilidade da transferência.</p>
-      </div>
-      <div class="about-card">
-        <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg></span>
-        <h4>Tudo documentado</h4>
-        <p>Cada negociação tem instrumento de cessão próprio entre as partes.</p>
+        <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>
+        <h4>Foco em resultado</h4>
+        <p>Registro nas classes certas, evitando indeferimento e retrabalho.</p>
       </div>
       <div class="about-card">
         <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-        <h4>Agilidade</h4>
-        <p>Credenciados no INPI, conduzimos cada etapa do início à publicação na RPI.</p>
+        <h4>Acompanhamento contínuo</h4>
+        <p>Monitoramento de marcas semelhantes e dos prazos do INPI.</p>
+      </div>
+      <div class="about-card">
+        <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-8 0v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+        <h4>Atendimento próximo</h4>
+        <p>Linguagem clara, sem juridiquês. Você entende cada passo.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========================= REGISTRO (serviços) ========================= -->
+<!-- ========================= REGISTRO ========================= -->
 <section id="registro" class="pad">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Marca registrada</span>
-      <h2>Sua marca só é sua quando está registrada.</h2>
-      <p>No Brasil, marca não é de quem usa primeiro — é de quem registra primeiro. Quatro frentes que protegem e valorizam o patrimônio da sua empresa.</p>
-    </div>
-    <div class="services">
-      <div class="service reveal"><div class="num">01</div><h3>Registro de marca</h3><p>Análise de viabilidade <strong>gratuita</strong>, definição das classes corretas e condução de todo o processo no INPI, do depósito ao deferimento.</p></div>
-      <div class="service reveal" style="transition-delay:.08s"><div class="num">02</div><h3>Monitoramento</h3><p>Vigilância das publicações do INPI para identificar marcas semelhantes e agir a tempo, protegendo o que é seu.</p></div>
-      <div class="service reveal" style="transition-delay:.16s"><div class="num">03</div><h3>Compra de marcas</h3><p>Acesso a um portfólio de marcas já registradas e disponíveis para transferência — ganhe anos de processo.</p></div>
-      <div class="service reveal" style="transition-delay:.24s"><div class="num">04</div><h3>Venda de marcas</h3><p>Tem uma marca registrada parada? Avaliamos, anunciamos e intermediamos a venda com toda a segurança.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ========================= INTERMEDIAÇÃO (transferência no INPI) ========================= -->
-<section id="intermediacao" class="pad" style="background:var(--creme-warm)">
-  <div class="wrap">
     <div class="sec-head center reveal">
-      <span class="eyebrow">Transferência de titularidade</span>
-      <h2>No INPI, a transferência é formal, pública e definitiva.</h2>
-      <p>Diferente de qualquer outro ativo, a marca registrada é propriedade real e oponível a terceiros. A cessão é contratada, protocolada e publicada — segurança de verdade para quem compra e para quem vende.</p>
-    </div>
-    <div class="transfer-grid">
-      <div class="tcard reveal">
-        <span class="badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg></span>
-        <div class="num">Passo 01</div>
-        <h4>Instrumento de cessão</h4>
-        <p>Contrato formal entre cedente e cessionário, com a qualificação completa das partes e a identificação da marca cedida.</p>
-        <span class="tag-strong">Acordo documentado</span>
-      </div>
-      <div class="tcard reveal" style="transition-delay:.08s">
-        <span class="badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></span>
-        <div class="num">Passo 02</div>
-        <h4>GRU & protocolo</h4>
-        <p>A LIV paga a GRU e protocola a transferência no INPI. A taxa do INPI — que varia conforme o porte (ME, MEI e pessoa física têm desconto) — <strong>já está inclusa no preço</strong>.</p>
-        <span class="tag-strong">GRU por nossa conta</span>
-      </div>
-      <div class="tcard reveal" style="transition-delay:.16s">
-        <span class="badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
-        <div class="num">Passo 03</div>
-        <h4>Análise de viabilidade</h4>
-        <p>Conferência de compatibilidade de atividade e da abrangência das marcas afins, para a transferência se sustentar.</p>
-        <span class="tag-strong">Sem surpresas</span>
-      </div>
-      <div class="tcard reveal" style="transition-delay:.24s">
-        <span class="badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
-        <div class="num">Passo 04</div>
-        <h4>Anotação na RPI</h4>
-        <p>A transferência é anotada e publicada na Revista da Propriedade Industrial. A marca passa a ser, oficialmente, do comprador.</p>
-        <span class="tag-strong">Propriedade transferida</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========================= COMO FUNCIONA ========================= -->
-<section id="como-funciona" class="pad">
-  <div class="wrap">
-    <div class="sec-head center reveal">
-      <span class="eyebrow">Como funciona a intermediação</span>
-      <h2>Seu dinheiro fica seguro até a transferência ser garantida.</h2>
-      <p>O vendedor só recebe quando a transferência da marca está protocolada e a posse, garantida. Simples e seguro para os dois lados.</p>
+      <span class="eyebrow">Registro de marca</span>
+      <h2>Como registrar a sua marca, passo a passo.</h2>
+      <p>Do nome à proteção definitiva no INPI. Conduzimos cada etapa por você — com a estratégia certa desde o começo.</p>
     </div>
     <div class="steps">
-      <div class="step reveal"><div class="n">1</div><h4>Avaliação & curadoria</h4><p>Você nos envia a marca. Avaliamos preço de mercado, situação no INPI e a viabilidade da transferência.</p><span class="meta">Diagnóstico sem custo</span></div>
-      <div class="step reveal" style="transition-delay:.06s"><div class="n">2</div><h4>Anúncio verificado</h4><p>A marca entra no marketplace com selo de verificada e situação no INPI conferida pela LIV.</p><span class="meta">Situação INPI conferida</span></div>
-      <div class="step reveal" style="transition-delay:.12s"><div class="n">3</div><h4>Negociação & pagamento seguro</h4><p>Fechado o preço, o comprador paga. O valor fica retido com a LIV — ninguém recebe ainda.</p><span class="meta">Pagamento protegido</span></div>
-      <div class="step reveal" style="transition-delay:.18s"><div class="n">4</div><h4>Transferência de titularidade</h4><p>A LIV conduz o instrumento de cessão e protocola a transferência no INPI, com a GRU já paga.</p><span class="meta">Cessão protocolada</span></div>
-      <div class="step reveal" style="transition-delay:.24s"><div class="n">5</div><h4>Anotação na RPI</h4><p>Acompanhamos a análise e a anotação da transferência na Revista da Propriedade Industrial.</p><span class="meta">Publicado na RPI</span></div>
-      <div class="step reveal" style="transition-delay:.3s"><div class="n">6</div><h4>Liberação ao vendedor</h4><p>Garantida a transferência, liberamos o pagamento ao vendedor. Negócio concluído.</p><span class="meta">Pago com segurança</span></div>
+      <div class="step reveal"><div class="n">1</div><h4>Pesquisa de viabilidade</h4><p>Verificamos se o nome está livre no INPI e o risco de conflito com marcas anteriores.</p></div>
+      <div class="step reveal" style="transition-delay:.06s"><div class="n">2</div><h4>Definição das classes</h4><p>Identificamos as classes (NCL) corretas para o seu ramo — protegendo o que importa.</p></div>
+      <div class="step reveal" style="transition-delay:.12s"><div class="n">3</div><h4>Depósito no INPI</h4><p>Protocolamos o pedido com a documentação correta e a melhor estratégia de proteção.</p></div>
+      <div class="step reveal" style="transition-delay:.18s"><div class="n">4</div><h4>Acompanhamento do exame</h4><p>Monitoramos publicações, exigências e eventuais oposições até a decisão final.</p></div>
+      <div class="step reveal" style="transition-delay:.24s"><div class="n">5</div><h4>Concessão do registro</h4><p>Sai o certificado: a marca é sua, com validade de 10 anos renováveis.</p></div>
+      <div class="step reveal" style="transition-delay:.3s"><div class="n">6</div><h4>Vigilância contínua</h4><p>Seguimos de olho em marcas semelhantes para proteger o que é seu, sempre.</p></div>
     </div>
-    <div class="escrow-note reveal">
+    <div class="callout reveal">
       <span class="shield"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
-      <p><strong>O que é "pagamento seguro":</strong> o valor combinado fica retido com a <strong>LIV</strong>, que atua como intermediária, e só é liberado ao vendedor depois que a marca é transferida. Assim ninguém é passado pra trás — nem quem compra, nem quem vende.</p>
+      <p><strong>Proteja desde o nascimento da marca.</strong> Quanto antes você registra, menor o risco de perder o nome para um concorrente — e de ter que reconstruir tudo do zero. O melhor momento para registrar é quando a ideia nasce.</p>
     </div>
-    <p class="fee-note reveal"><strong>Quanto custa:</strong> o valor da intermediação é apresentado <strong>durante a negociação</strong>, de forma transparente, conforme a marca e o tamanho do negócio. As taxas do INPI já entram no preço (a gente paga pra você) e variam conforme o porte da empresa.</p>
   </div>
 </section>
 
-<!-- ========================= COMO AVALIAMOS ========================= -->
-<section id="como-avaliamos" class="pad" style="background:var(--creme-warm)">
+<!-- ========================= DEFESA & RECURSOS ========================= -->
+<section id="defesa" class="pad">
   <div class="wrap">
-    <div class="sec-head center reveal">
-      <span class="eyebrow">Como avaliamos</span>
-      <h2>O que define o valor de uma marca.</h2>
-      <p>Cada marca é única. Antes de fazer a proposta de valuation, olhamos para um conjunto de fatores — estes são os principais.</p>
+    <div class="sec-head reveal">
+      <span class="eyebrow">Defesa &amp; Recursos</span>
+      <h2>Especialistas em recursos e defesa de oposições de marca.</h2>
+      <p>Teve a marca indeferida? Alguém se opôs ao seu pedido? Ou estão usando um nome igual ao seu? A LIV atua em todas as frentes de defesa da sua marca no INPI.</p>
     </div>
-    <div class="val-grid">
-      <div class="val-card reveal">
-        <span class="vi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-        <h4>Histórico de uso</h4>
-        <p>Se a marca já foi usada no mercado, sua reputação, tempo de operação e clientela contam a favor do valor.</p>
+    <div class="services">
+      <div class="service reveal">
+        <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 6v14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span>
+        <h3>Oposição</h3>
+        <p>Apresentamos oposição a pedidos de terceiros que ameaçam a sua marca — e defendemos a sua quando ela é alvo de oposição.</p>
       </div>
-      <div class="val-card reveal" style="transition-delay:.05s">
-        <span class="vi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z"/></svg></span>
-        <h4>Distintividade</h4>
-        <p>Marcas de fantasia ou arbitrárias valem mais que as evocativas ou descritivas — quanto mais única, mais forte e defensável.</p>
+      <div class="service reveal" style="transition-delay:.08s">
+        <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg></span>
+        <h3>Recurso contra indeferimento</h3>
+        <p>Marca indeferida não é o fim. Analisamos a decisão e construímos o recurso para reverter o indeferimento no INPI.</p>
       </div>
-      <div class="val-card reveal" style="transition-delay:.1s">
-        <span class="vi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg></span>
-        <h4>Estágio no INPI</h4>
-        <p>Marca já registrada vale mais. Também pesa quanto falta para a concessão e o tempo de vigência restante do registro.</p>
+      <div class="service reveal" style="transition-delay:.16s">
+        <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7z"/><path d="M15 9l-4 4-2-2"/></svg></span>
+        <h3>Nulidade &amp; Caducidade</h3>
+        <p>Processos administrativos para anular registros indevidos ou derrubar marcas que não estão sendo usadas.</p>
       </div>
-      <div class="val-card reveal">
-        <span class="vi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>
-        <h4>Ramo de atuação</h4>
-        <p>Setores com menos conflito de marcas e boa demanda deixam a transferência mais tranquila e valorizam o ativo.</p>
-      </div>
-      <div class="val-card reveal" style="transition-delay:.05s">
-        <span class="vi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg></span>
-        <h4>Identidade visual</h4>
-        <p>A riqueza e a qualidade da identidade visual — um logo bem construído, uma marca mista forte — agregam valor.</p>
-      </div>
-      <div class="val-card reveal" style="transition-delay:.1s">
-        <span class="vi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg></span>
-        <h4>Abrangência de classes</h4>
-        <p>Quantas classes (NCL) a marca protege e a amplitude dessa proteção também entram na conta da avaliação.</p>
+      <div class="service reveal" style="transition-delay:.24s">
+        <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 14h6M9 18h4"/></svg></span>
+        <h3>Notificação extrajudicial</h3>
+        <p>Estão usando a sua marca sem autorização? Notificamos e agimos para fazer cessar o uso indevido.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========================= MARKETPLACE ========================= -->
-<section id="marketplace" class="pad">
-  <div class="wrap">
-    <div class="market-head reveal">
-      <div class="sec-head" style="margin-bottom:0">
-        <span class="eyebrow">Marcas à venda</span>
-        <h2>Marcas registradas à venda.</h2>
-        <p>Marcas já depositadas ou registradas no INPI, prontas para transferência. Economize anos de processo. Valores ilustrativos — fale conosco para o catálogo atual.</p>
-      </div>
-      <div class="market-filters" id="filters">
-        <button class="chip active" data-f="all">Todas</button>
-        <button class="chip" data-f="alimentacao">Alimentação</button>
-        <button class="chip" data-f="moda">Moda</button>
-        <button class="chip" data-f="servicos">Serviços</button>
-        <button class="chip" data-f="tech">Tecnologia</button>
-      </div>
-    </div>
-
-    <div class="market-grid" id="marketGrid">
-      <!-- Exemplos ilustrativos — substituir pelo banco de marcas real da LIV -->
-      <div class="mark-card reveal" data-cat="alimentacao">
-        <div class="mark-top"><span class="plat"><span class="pico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="verified"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Registrada</span></div>
-        <div class="mark-name">Aurora</div>
-        <div class="mark-niche">NCL 30 · 43 — Alimentação</div>
-        <div class="mark-stats"><div><b>Registrada</b><span>situação INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
-        <div class="mark-foot"><div class="price"><small>a partir de</small><b>R$ 6.900</b></div><a href="#contato">Tenho interesse <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
-      </div>
-
-      <div class="mark-card reveal" data-cat="moda" style="transition-delay:.06s">
-        <div class="mark-top"><span class="plat"><span class="pico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="verified"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Registrada</span></div>
-        <div class="mark-name">Volpe</div>
-        <div class="mark-niche">NCL 25 — Vestuário</div>
-        <div class="mark-stats"><div><b>Registrada</b><span>situação INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
-        <div class="mark-foot"><div class="price"><small>a partir de</small><b>R$ 8.400</b></div><a href="#contato">Tenho interesse <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
-      </div>
-
-      <div class="mark-card reveal" data-cat="tech" style="transition-delay:.12s">
-        <div class="mark-top"><span class="plat"><span class="pico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="verified exam"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/></svg>Em exame</span></div>
-        <div class="mark-name">Nuvio</div>
-        <div class="mark-niche">NCL 42 — Software / TI</div>
-        <div class="mark-stats"><div><b>Depositada</b><span>situação INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
-        <div class="mark-foot"><div class="price"><small>a partir de</small><b>R$ 5.200</b></div><a href="#contato">Tenho interesse <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
-      </div>
-
-      <div class="mark-card reveal" data-cat="servicos">
-        <div class="mark-top"><span class="plat"><span class="pico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="verified"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Registrada</span></div>
-        <div class="mark-name">Élida</div>
-        <div class="mark-niche">NCL 44 — Estética / Saúde</div>
-        <div class="mark-stats"><div><b>Registrada</b><span>situação INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
-        <div class="mark-foot"><div class="price"><small>a partir de</small><b>R$ 7.100</b></div><a href="#contato">Tenho interesse <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
-      </div>
-
-      <div class="mark-card reveal" data-cat="alimentacao" style="transition-delay:.06s">
-        <div class="mark-top"><span class="plat"><span class="pico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="verified"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Registrada</span></div>
-        <div class="mark-name">Bracco</div>
-        <div class="mark-niche">NCL 43 — Bares e restaurantes</div>
-        <div class="mark-stats"><div><b>Registrada</b><span>situação INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
-        <div class="mark-foot"><div class="price"><small>a partir de</small><b>R$ 9.300</b></div><a href="#contato">Tenho interesse <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
-      </div>
-
-      <div class="mark-card reveal" data-cat="servicos" style="transition-delay:.12s">
-        <div class="mark-top"><span class="plat"><span class="pico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="verified"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Registrada</span></div>
-        <div class="mark-name">Cordel</div>
-        <div class="mark-niche">NCL 41 — Educação</div>
-        <div class="mark-stats"><div><b>Registrada</b><span>situação INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
-        <div class="mark-foot"><div class="price"><small>a partir de</small><b>R$ 6.500</b></div><a href="#contato">Tenho interesse <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
-      </div>
-    </div>
-
-    <div class="market-sell reveal">
-      <div>
-        <h3>Tem uma marca registrada parada?</h3>
-        <p>Marca registrada é ativo: pode ser vendida e gerar renda. A LIV avalia, anuncia no marketplace e intermedia a negociação com pagamento seguro e segurança jurídica.</p>
-      </div>
-      <a href="#contato" class="btn btn-brass">Anunciar minha marca</a>
-    </div>
-  </div>
-</section>
-
-<!-- ========================= CONFIANÇA ========================= -->
-<section class="pad" style="background:var(--creme-warm)">
-  <div class="wrap">
-    <div class="sec-head center reveal">
-      <span class="eyebrow">Por que a LIV</span>
-      <h2>Intermediação com a cabeça de quem cuida de propriedade.</h2>
-    </div>
-    <div class="trust-grid">
-      <div class="trust-card reveal"><span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><b>Seguro</b><h4>Pagamento protegido</h4><p>O vendedor só recebe após a transferência garantida.</p></div>
-      <div class="trust-card reveal" style="transition-delay:.06s"><span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><b>Verificado</b><h4>Situação no INPI</h4><p>Conferimos a situação e a titularidade antes de anunciar.</p></div>
-      <div class="trust-card reveal" style="transition-delay:.12s"><span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span><b>Contrato</b><h4>Tudo documentado</h4><p>Instrumento de cessão formal entre cedente e cessionário.</p></div>
-      <div class="trust-card reveal" style="transition-delay:.18s"><span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span><b>INPI</b><h4>Transferência averbada</h4><p>A cessão é anotada e publicada na RPI — propriedade real.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ========================= CONTATO / FORM ========================= -->
-<section id="contato" class="pad">
+<!-- ========================= VIABILIDADE GRÁTIS ========================= -->
+<section id="viabilidade" class="pad">
   <div class="wrap analise-grid">
     <div class="analise-copy reveal">
       <span class="eyebrow">Grátis · sem compromisso</span>
-      <h2>Vamos conversar sobre a sua marca.</h2>
-      <p>Quer registrar, comprar ou vender uma marca? Conte o que você tem em mente. Respondemos com um diagnóstico e os próximos passos — sem custo.</p>
+      <h2>Análise de viabilidade da sua marca.</h2>
+      <p>Preencha os dados abaixo. Nossa equipe roda a análise de viabilidade — disponibilidade no INPI, risco de conflito e classes recomendadas — e envia o <strong>diagnóstico completo direto no seu e-mail</strong>.</p>
       <ul class="analise-steps">
-        <li><span class="n">1</span><div><b>Você descreve a marca</b><span>Nome, classe/segmento e o que deseja fazer.</span></div></li>
-        <li><span class="n">2</span><div><b>Avaliamos e fazemos a proposta</b><span>Análise manual e, para quem vende, uma proposta de valuation da marca.</span></div></li>
-        <li><span class="n">3</span><div><b>Você decide</b><span>Concordou? Assina o termo de ciência e seguimos. Não concordou? Encerramos, sem compromisso.</span></div></li>
-        <li><span class="n">4</span><div><b>Conduzimos a transferência</b><span>Da cessão à anotação na RPI, com pagamento seguro.</span></div></li>
+        <li><span class="n">1</span><div><b>Você envia os dados</b><span>Leva menos de um minuto no formulário ao lado.</span></div></li>
+        <li><span class="n">2</span><div><b>Rodamos a análise</b><span>Verificamos anterioridades e as classes certas pro seu ramo.</span></div></li>
+        <li><span class="n">3</span><div><b>Você recebe no e-mail</b><span>O diagnóstico de viabilidade da sua marca, prontinho.</span></div></li>
       </ul>
     </div>
 
     <div class="form-card reveal" style="transition-delay:.1s">
       <div id="formInner">
-        <span class="fc-tag">Fale com a LIV</span>
-        <h3>Registrar, comprar ou vender</h3>
-        <p class="fc-sub">Resposta pelo WhatsApp em até 1 dia útil.</p>
+        <span class="fc-tag">Viabilidade gratuita</span>
+        <h3>Solicite a sua, grátis</h3>
+        <p class="fc-sub">Você recebe o diagnóstico no e-mail. Todos os campos são obrigatórios.</p>
         <div class="field">
-          <label for="intencao">O que você quer fazer? *</label>
-          <select id="intencao">
-            <option value="">Selecione</option>
-            <option>Registrar uma marca nova</option>
-            <option>Comprar uma marca registrada</option>
-            <option>Vender minha marca</option>
-            <option>Monitorar / proteger minha marca</option>
-          </select>
+          <label for="vNome">Seu nome *</label>
+          <input type="text" id="vNome" placeholder="Como podemos te chamar">
+        </div>
+        <div class="field">
+          <label for="vMarca">Nome da marca *</label>
+          <input type="text" id="vMarca" placeholder="Ex.: Aurora Café">
         </div>
         <div class="field-row">
-          <div class="field"><label for="ativo">Nome da marca *</label><input type="text" id="ativo" placeholder="Ex.: Aurora Café"></div>
-          <div class="field"><label for="segmento">Segmento / classe</label><input type="text" id="segmento" placeholder="Ex.: cafeteria · NCL 43"></div>
-        </div>
-
-        <!-- Bloco extra para quem vai VENDER -->
-        <div class="sell-block" id="sellBlock">
-          <div class="sb-title">Você quer vender? Conta pra gente um pouco mais:</div>
-          <div class="field"><label for="qUso">Essa marca já foi utilizada? Explique</label><input type="text" id="qUso" placeholder="Ex.: usei por 3 anos / nunca cheguei a usar"></div>
-          <div class="field"><label for="qFaliu">A empresa dessa marca faliu?</label><input type="text" id="qFaliu" placeholder="Sim / Não"></div>
-          <div class="field"><label for="qDivida">A marca pertence a uma empresa com dívidas ou pendências?</label><input type="text" id="qDivida" placeholder="Sim / Não — pode explicar"></div>
-          <div class="field"><label for="qParou">Por que a marca deixou de ser usada (ou nunca foi)?</label><input type="text" id="qParou" placeholder="Ex.: troquei de ramo / só registrei e não abri"></div>
-          <div class="field"><label for="qPreco">Por quanto você gostaria de vendê-la?</label><input type="text" id="qPreco" placeholder="Ex.: R$ 8.000 (ou 'quero uma avaliação')"></div>
-          <div class="field"><label for="qPorte">Porte (define a taxa do INPI)</label>
-            <select id="qPorte">
-              <option value="">Selecione</option>
-              <option>Pessoa física</option>
-              <option>MEI</option>
-              <option>ME / EPP (pequeno porte)</option>
-              <option>Empresa (demais portes)</option>
-            </select>
+          <div class="field">
+            <label for="vRamo">Ramo de atuação *</label>
+            <input type="text" id="vRamo" placeholder="Ex.: cafeteria">
           </div>
-          <div class="term-box">
-            <p class="term-title">Termo de ciência — venda de marca</p>
-            <p class="term-text">Ao seguir, você declara que é o legítimo titular da marca, que ela não está em litígio nem penhorada, e que está ciente de que deseja vendê-la. Vamos avaliar e enviar uma <strong>proposta de valuation</strong> — você decide se aceita.</p>
-            <label class="radio"><input type="radio" name="consent" value="concordo"> Concordo e estou ciente — quero receber a proposta</label>
-            <label class="radio"><input type="radio" name="consent" value="nao"> Não concordo — não quero seguir</label>
-            <p class="term-no" id="termNo">Tudo bem! Sem a concordância, a negociação não terá continuidade. Se mudar de ideia, é só voltar aqui. 🙂</p>
+          <div class="field">
+            <label for="vInsta">Instagram *</label>
+            <input type="text" id="vInsta" placeholder="@suamarca">
           </div>
         </div>
-
-        <div class="field"><label for="nome">Seu nome *</label><input type="text" id="nome" placeholder="Como podemos te chamar"></div>
-        <div class="field"><label for="contatoCampo">WhatsApp ou e-mail *</label><input type="text" id="contatoCampo" placeholder="(49) 9 9999-9999"></div>
+        <div class="field-row">
+          <div class="field">
+            <label for="vEmail">E-mail *</label>
+            <input type="email" id="vEmail" placeholder="voce@email.com">
+          </div>
+          <div class="field">
+            <label for="vContato">WhatsApp *</label>
+            <input type="text" id="vContato" placeholder="(49) 9 9999-9999">
+          </div>
+        </div>
         <button class="btn btn-primary" id="submitBtn">
-          Enviar pelo WhatsApp
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.4A11.8 11.8 0 0 0 2.1 17.6L1 23l5.5-1.4A11.8 11.8 0 1 0 20.5 3.4zM12 21.3c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.3.9.9-3.2-.2-.4a9.8 9.8 0 1 1 8 4.3zm5.4-7.3c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.5.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.4.1-.6l.5-.5.3-.5v-.5l-.9-2.2c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4a3.4 3.4 0 0 0-1 2.5 5.9 5.9 0 0 0 1.2 3.1 13.4 13.4 0 0 0 5.2 4.6c.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4s.3-1.3.2-1.4-.2-.2-.5-.4z"/></svg>
+          Solicitar viabilidade gratuita
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>
         </button>
-        <p class="form-note">Ao enviar, abrimos uma conversa no WhatsApp com seus dados. A compra e venda de marcas é uma intermediação; a transferência de titularidade é averbada no INPI.</p>
+        <p class="form-note">Seus dados são usados apenas para preparar e enviar a sua análise de viabilidade. Os dados do INPI refletem a situação na data da consulta e não constituem aconselhamento jurídico formal.</p>
       </div>
       <div class="form-success" id="formSuccess">
         <div class="check"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
-        <h3 class="serif">Quase lá!</h3>
-        <p>Abrimos uma conversa no WhatsApp com seus dados. É só enviar a mensagem que já preparamos.</p>
-        <a href="#" class="btn btn-brass" id="waLink" target="_blank" rel="noopener">Abrir o WhatsApp</a>
+        <h3 class="serif">Recebemos! 🎉</h3>
+        <p>Vamos preparar a análise de viabilidade da sua marca e enviar no seu e-mail. Se quiser adiantar, é só falar com a gente no WhatsApp.</p>
+        <a href="#" class="btn btn-brass" id="waLink" target="_blank" rel="noopener">Falar no WhatsApp</a>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ========================= BLOG ========================= -->
+<section id="blog" class="pad" style="background:var(--creme-warm)">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Blog</span>
+      <h2>Conteúdo sobre marcas e propriedade intelectual.</h2>
+      <p>Artigos práticos para você proteger e fortalecer a sua marca.</p>
+    </div>
+    <div class="blog-grid">
+      <article class="post reveal">
+        <div class="cover"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="body">
+          <span class="cat">Registro</span>
+          <h3>Por que registrar a marca antes de lançar?</h3>
+          <p>O registro precoce evita que anos de trabalho sejam construídos sobre um nome que pode ser tomado.</p>
+          <span class="more">Em breve <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </article>
+      <article class="post reveal" style="transition-delay:.08s">
+        <div class="cover"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/></svg></div>
+        <div class="body">
+          <span class="cat">Conceitos</span>
+          <h3>Marca x nome empresarial: qual a diferença?</h3>
+          <p>Ter CNPJ não protege o seu nome no mercado. Entenda por que registro de marca é outra coisa.</p>
+          <span class="more">Em breve <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </article>
+      <article class="post reveal" style="transition-delay:.16s">
+        <div class="cover"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7z"/></svg></div>
+        <div class="body">
+          <span class="cat">Defesa</span>
+          <h3>Copiaram a minha marca. O que eu faço?</h3>
+          <p>Da notificação extrajudicial à oposição no INPI: os caminhos para defender o que é seu.</p>
+          <span class="more">Em breve <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </article>
+    </div>
+    <p class="blog-soon reveal">Primeiros artigos chegando em breve. Acompanhe pelo nosso Instagram e LinkedIn.</p>
   </div>
 </section>
 
@@ -744,32 +490,40 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
           <img class="liv-mark" src="liv_mark_light.png" alt="LIV">
           <span class="logo-txt">Propriedade Intelectual</span>
         </div>
-        <p>Registro de marcas no INPI e intermediação de compra e venda de marcas registradas, com pagamento seguro e transferência averbada na RPI.</p>
-        <div class="foot-dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <p>Registro e defesa de marcas no INPI, com análise de viabilidade gratuita. Proteja sua marca desde o primeiro dia.</p>
+        <div class="foot-social">
+          <a href="https://instagram.com/livpropriedadeintelectual" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/company/livpropriedadeintelectual" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0zM.5 8h4V24h-4zM8 8h3.8v2.2h.05c.53-1 1.83-2.2 3.77-2.2 4.03 0 4.78 2.65 4.78 6.1V24h-4v-7.1c0-1.7-.03-3.9-2.38-3.9-2.38 0-2.75 1.86-2.75 3.78V24H8z"/></svg>
+          </a>
+        </div>
       </div>
       <div class="foot-col">
-        <h5>Marca registrada</h5>
+        <h5>Serviços</h5>
         <a href="#registro">Registro de marca</a>
+        <a href="#defesa">Defesa &amp; Recursos</a>
+        <a href="#viabilidade">Viabilidade grátis</a>
         <a href="#registro">Monitoramento</a>
-        <a href="#intermediacao">Defesa e recursos</a>
-        <a href="#contato">Análise de viabilidade</a>
       </div>
       <div class="foot-col">
-        <h5>Intermediação</h5>
-        <a href="#marketplace">Comprar marca</a>
-        <a href="#contato">Vender marca</a>
-        <a href="#como-funciona">Como funciona</a>
-        <a href="#intermediacao">Transferência no INPI</a>
+        <h5>Empresa</h5>
+        <a href="#quem-somos">Quem somos</a>
+        <a href="#blog">Blog</a>
+        <a href="#" id="footWa">Contato</a>
+        <a href="#viabilidade">Análise de viabilidade</a>
       </div>
       <div class="foot-col">
         <h5>Contato</h5>
         <a href="#" id="waFoot">WhatsApp</a>
         <a href="mailto:contato@livpi.com.br">contato@livpi.com.br</a>
         <a href="https://instagram.com/livpropriedadeintelectual" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.linkedin.com/company/livpropriedadeintelectual" target="_blank" rel="noopener">LinkedIn</a>
       </div>
     </div>
     <div class="foot-bottom">
-      <p class="disclaimer">A LIV atua como consultoria em propriedade intelectual e como <strong>intermediária</strong> nas negociações de marcas, <strong>credenciada no INPI</strong> e em conformidade com a legislação de propriedade industrial. A transferência de titularidade é formalizada por instrumento de cessão, protocolada no INPI e publicada na RPI. Os dados do INPI refletem a situação na data da consulta. Marcas e valores exibidos são ilustrativos.</p>
+      <p class="disclaimer">A LIV atua como consultoria em propriedade intelectual, <strong>credenciada no INPI</strong> e em conformidade com a legislação de propriedade industrial. Os dados do INPI refletem a situação na data da consulta e não constituem aconselhamento jurídico formal.</p>
       <div class="copy">
         <span>© 2026 LIV Propriedade Intelectual. Todos os direitos reservados.</span>
         <span>Lages/SC · www.livpi.com.br</span>
@@ -786,6 +540,7 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
 <script>
 /* ===== CONFIG ===== */
 const WHATSAPP = "5549999647004";
+const waBase = msg => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
 
 const header = document.getElementById('header');
 addEventListener('scroll', () => header.classList.toggle('scrolled', scrollY > 30));
@@ -799,65 +554,38 @@ const io = new IntersectionObserver((entries) => {
 }, { threshold: .12 });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-document.querySelectorAll('#filters .chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('#filters .chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    const f = chip.dataset.f;
-    document.querySelectorAll('#marketGrid .mark-card').forEach(card => {
-      card.style.display = (f === 'all' || card.dataset.cat === f) ? '' : 'none';
-    });
-  });
-});
+/* WhatsApp links */
+const msgGeral = "Olá! Vim pelo site da LIV e gostaria de falar com um especialista.";
+['navWa','heroWa','footWa','waFoot','waFloat'].forEach(id => { const el = document.getElementById(id); if (el) el.href = waBase(msgGeral); });
 
-/* mostra perguntas extras quando a intenção é VENDER */
-const intencaoSel = document.getElementById('intencao');
-const sellBlock = document.getElementById('sellBlock');
-const isSell = () => /vender/i.test(intencaoSel.value);
-intencaoSel.addEventListener('change', () => sellBlock.classList.toggle('show', isSell()));
-document.querySelectorAll('input[name="consent"]').forEach(r => r.addEventListener('change', () => {
-  document.getElementById('termNo').classList.toggle('show', r.value === 'nao' && r.checked);
-}));
-
-const waBase = msg => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
-document.getElementById('waFloat').href = waBase("Olá! Vim pelo site da LIV.");
-document.getElementById('waFoot').href = waBase("Olá! Vim pelo site da LIV.");
-
+/* Formulário de viabilidade — TODOS os campos obrigatórios.
+   Por ora envia o lead via WhatsApp; quando o backend de viabilidade estiver
+   conectado, trocar este handler por um POST para o endpoint que gera e envia
+   o diagnóstico por e-mail. */
 const submitBtn = document.getElementById('submitBtn');
 submitBtn.addEventListener('click', () => {
   const v = id => (document.getElementById(id).value || '').trim();
-  const intencao = v('intencao'), ativo = v('ativo'), segmento = v('segmento'), nome = v('nome'), contato = v('contatoCampo');
+  const nome = v('vNome'), marca = v('vMarca'), ramo = v('vRamo'), insta = v('vInsta'), email = v('vEmail'), contato = v('vContato');
 
-  if (!intencao || !ativo || !nome || !contato) {
-    alert('Por favor, preencha os campos obrigatórios (*).');
+  if (!nome || !marca || !ramo || !insta || !email || !contato) {
+    alert('Por favor, preencha todos os campos (todos são obrigatórios).');
     return;
   }
-  let msg =
-`Olá! Vim pelo site da LIV.
+  if (!/^\S+@\S+\.\S+$/.test(email)) { alert('Confira o seu e-mail, por favor.'); return; }
 
-• Quero: ${intencao}
-• Marca: ${ativo}${segmento ? `\n• Segmento/classe: ${segmento}` : ''}`;
+  const msg =
+`Olá! Quero a *análise de viabilidade gratuita* da minha marca.
 
-  if (isSell()) {
-    const consent = document.querySelector('input[name="consent"]:checked');
-    if (!consent) { alert('No termo de ciência, marque "Concordo" ou "Não concordo".'); return; }
-    if (consent.value === 'nao') { alert('Sem a concordância, a negociação não terá continuidade. Se mudar de ideia, estamos por aqui. 🙂'); return; }
-    const uso = v('qUso'), faliu = v('qFaliu'), divida = v('qDivida'), parou = v('qParou'), preco = v('qPreco'), porte = v('qPorte');
-    if (uso)    msg += `\n• Já foi utilizada?: ${uso}`;
-    if (faliu)  msg += `\n• A empresa faliu?: ${faliu}`;
-    if (divida) msg += `\n• Empresa com dívidas/pendências?: ${divida}`;
-    if (parou)  msg += `\n• Por que parou de usar / não usou: ${parou}`;
-    if (porte)  msg += `\n• Porte (taxa INPI): ${porte}`;
-    if (preco)  msg += `\n• Quanto gostaria de vender: ${preco}`;
-    msg += `\n• Termo de ciência: concordo em receber a proposta de valuation`;
-  }
-
-  msg += `\n• Nome: ${nome}\n• Contato: ${contato}`;
+• Nome: ${nome}
+• Marca: ${marca}
+• Ramo de atuação: ${ramo}
+• Instagram: ${insta}
+• E-mail: ${email}
+• WhatsApp: ${contato}`;
 
   document.getElementById('waLink').href = waBase(msg);
   document.getElementById('formInner').style.display = 'none';
   document.getElementById('formSuccess').classList.add('show');
-  window.open(waBase(msg), '_blank');
 });
 </script>
 </body>
