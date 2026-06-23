@@ -7,7 +7,7 @@
 <meta name="description" content="LIV Propriedade Intelectual: registro de marcas no INPI, defesa em oposições e recursos, e análise de viabilidade gratuita. Proteja sua marca desde o primeiro dia.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@200;300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&display=swap" rel="stylesheet">
 <style>
 :root{
   --midnight:#0F2536;
@@ -20,8 +20,8 @@
   --stone-soft:#B5AEA3;
   --line:rgba(15,37,54,.12);
   --line-light:rgba(250,248,244,.14);
-  --serif:'Instrument Serif',Georgia,serif;
-  --sans:'Hanken Grotesk',system-ui,sans-serif;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Archivo',system-ui,sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -99,7 +99,8 @@ section{position:relative}
 .about-text h2{font-family:var(--serif);font-weight:400;font-size:clamp(30px,3.6vw,46px);line-height:1.1;margin:16px 0 20px}
 .about-text p{color:var(--stone);font-size:16.5px;margin-bottom:16px;font-weight:300}
 .about-text strong{color:var(--midnight);font-weight:600}
-.about-note{margin-top:24px;padding:18px 22px;border-left:2px solid var(--brass);background:rgba(184,147,90,.07);font-size:14px;color:var(--midnight);border-radius:0 8px 8px 0}
+.about-note{margin-top:24px;padding:20px 24px;border-left:3px solid var(--brass);background:var(--midnight);font-size:14px;color:var(--creme);border-radius:14px;box-shadow:0 24px 50px -34px rgba(15,37,54,.5)}
+.about-note strong{color:var(--brass-light)}
 .about-visual{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .about-card{background:var(--creme);border:1px solid var(--line);border-radius:14px;padding:26px 22px;transition:transform .35s,box-shadow .35s}
 .about-card:hover{transform:translateY(-5px);box-shadow:0 20px 40px -24px rgba(15,37,54,.25)}
@@ -126,10 +127,10 @@ section{position:relative}
 
 /* ===== HISTÓRIA (story) ===== */
 .story{max-width:760px;margin:0 auto}
-.story p{font-size:17px;color:var(--stone);font-weight:300;margin-bottom:18px;line-height:1.7}
+.story p{font-size:17px;color:var(--stone);font-weight:400;margin-bottom:18px;line-height:1.75;text-align:justify}
 .story p strong{color:var(--midnight);font-weight:600}
-.story .lead-line{font-family:var(--serif);font-style:italic;font-size:23px;color:var(--brass);margin:28px 0;text-align:center}
-.story .closing{font-family:var(--serif);font-size:22px;color:var(--midnight);font-style:italic;margin-top:26px;line-height:1.4}
+.story .lead-line{font-family:var(--serif);font-style:italic;font-size:24px;color:var(--midnight);margin:28px 0;text-align:center}
+.story .closing{font-family:var(--serif);font-size:22px;color:var(--midnight);font-style:italic;margin-top:26px;line-height:1.4;text-align:left}
 @media(max-width:980px){.atua-grid{grid-template-columns:1fr}}
 
 /* ===== REGISTRO (passos, seção escura) ===== */
