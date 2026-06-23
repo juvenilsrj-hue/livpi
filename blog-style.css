@@ -27,6 +27,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;transition:.4s;padding:14
 .btn{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:13px;padding:9px 18px;border-radius:50px;transition:all .3s cubic-bezier(.2,.7,.3,1);cursor:pointer;border:none;font-family:var(--sans)}
 .btn-primary{background:var(--midnight);color:var(--creme)}
 .btn-primary:hover{background:var(--brass);transform:translateY(-2px)}
+.nav-links a.btn-primary{color:var(--creme)}
 .btn-brass{background:var(--brass);color:var(--midnight)}
 .btn-brass:hover{background:var(--brass-light);transform:translateY(-2px)}
 .nav-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px}
@@ -38,11 +39,11 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;transition:.4s;padding:14
 .back:hover{color:var(--brass);border-color:var(--brass);transform:translateY(-1px)}
 
 /* page-head (lista do blog) */
-.page-head{text-align:center;padding:18px 0 54px;background:var(--creme-warm)}
+.page-head{text-align:center;padding:112px 0 58px;background:var(--creme-warm)}
 .page-head .eyebrow{justify-content:center}
 .page-head h1{font-family:var(--serif);font-weight:400;font-size:clamp(38px,5vw,58px);line-height:1.07;margin:10px 0 14px}
 .page-head p{font-size:18px;color:var(--stone);font-weight:300;max-width:640px;margin:0 auto}
-.page-head .topbar{padding-top:0;margin-bottom:6px}
+.page-head .topbar{padding-top:0;margin-bottom:18px}
 
 /* grid de posts */
 .pad{padding:72px 0}
@@ -64,7 +65,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:100;transition:.4s;padding:14
 .article-head .cat{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);display:block;margin-bottom:14px}
 .article-head h1{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4.2vw,46px);line-height:1.12;letter-spacing:-.01em;margin-bottom:16px}
 .article-head .meta{font-size:13.5px;color:var(--stone);border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
-.article-body p{font-size:17.5px;color:#3b4754;font-weight:300;margin-bottom:20px;line-height:1.8}
+.article-body p{font-size:17.5px;color:#3b4754;font-weight:300;margin-bottom:20px;line-height:1.8;text-align:justify}
 .article-body p strong{color:var(--midnight);font-weight:600}
 .cta-box{margin:36px 0 8px;background:linear-gradient(120deg,rgba(184,147,90,.16),rgba(184,147,90,.04));border:1px solid rgba(184,147,90,.32);border-radius:16px;padding:24px 28px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:space-between}
 .cta-box p{font-size:15.5px;color:var(--midnight);max-width:560px;font-weight:400;line-height:1.55}
@@ -122,7 +123,8 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:60px 0 30
 @media(max-width:980px){.blog-grid{grid-template-columns:1fr 1fr}.foot-grid{grid-template-columns:1fr 1fr;gap:34px}}
 @media(max-width:760px){
   .wrap{padding:0 22px}
-  .nav-links{position:fixed;top:0;right:0;height:100vh;width:80%;max-width:320px;background:var(--midnight);flex-direction:column;align-items:flex-start;justify-content:center;padding:40px;gap:22px;transform:translateX(100%);transition:transform .4s cubic-bezier(.2,.7,.3,1);z-index:200}
+  .nav-links{position:fixed;top:0;right:0;height:100vh;width:80%;max-width:320px;background:var(--midnight);flex-direction:column;align-items:flex-start;justify-content:flex-start;padding:96px 40px 40px;gap:20px;transform:translateX(100%);transition:transform .4s cubic-bezier(.2,.7,.3,1);z-index:200;overflow-y:auto}
+.nav-links a.btn-primary{margin-top:8px}
   .nav-links.open{transform:none}
   .nav-links a{color:var(--creme);font-size:18px}
   .nav-toggle{display:flex;z-index:201}
