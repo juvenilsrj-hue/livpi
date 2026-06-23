@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — LIV Propriedade Intelectual</title>
+<meta name="description" content="Blog da LIV Propriedade Intelectual: conteúdo prático sobre registro, defesa e gestão de marcas no INPI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --midnight:#0F2536;--midnight-deep:#0A1A27;--brass:#B8935A;--brass-light:#CDA877;
+  --creme:#FAF8F4;--creme-warm:#ECE4D3;--stone:#8A8276;--stone-soft:#B5AEA3;
+  --line:rgba(15,37,54,.12);--line-light:rgba(250,248,244,.14);
+  --serif:'Spectral',Georgia,serif;--sans:'Inter',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--creme);color:var(--midnight);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--brass);color:var(--creme)}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);display:inline-flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:28px;height:1px;background:var(--brass)}
+
+/* LOGO + NAV */
+.logo{display:flex;align-items:center;gap:13px}
+.liv-mark{height:46px;width:auto;flex-shrink:0;display:block}
+.logo-txt{line-height:1.25;font-size:12px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--stone);max-width:130px}
+header{position:fixed;top:0;left:0;right:0;z-index:100;transition:.4s;padding:14px 0;background:rgba(250,248,244,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{font-size:14.5px;font-weight:500;color:var(--midnight);transition:color .25s}
+.nav-links a:hover{color:var(--brass)}
+.btn{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:13px;padding:9px 18px;border-radius:50px;transition:all .3s cubic-bezier(.2,.7,.3,1);cursor:pointer;border:none;font-family:var(--sans)}
+.btn-primary{background:var(--midnight);color:var(--creme)}
+.btn-primary:hover{background:var(--brass);transform:translateY(-2px)}
+.btn-brass{background:var(--brass);color:var(--midnight);font-size:16px;padding:14px 26px}
+.btn-brass:hover{background:var(--brass-light);transform:translateY(-2px)}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px}
+.nav-toggle span{width:24px;height:2px;background:var(--midnight)}
+
+/* PAGE HEAD */
+.page-head{padding:150px 0 60px;text-align:center;background:var(--creme-warm)}
+.page-head .back{font-size:13px;color:var(--stone);font-weight:500;display:inline-flex;align-items:center;gap:7px;margin-bottom:18px}
+.page-head .back:hover{color:var(--brass)}
+.page-head h1{font-family:var(--serif);font-weight:400;font-size:clamp(40px,5vw,64px);line-height:1.05;margin:8px 0 16px;letter-spacing:-.01em}
+.page-head p{font-size:18px;color:var(--stone);font-weight:300;max-width:620px;margin:0 auto}
+
+/* GRID */
+.pad{padding:80px 0}
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.post{background:var(--creme);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .35s,box-shadow .35s;display:flex;flex-direction:column}
+.post:hover{transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(15,37,54,.3)}
+.post .cover{height:160px;background:linear-gradient(135deg,var(--midnight),var(--brass));display:grid;place-items:center}
+.post .cover svg{color:rgba(250,248,244,.85)}
+.post .body{padding:24px 24px 26px;display:flex;flex-direction:column;flex:1}
+.post .cat{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);margin-bottom:10px}
+.post h3{font-family:var(--serif);font-weight:400;font-size:21px;line-height:1.2;margin-bottom:10px}
+.post p{font-size:14px;color:var(--stone);font-weight:300;margin-bottom:16px;flex:1}
+.post .more{font-size:13px;font-weight:600;color:var(--midnight);display:inline-flex;align-items:center;gap:7px}
+
+/* NEWSLETTER */
+.newsletter{max-width:640px;margin:64px auto 0;text-align:center;background:var(--midnight);color:var(--creme);border-radius:22px;padding:42px 38px;box-shadow:0 30px 70px -44px rgba(15,37,54,.55)}
+.newsletter .eyebrow{color:var(--brass-light);justify-content:center}
+.newsletter .eyebrow::before{background:var(--brass-light)}
+.newsletter h3{font-family:var(--serif);font-weight:400;font-size:30px;color:var(--creme);margin:12px 0 8px}
+.newsletter > p{color:var(--stone-soft);font-size:15px;font-weight:300;margin-bottom:22px}
+.nl-form{display:flex;gap:10px;max-width:470px;margin:0 auto}
+.nl-form input{flex:1;padding:14px 16px;border:1.5px solid var(--line-light);border-radius:11px;background:rgba(250,248,244,.06);color:var(--creme);font-family:var(--sans);font-size:15px}
+.nl-form input::placeholder{color:var(--stone-soft)}
+.nl-form input:focus{outline:none;border-color:var(--brass)}
+.nl-note{font-size:12px;color:var(--stone-soft);margin-top:14px}
+
+/* FOOTER */
+footer{background:var(--midnight-deep);color:var(--stone-soft);padding:60px 0 30px;margin-top:80px}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.1fr;gap:40px;margin-bottom:42px}
+.foot-brand .logo-txt{color:var(--stone-soft)}
+.foot-brand p{font-size:14px;margin:18px 0;max-width:320px;font-weight:300}
+.foot-social{display:flex;gap:12px;margin-top:18px}
+.foot-social a{width:40px;height:40px;border-radius:11px;border:1px solid var(--line-light);display:grid;place-items:center;color:var(--stone-soft);transition:all .25s}
+.foot-social a:hover{color:var(--midnight);background:var(--brass-light);border-color:var(--brass-light);transform:translateY(-2px)}
+.foot-col h5{color:var(--creme);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;font-weight:600}
+.foot-col a{display:block;font-size:14px;padding:6px 0;transition:color .25s;font-weight:300}
+.foot-col a:hover{color:var(--brass-light)}
+.foot-bottom{border-top:1px solid var(--line-light);padding-top:24px;font-size:12.5px}
+.foot-bottom .disclaimer{max-width:980px;line-height:1.7;color:var(--stone-soft);opacity:.85;margin-bottom:14px}
+.foot-bottom .copy{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+.wa-float{position:fixed;bottom:26px;right:26px;z-index:90;width:58px;height:58px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 14px 34px -10px rgba(37,211,102,.6);transition:transform .3s}
+.wa-float:hover{transform:scale(1.08)}
+
+@media(max-width:980px){.blog-grid{grid-template-columns:1fr 1fr}.foot-grid{grid-template-columns:1fr 1fr;gap:34px}}
+@media(max-width:680px){
+  .wrap{padding:0 22px}
+  .nav-links{position:fixed;top:0;right:0;height:100vh;width:80%;max-width:320px;background:var(--midnight);flex-direction:column;align-items:flex-start;justify-content:center;padding:40px;gap:22px;transform:translateX(100%);transition:transform .4s cubic-bezier(.2,.7,.3,1);z-index:200}
+  .nav-links.open{transform:none}
+  .nav-links a{color:var(--creme);font-size:18px}
+  .nav-toggle{display:flex;z-index:201}
+  .blog-grid{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr}
+  .nl-form{flex-direction:column}
+  .page-head{padding:120px 0 50px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="wrap nav">
+    <a href="index.html" class="logo" aria-label="LIV Propriedade Intelectual">
+      <img class="liv-mark" src="liv_mark_dark.png" alt="LIV">
+      <span class="logo-txt">Propriedade Intelectual</span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html#quem-somos">Quem somos</a>
+      <a href="index.html#atuacao">Como atuamos</a>
+      <a href="index.html#registro">Registro</a>
+      <a href="index.html#defesa">Defesa &amp; Recursos</a>
+      <a href="blog.html">Blog</a>
+      <a href="#" class="btn btn-primary" id="navWa">Falar com a LIV</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- PAGE HEAD -->
+<section class="page-head">
+  <div class="wrap">
+    <a href="index.html" class="back"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> Voltar ao site</a>
+    <span class="eyebrow" style="justify-content:center">Blog</span>
+    <h1>Conteúdo sobre marcas e propriedade intelectual.</h1>
+    <p>Artigos práticos para você registrar, proteger e fortalecer a sua marca.</p>
+  </div>
+</section>
+
+<!-- ARTIGOS -->
+<section class="pad">
+  <div class="wrap">
+    <div class="blog-grid">
+      <article class="post reveal">
+        <div class="cover"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="body"><span class="cat">Registro</span><h3>Por que registrar a marca antes de lançar?</h3><p>O registro precoce evita que anos de trabalho sejam construídos sobre um nome que pode ser tomado.</p><span class="more">Em breve <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      </article>
+      <article class="post reveal" style="transition-delay:.06s">
+        <div class="cover"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/></svg></div>
+        <div class="body"><span class="cat">Conceitos</span><h3>Marca x nome empresarial: qual a diferença?</h3><p>Ter CNPJ não protege o seu nome no mercado. Entenda por que registro de marca é outra coisa.</p><span class="more">Em breve <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      </article>
+      <article class="post reveal" style="transition-delay:.12s">
+        <div class="cover"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7z"/></svg></div>
+        <div class="body"><span class="cat">Defesa</span><h3>Copiaram a minha marca. O que eu faço?</h3><p>Da notificação extrajudicial à oposição no INPI: os caminhos para defender o que é seu.</p><span class="more">Em breve <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      </article>
+      <article class="post reveal">
+        <div class="cover"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13"/><path d="M14 5l3 3-3 3"/><path d="M20 16H7"/><path d="M10 13l-3 3 3 3"/></svg></div>
+        <div class="body"><span class="cat">Compra e venda</span><h3>Comprar uma marca pronta vale a pena?</h3><p>Ganhar tempo de processo e adquirir um ativo já registrado: quando faz sentido para o seu negócio.</p><span class="more">Em breve <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      </article>
+      <article class="post reveal" style="transition-delay:.06s">
+        <div class="cover"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+        <div class="body"><span class="cat">Viabilidade</span><h3>O que é a análise de viabilidade de marca?</h3><p>Antes de depositar, vale conferir se o nome está livre e o risco de conflito. Mostramos como.</p><span class="more">Em breve <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      </article>
+      <article class="post reveal" style="transition-delay:.12s">
+        <div class="cover"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M9 14.5 7.5 22 12 19l4.5 3L15 14.5"/></svg></div>
+        <div class="body"><span class="cat">Estratégia</span><h3>Quantas classes a minha marca precisa proteger?</h3><p>Proteger as classes certas evita brechas e gasto desnecessário. Entenda a lógica das classes (NCL).</p><span class="more">Em breve <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+      </article>
+    </div>
+
+    <!-- NEWSLETTER -->
+    <div class="newsletter reveal">
+      <span class="eyebrow">Newsletter</span>
+      <h3>Receba em primeira mão</h3>
+      <p>Conteúdos sobre marcas e propriedade intelectual, direto no seu e-mail.</p>
+      <div class="nl-form">
+        <input type="email" id="nlEmail" placeholder="Seu melhor e-mail">
+        <button class="btn btn-brass" id="nlBtn">Quero receber</button>
+      </div>
+      <p class="nl-note" id="nlNote">Sem spam. Você cancela quando quiser.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo">
+          <img class="liv-mark" src="liv_mark_light.png" alt="LIV">
+          <span class="logo-txt">Propriedade Intelectual</span>
+        </div>
+        <p>Registro e defesa de marcas no INPI, com análise de viabilidade gratuita. Proteja sua marca desde o primeiro dia.</p>
+        <div class="foot-social">
+          <a href="https://instagram.com/livpropriedadeintelectual" target="_blank" rel="noopener" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg></a>
+          <a href="https://www.linkedin.com/company/livpropriedadeintelectual" target="_blank" rel="noopener" aria-label="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0zM.5 8h4V24h-4zM8 8h3.8v2.2h.05c.53-1 1.83-2.2 3.77-2.2 4.03 0 4.78 2.65 4.78 6.1V24h-4v-7.1c0-1.7-.03-3.9-2.38-3.9-2.38 0-2.75 1.86-2.75 3.78V24H8z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col"><h5>Serviços</h5><a href="index.html#registro">Registro de marca</a><a href="index.html#defesa">Defesa &amp; Recursos</a><a href="index.html#viabilidade">Viabilidade grátis</a><a href="index.html#registro">Monitoramento</a></div>
+      <div class="foot-col"><h5>Empresa</h5><a href="index.html#quem-somos">Quem somos</a><a href="blog.html">Blog</a><a href="#" id="footWa">Contato</a><a href="index.html#viabilidade">Análise de viabilidade</a></div>
+      <div class="foot-col"><h5>Contato</h5><a href="#" id="waFoot">WhatsApp</a><a href="mailto:contato@livpi.com.br">contato@livpi.com.br</a><a href="https://instagram.com/livpropriedadeintelectual" target="_blank" rel="noopener">Instagram</a><a href="https://www.linkedin.com/company/livpropriedadeintelectual" target="_blank" rel="noopener">LinkedIn</a></div>
+    </div>
+    <div class="foot-bottom">
+      <p class="disclaimer">A LIV atua como consultoria em propriedade intelectual, <strong>credenciada no INPI</strong> e em conformidade com a legislação de propriedade industrial. Os dados do INPI refletem a situação na data da consulta.</p>
+      <div class="copy"><span>© 2026 LIV Propriedade Intelectual. Todos os direitos reservados.</span><span>Lages/SC · www.livpi.com.br</span></div>
+    </div>
+  </div>
+</footer>
+
+<a href="#" class="wa-float" id="waFloat" aria-label="WhatsApp">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="#fff"><path d="M20.5 3.4A11.8 11.8 0 0 0 2.1 17.6L1 23l5.5-1.4A11.8 11.8 0 1 0 20.5 3.4zM12 21.3c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.3.9.9-3.2-.2-.4a9.8 9.8 0 1 1 8 4.3zm5.4-7.3c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.5.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.4.1-.6l.5-.5.3-.5v-.5l-.9-2.2c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4a3.4 3.4 0 0 0-1 2.5 5.9 5.9 0 0 0 1.2 3.1 13.4 13.4 0 0 0 5.2 4.6c.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4s.3-1.3.2-1.4-.2-.2-.5-.4z"/></svg>
+</a>
+
+<script>
+const WHATSAPP = "5549999647004";
+const waBase = msg => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
+const toggle = document.getElementById('navToggle'), links = document.getElementById('navLinks');
+toggle.addEventListener('click', () => { links.classList.toggle('open'); });
+const io = new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+['navWa','footWa','waFoot','waFloat'].forEach(id=>{const el=document.getElementById(id);if(el)el.href=waBase("Olá! Vim pelo blog da LIV e gostaria de falar com um especialista.");});
+const nlBtn=document.getElementById('nlBtn');
+if(nlBtn)nlBtn.addEventListener('click',()=>{const email=(document.getElementById('nlEmail').value||'').trim();if(!/^\S+@\S+\.\S+$/.test(email)){alert('Confira o seu e-mail, por favor.');return;}document.getElementById('nlNote').textContent='Pronto! Em breve você recebe nossos conteúdos. 🎉';window.open(waBase('Olá! Quero receber os conteúdos da LIV no e-mail: '+email),'_blank');});
+</script>
+</body>
+</html>

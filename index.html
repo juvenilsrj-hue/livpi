@@ -201,6 +201,18 @@ section{position:relative}
 .post p{font-size:14px;color:var(--stone);font-weight:300;margin-bottom:16px;flex:1}
 .post .more{font-size:13px;font-weight:600;color:var(--midnight);display:inline-flex;align-items:center;gap:7px}
 .blog-soon{margin-top:34px;text-align:center;font-size:14px;color:var(--stone)}
+.blog-cta{text-align:center;margin-top:40px}
+.newsletter{max-width:640px;margin:50px auto 0;text-align:center;background:var(--midnight);color:var(--creme);border-radius:22px;padding:42px 38px;box-shadow:0 30px 70px -44px rgba(15,37,54,.55)}
+.newsletter .eyebrow{color:var(--brass-light);justify-content:center}
+.newsletter .eyebrow::before{background:var(--brass-light)}
+.newsletter h3{font-family:var(--serif);font-weight:400;font-size:30px;color:var(--creme);margin:12px 0 8px}
+.newsletter > p{color:var(--stone-soft);font-size:15px;font-weight:300;margin-bottom:22px}
+.nl-form{display:flex;gap:10px;max-width:470px;margin:0 auto}
+.nl-form input{flex:1;padding:14px 16px;border:1.5px solid var(--line-light);border-radius:11px;background:rgba(250,248,244,.06);color:var(--creme);font-family:var(--sans);font-size:15px}
+.nl-form input::placeholder{color:var(--stone-soft)}
+.nl-form input:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px rgba(184,147,90,.18)}
+.nl-note{font-size:12px;color:var(--stone-soft);margin-top:14px}
+@media(max-width:600px){.nl-form{flex-direction:column}}
 
 /* ===== FOOTER ===== */
 footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32px}
@@ -461,9 +473,9 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
   </div>
 </section>
 <!-- ========================= BLOG ========================= -->
-<section id="blog" class="pad" style="background:var(--creme-warm)">
+<section id="blog" class="pad" style="background:var(--creme-warm);padding-top:48px">
   <div class="wrap">
-    <div class="sec-head center reveal">
+    <div class="sec-head center reveal" style="margin-bottom:40px">
       <span class="eyebrow">Blog</span>
       <h2>Conteúdo sobre marcas e propriedade intelectual.</h2>
       <p>Artigos práticos para você proteger e fortalecer a sua marca.</p>
@@ -497,7 +509,18 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
         </div>
       </article>
     </div>
-    <p class="blog-soon reveal">Primeiros artigos chegando em breve. Acompanhe pelo nosso Instagram e LinkedIn.</p>
+    <div class="blog-cta reveal"><a href="blog.html" class="btn btn-primary">Ver todos os artigos
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+    <div class="newsletter reveal">
+      <span class="eyebrow">Newsletter</span>
+      <h3>Receba em primeira mão</h3>
+      <p>Conteúdos sobre marcas e propriedade intelectual, direto no seu e-mail.</p>
+      <div class="nl-form">
+        <input type="email" id="nlEmail" placeholder="Seu melhor e-mail">
+        <button class="btn btn-brass" id="nlBtn">Quero receber</button>
+      </div>
+      <p class="nl-note" id="nlNote">Sem spam. Você cancela quando quiser.</p>
+    </div>
   </div>
 </section>
 <!-- ========================= NOSSOS CLIENTES ========================= -->
@@ -631,6 +654,15 @@ submitBtn.addEventListener('click', () => {
   document.getElementById('waLink').href = waBase(msg);
   document.getElementById('formInner').style.display = 'none';
   document.getElementById('formSuccess').classList.add('show');
+});
+
+/* Newsletter */
+const nlBtn = document.getElementById('nlBtn');
+if (nlBtn) nlBtn.addEventListener('click', () => {
+  const email = (document.getElementById('nlEmail').value || '').trim();
+  if (!/^\S+@\S+\.\S+$/.test(email)) { alert('Confira o seu e-mail, por favor.'); return; }
+  document.getElementById('nlNote').textContent = 'Pronto! Em breve você recebe nossos conteúdos. 🎉';
+  window.open(waBase('Olá! Quero receber os conteúdos da LIV no e-mail: ' + email), '_blank');
 });
 </script>
 </body>
