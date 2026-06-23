@@ -202,17 +202,19 @@ section{position:relative}
 .post .more{font-size:13px;font-weight:600;color:var(--midnight);display:inline-flex;align-items:center;gap:7px}
 .blog-soon{margin-top:34px;text-align:center;font-size:14px;color:var(--stone)}
 .blog-cta{text-align:center;margin-top:40px}
-.newsletter{max-width:640px;margin:50px auto 0;text-align:center;background:var(--midnight);color:var(--creme);border-radius:22px;padding:42px 38px;box-shadow:0 30px 70px -44px rgba(15,37,54,.55)}
-.newsletter .eyebrow{color:var(--brass-light);justify-content:center}
+.newsletter{max-width:980px;margin:50px auto 0;background:var(--midnight);color:var(--creme);border-radius:20px;padding:28px 40px;display:flex;align-items:center;justify-content:space-between;gap:40px;text-align:left;box-shadow:0 30px 70px -44px rgba(15,37,54,.55)}
+.newsletter .nl-copy{flex:1;min-width:0}
+.newsletter .eyebrow{color:var(--brass-light)}
 .newsletter .eyebrow::before{background:var(--brass-light)}
-.newsletter h3{font-family:var(--serif);font-weight:400;font-size:30px;color:var(--creme);margin:12px 0 8px}
-.newsletter > p{color:var(--stone-soft);font-size:15px;font-weight:300;margin-bottom:22px}
-.nl-form{display:flex;gap:10px;max-width:470px;margin:0 auto}
-.nl-form input{flex:1;padding:14px 16px;border:1.5px solid var(--line-light);border-radius:11px;background:rgba(250,248,244,.06);color:var(--creme);font-family:var(--sans);font-size:15px}
+.newsletter h3{font-family:var(--serif);font-weight:400;font-size:25px;color:var(--creme);margin:8px 0 5px}
+.newsletter .nl-copy p{color:var(--stone-soft);font-size:14px;font-weight:300;margin:0}
+.nl-side{flex-shrink:0;width:400px;max-width:44%}
+.nl-form{display:flex;gap:10px}
+.nl-form input{flex:1;padding:13px 15px;border:1.5px solid var(--line-light);border-radius:11px;background:rgba(250,248,244,.06);color:var(--creme);font-family:var(--sans);font-size:15px;min-width:0}
 .nl-form input::placeholder{color:var(--stone-soft)}
 .nl-form input:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px rgba(184,147,90,.18)}
-.nl-note{font-size:12px;color:var(--stone-soft);margin-top:14px}
-@media(max-width:600px){.nl-form{flex-direction:column}}
+.nl-note{font-size:11.5px;color:var(--stone-soft);margin-top:10px}
+@media(max-width:760px){.newsletter{flex-direction:column;text-align:center;gap:18px;padding:30px 26px}.newsletter .eyebrow{justify-content:center}.nl-side{width:100%;max-width:100%}.nl-form{flex-direction:column}.nl-note{text-align:center}}
 
 /* ===== FOOTER ===== */
 footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32px}
@@ -512,14 +514,18 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
     <div class="blog-cta reveal"><a href="blog.html" class="btn btn-primary">Ver todos os artigos
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
     <div class="newsletter reveal">
-      <span class="eyebrow">Newsletter</span>
-      <h3>Receba em primeira mão</h3>
-      <p>Conteúdos sobre marcas e propriedade intelectual, direto no seu e-mail.</p>
-      <div class="nl-form">
-        <input type="email" id="nlEmail" placeholder="Seu melhor e-mail">
-        <button class="btn btn-brass" id="nlBtn">Quero receber</button>
+      <div class="nl-copy">
+        <span class="eyebrow">Newsletter</span>
+        <h3>Receba em primeira mão</h3>
+        <p>Conteúdos sobre marcas e propriedade intelectual, direto no seu e-mail.</p>
       </div>
-      <p class="nl-note" id="nlNote">Sem spam. Você cancela quando quiser.</p>
+      <div class="nl-side">
+        <div class="nl-form">
+          <input type="email" id="nlEmail" placeholder="Seu melhor e-mail">
+          <button class="btn btn-brass" id="nlBtn">Quero receber</button>
+        </div>
+        <p class="nl-note" id="nlNote">Sem spam. Você cancela quando quiser.</p>
+      </div>
     </div>
   </div>
 </section>
