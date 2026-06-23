@@ -1,0 +1,138 @@
+/* ===== LIV — estilos compartilhados do Blog e dos artigos ===== */
+:root{
+  --midnight:#0F2536;--midnight-deep:#0A1A27;--brass:#B8935A;--brass-light:#CDA877;
+  --creme:#FAF8F4;--creme-warm:#ECE4D3;--stone:#8A8276;--stone-soft:#B5AEA3;
+  --line:rgba(15,37,54,.12);--line-light:rgba(250,248,244,.14);
+  --serif:'Spectral',Georgia,serif;--sans:'Inter',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--creme);color:var(--midnight);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--brass);color:var(--creme)}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);display:inline-flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:28px;height:1px;background:var(--brass)}
+
+/* logo + nav */
+.logo{display:flex;align-items:center;gap:13px}
+.liv-mark{height:46px;width:auto;flex-shrink:0;display:block}
+.logo-txt{line-height:1.25;font-size:12px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--stone);max-width:130px}
+header{position:fixed;top:0;left:0;right:0;z-index:100;transition:.4s;padding:14px 0;background:rgba(250,248,244,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between}
+.nav-links{display:flex;align-items:center;gap:22px}
+.nav-links a{font-size:14.5px;font-weight:500;color:var(--midnight);transition:color .25s}
+.nav-links a:hover{color:var(--brass)}
+.btn{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:13px;padding:9px 18px;border-radius:50px;transition:all .3s cubic-bezier(.2,.7,.3,1);cursor:pointer;border:none;font-family:var(--sans)}
+.btn-primary{background:var(--midnight);color:var(--creme)}
+.btn-primary:hover{background:var(--brass);transform:translateY(-2px)}
+.btn-brass{background:var(--brass);color:var(--midnight)}
+.btn-brass:hover{background:var(--brass-light);transform:translateY(-2px)}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px}
+.nav-toggle span{width:24px;height:2px;background:var(--midnight)}
+
+/* botão Voltar (canto superior direito) */
+.topbar{display:flex;justify-content:flex-end;padding-top:96px}
+.back{font-size:13px;color:var(--stone);font-weight:600;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);padding:9px 16px;border-radius:50px;transition:.25s;background:var(--creme)}
+.back:hover{color:var(--brass);border-color:var(--brass);transform:translateY(-1px)}
+
+/* page-head (lista do blog) */
+.page-head{text-align:center;padding:18px 0 54px;background:var(--creme-warm)}
+.page-head .eyebrow{justify-content:center}
+.page-head h1{font-family:var(--serif);font-weight:400;font-size:clamp(38px,5vw,58px);line-height:1.07;margin:10px 0 14px}
+.page-head p{font-size:18px;color:var(--stone);font-weight:300;max-width:640px;margin:0 auto}
+.page-head .topbar{padding-top:0;margin-bottom:6px}
+
+/* grid de posts */
+.pad{padding:72px 0}
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.post{background:var(--creme);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .35s,box-shadow .35s;display:flex;flex-direction:column}
+.post:hover{transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(15,37,54,.3)}
+.post .cover{height:150px;background:linear-gradient(135deg,var(--midnight),var(--brass));display:grid;place-items:center}
+.post .cover svg{color:rgba(250,248,244,.85)}
+.post .body{padding:24px;display:flex;flex-direction:column;flex:1}
+.post .cat{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);margin-bottom:10px}
+.post h3{font-family:var(--serif);font-weight:400;font-size:21px;line-height:1.22;margin-bottom:10px}
+.post p{font-size:14px;color:var(--stone);font-weight:300;margin-bottom:16px;flex:1}
+.post .more{font-size:13px;font-weight:600;color:var(--midnight);display:inline-flex;align-items:center;gap:7px}
+.post:hover .more{color:var(--brass)}
+
+/* ===== ARTIGO ===== */
+.article{max-width:760px;margin:0 auto}
+.article-head{padding:26px 0 0}
+.article-head .cat{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);display:block;margin-bottom:14px}
+.article-head h1{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4.2vw,46px);line-height:1.12;letter-spacing:-.01em;margin-bottom:16px}
+.article-head .meta{font-size:13.5px;color:var(--stone);border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+.article-body p{font-size:17.5px;color:#3b4754;font-weight:300;margin-bottom:20px;line-height:1.8}
+.article-body p strong{color:var(--midnight);font-weight:600}
+.cta-box{margin:36px 0 8px;background:linear-gradient(120deg,rgba(184,147,90,.16),rgba(184,147,90,.04));border:1px solid rgba(184,147,90,.32);border-radius:16px;padding:24px 28px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.cta-box p{font-size:15.5px;color:var(--midnight);max-width:560px;font-weight:400;line-height:1.55}
+.cta-box .btn-brass{font-size:14.5px;padding:13px 22px;white-space:nowrap}
+
+/* palavras-chave */
+.tags{display:flex;flex-wrap:wrap;gap:9px;margin:36px 0 0}
+.tag{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--stone);background:var(--creme-warm);border:1px solid var(--line);padding:6px 12px;border-radius:50px}
+
+/* compartilhar */
+.share{margin:26px 0;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.share .lbl{font-size:14px;color:var(--midnight);font-weight:600;margin-bottom:14px}
+.share-icons{display:flex;gap:10px;flex-wrap:wrap}
+.share-icons a{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;color:var(--midnight);transition:.25s;cursor:pointer}
+.share-icons a:hover{background:var(--midnight);color:var(--creme);border-color:var(--midnight);transform:translateY(-2px)}
+
+/* leia também */
+.leia{margin-top:46px}
+.leia h2{font-family:var(--serif);font-weight:400;font-size:25px;margin-bottom:20px}
+.leia-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* newsletter (clara e fina) */
+.newsletter{margin:60px auto 0;background:var(--creme);border:1px solid rgba(184,147,90,.35);color:var(--midnight);border-radius:16px;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;gap:34px;text-align:left;box-shadow:0 18px 44px -32px rgba(15,37,54,.3)}
+.newsletter .nl-copy{flex:1;min-width:0}
+.newsletter .eyebrow{color:var(--brass)}
+.newsletter h3{font-family:var(--serif);font-weight:400;font-size:24px;color:var(--midnight);margin:6px 0 3px}
+.newsletter .nl-copy p{color:var(--stone);font-size:13.5px;font-weight:300;margin:0}
+.nl-side{flex-shrink:0;width:400px;max-width:46%}
+.nl-form{display:flex;gap:10px}
+.nl-form input{flex:1;padding:12px 15px;border:1.5px solid var(--line);border-radius:11px;background:#fff;color:var(--midnight);font-family:var(--sans);font-size:15px;min-width:0}
+.nl-form input::placeholder{color:var(--stone)}
+.nl-form input:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px rgba(184,147,90,.18)}
+.nl-note{font-size:11.5px;color:var(--stone);margin-top:9px}
+
+/* footer */
+footer{background:var(--midnight-deep);color:var(--stone-soft);padding:60px 0 30px;margin-top:80px}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.1fr;gap:40px;margin-bottom:42px}
+.foot-brand .logo-txt{color:var(--stone-soft)}
+.foot-brand p{font-size:14px;margin:18px 0;max-width:320px;font-weight:300}
+.foot-social{display:flex;gap:12px;margin-top:18px}
+.foot-social a{width:40px;height:40px;border-radius:11px;border:1px solid var(--line-light);display:grid;place-items:center;color:var(--stone-soft);transition:all .25s}
+.foot-social a:hover{color:var(--midnight);background:var(--brass-light);border-color:var(--brass-light);transform:translateY(-2px)}
+.foot-col h5{color:var(--creme);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;font-weight:600}
+.foot-col a{display:block;font-size:14px;padding:6px 0;transition:color .25s;font-weight:300}
+.foot-col a:hover{color:var(--brass-light)}
+.foot-bottom{border-top:1px solid var(--line-light);padding-top:24px;font-size:12.5px}
+.foot-bottom .disclaimer{max-width:980px;line-height:1.7;color:var(--stone-soft);opacity:.85;margin-bottom:14px}
+.foot-bottom .copy{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+.wa-float{position:fixed;bottom:26px;right:26px;z-index:90;width:58px;height:58px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 14px 34px -10px rgba(37,211,102,.6);transition:transform .3s}
+.wa-float:hover{transform:scale(1.08)}
+
+@media(max-width:980px){.blog-grid{grid-template-columns:1fr 1fr}.foot-grid{grid-template-columns:1fr 1fr;gap:34px}}
+@media(max-width:760px){
+  .wrap{padding:0 22px}
+  .nav-links{position:fixed;top:0;right:0;height:100vh;width:80%;max-width:320px;background:var(--midnight);flex-direction:column;align-items:flex-start;justify-content:center;padding:40px;gap:22px;transform:translateX(100%);transition:transform .4s cubic-bezier(.2,.7,.3,1);z-index:200}
+  .nav-links.open{transform:none}
+  .nav-links a{color:var(--creme);font-size:18px}
+  .nav-toggle{display:flex;z-index:201}
+  .blog-grid{grid-template-columns:1fr}
+  .leia-grid{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr}
+  .newsletter{flex-direction:column;text-align:center;gap:16px;padding:24px 22px}
+  .newsletter .eyebrow{justify-content:center}
+  .nl-side{width:100%;max-width:100%}
+  .nl-form{flex-direction:column}
+  .nl-note{text-align:center}
+  .cta-box{flex-direction:column;align-items:flex-start}
+}
