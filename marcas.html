@@ -10,49 +10,73 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="blog-style.css">
 <style>
-/* ===== Marcas à venda (catálogo) ===== */
-.notice{display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:space-between;background:linear-gradient(120deg,rgba(184,147,90,.16),rgba(184,147,90,.04));border:1px solid rgba(184,147,90,.34);border-radius:16px;padding:18px 26px;margin-bottom:34px}
+/* ===== Marcas à venda — marketplace escuro (paleta LIV) ===== */
+/* page-head escuro */
+.page-head{background:var(--midnight)}
+.page-head .eyebrow{color:var(--brass-light)}
+.page-head .eyebrow::before{background:var(--brass-light)}
+.page-head h1{color:var(--creme)}
+.page-head p{color:var(--stone-soft)}
+.page-head .back{background:rgba(250,248,244,.06);border-color:var(--line-light);color:var(--stone-soft)}
+.page-head .back:hover{color:var(--brass-light);border-color:var(--brass-light)}
+
+/* seção do catálogo (escura) */
+.mk{background:var(--midnight);color:var(--creme)}
+
+/* aviso */
+.notice{display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:space-between;background:linear-gradient(120deg,rgba(184,147,90,.16),rgba(184,147,90,.04));border:1px solid rgba(184,147,90,.32);border-radius:16px;padding:18px 26px;margin-bottom:28px}
 .notice .nt{display:flex;gap:14px;align-items:center}
-.notice .ico{width:42px;height:42px;border-radius:11px;background:rgba(184,147,90,.18);color:var(--brass);display:grid;place-items:center;flex-shrink:0}
-.notice p{font-size:14.5px;color:var(--midnight);font-weight:400;max-width:680px}
+.notice .ico{width:42px;height:42px;border-radius:11px;background:rgba(184,147,90,.18);color:var(--brass-light);display:grid;place-items:center;flex-shrink:0}
+.notice p{font-size:14.5px;color:var(--creme);font-weight:300;max-width:680px}
+.notice p strong{color:var(--creme);font-weight:600}
 .notice .btn{white-space:nowrap}
 
-.filters{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-.filters select,.filters input{padding:12px 15px;border:1.5px solid var(--line);border-radius:11px;background:#fff;font-family:var(--sans);font-size:14.5px;color:var(--midnight)}
-.filters select{min-width:220px;cursor:pointer}
-.filters input{flex:1;min-width:200px}
-.filters select:focus,.filters input:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px rgba(184,147,90,.16)}
-.filters .fnote{width:100%;font-size:12px;color:var(--stone);margin-top:-4px}
+/* filtros (chips) */
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chip{font-size:13px;font-weight:500;padding:8px 16px;border-radius:50px;border:1px solid var(--line-light);color:var(--stone-soft);background:transparent;cursor:default}
+.chip.active{background:var(--brass);color:var(--midnight);border-color:var(--brass)}
+.fnote{width:100%;font-size:12px;color:var(--stone-soft);opacity:.75;margin-top:2px}
 
-.marca-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:24px}
-.marca{background:var(--creme);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .35s,box-shadow .35s;position:relative}
-.marca:hover{transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(15,37,54,.3)}
-.marca .top{height:128px;background:linear-gradient(135deg,var(--midnight),var(--brass));display:grid;place-items:center;position:relative}
-.marca .top .nm{font-family:var(--serif);font-size:28px;color:var(--creme);letter-spacing:.01em}
-.marca .badge{position:absolute;top:12px;left:12px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(250,248,244,.92);color:var(--midnight);padding:4px 10px;border-radius:50px}
-.marca .body{padding:22px;display:flex;flex-direction:column;flex:1;gap:12px}
-.marca .seg{font-size:14px;color:var(--stone);font-weight:300}
-.marca .chips{display:flex;gap:8px;flex-wrap:wrap}
-.marca .chip{font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--stone);background:var(--creme-warm);border:1px solid var(--line);padding:5px 11px;border-radius:50px}
-.marca .chip.ok{color:#3c6b4f;background:rgba(60,107,79,.1);border-color:rgba(60,107,79,.25)}
-.marca .chip.wait{color:#9a7330;background:rgba(184,147,90,.12);border-color:rgba(184,147,90,.3)}
-.marca .price{font-family:var(--serif);font-size:18px;color:var(--midnight);margin-top:auto;padding-top:6px}
-.marca .btn{width:100%;justify-content:center;margin-top:4px}
+/* grade + cards 3D */
+.market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:26px;perspective:1100px}
+.mk-card{position:relative;background:linear-gradient(165deg,rgba(250,248,244,.06),rgba(250,248,244,.015));border:1px solid var(--line-light);border-radius:18px;padding:24px;transform-style:preserve-3d;transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s,border-color .3s;box-shadow:0 20px 44px -28px rgba(0,0,0,.8),inset 0 1px 0 rgba(250,248,244,.07);will-change:transform}
+.mk-card:hover{border-color:rgba(184,147,90,.45);box-shadow:0 38px 72px -34px rgba(0,0,0,.9),inset 0 1px 0 rgba(250,248,244,.1)}
+.mk-card .exbadge{position:absolute;top:14px;right:14px;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--stone-soft);background:rgba(250,248,244,.06);border:1px solid var(--line-light);padding:3px 9px;border-radius:50px}
+.mk-top{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.plat{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:600;letter-spacing:.03em;color:var(--stone-soft)}
+.plat .pico{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--brass);color:var(--midnight)}
+.mk-name{font-family:var(--serif);font-size:26px;color:var(--creme);margin:2px 0 3px}
+.mk-niche{font-size:12.5px;color:var(--stone-soft);margin-bottom:16px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
+.stats div{background:rgba(250,248,244,.04);border:1px solid var(--line-light);border-radius:10px;padding:10px 12px}
+.stats b{display:block;font-size:14px;color:var(--creme);font-family:var(--serif);font-weight:400}
+.stats b.ok{color:#7fdca6}
+.stats b.wait{color:var(--brass-light)}
+.stats span{font-size:9.5px;color:var(--stone-soft);letter-spacing:.05em;text-transform:uppercase}
+.mk-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line-light);padding-top:15px}
+.mk-foot .price small{display:block;font-size:9.5px;color:var(--stone-soft);letter-spacing:.06em;text-transform:uppercase}
+.mk-foot .price b{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--brass-light)}
+.mk-foot a{font-size:12.5px;font-weight:600;color:var(--creme);display:inline-flex;align-items:center;gap:6px;background:rgba(250,248,244,.06);border:1px solid var(--line-light);padding:9px 15px;border-radius:50px;transition:.25s}
+.mk-foot a:hover{background:var(--brass);color:var(--midnight);border-color:var(--brass)}
 
-/* faixa "anuncie sua marca" (escura) */
-.sell-cta{background:var(--midnight);color:var(--creme);border-radius:22px;margin-top:56px;padding:48px 44px;text-align:center;overflow:hidden;position:relative}
-.sell-cta::after{content:"";position:absolute;bottom:-60px;right:-50px;width:220px;height:220px;border:1px solid var(--line-light);border-radius:50%}
+.market-cta{text-align:center;margin-top:30px}
+.market-cta a{font-size:14px;font-weight:600;color:var(--brass-light);display:inline-flex;gap:8px;align-items:center;justify-content:center}
+.market-cta a:hover{color:var(--creme)}
+
+/* anuncie sua marca */
+.sell-cta{background:linear-gradient(120deg,rgba(184,147,90,.16),rgba(184,147,90,.05));border:1px solid rgba(184,147,90,.32);border-radius:20px;margin-top:50px;padding:42px 40px;text-align:center;position:relative;overflow:hidden}
 .sell-cta .eyebrow{color:var(--brass-light);justify-content:center}
 .sell-cta .eyebrow::before{background:var(--brass-light)}
-.sell-cta h2{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.2vw,38px);margin:14px 0 12px;line-height:1.12}
-.sell-cta p{font-size:16px;color:var(--stone-soft);font-weight:300;max-width:620px;margin:0 auto 26px}
+.sell-cta h2{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.2vw,36px);color:var(--creme);margin:12px 0 12px;line-height:1.12}
+.sell-cta p{font-size:15.5px;color:var(--stone-soft);font-weight:300;max-width:600px;margin:0 auto 24px}
 .sell-cta .btn{font-size:16px;padding:15px 32px}
 
-@media(max-width:980px){.marca-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:760px){.marca-grid{grid-template-columns:1fr}.notice{flex-direction:column;align-items:flex-start}.filters select{min-width:0;width:100%}}
+@media(max-width:980px){.market-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.market-grid{grid-template-columns:1fr;perspective:none}.notice{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
 <body>
+<span class="reg-mark" aria-hidden="true">®</span>
 
 <!-- HEADER -->
 <header id="header">
@@ -84,89 +108,84 @@
   </div>
 </section>
 
-<!-- CATÁLOGO -->
-<section class="pad">
+<!-- CATÁLOGO (escuro) -->
+<section class="pad mk">
   <div class="wrap">
 
     <!-- aviso de catálogo em construção -->
     <div class="notice reveal">
       <div class="nt">
         <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
-        <p><strong>Catálogo em construção.</strong> Estamos selecionando marcas para anunciar aqui. Os exemplos abaixo mostram como cada oportunidade será apresentada. Quer anunciar a sua marca ou ser avisado das novidades?</p>
+        <p><strong>Catálogo em construção.</strong> Estamos selecionando marcas para anunciar aqui. Os cards abaixo são exemplos ilustrativos de como cada oportunidade será apresentada.</p>
       </div>
       <a class="btn btn-brass" id="waAviso" href="#" target="_blank" rel="noopener">Falar com a LIV</a>
     </div>
 
     <!-- filtros (em breve funcionais) -->
     <div class="filters reveal">
-      <select aria-label="Segmento" disabled>
-        <option>Todos os segmentos</option>
-        <option>Moda e vestuário</option>
-        <option>Alimentos e bebidas</option>
-        <option>Cosméticos e beleza</option>
-        <option>Tecnologia e software</option>
-        <option>Serviços</option>
-      </select>
-      <input type="text" placeholder="Buscar por nome ou classe (NCL)..." disabled>
+      <span class="chip active">Todos</span>
+      <span class="chip">Moda</span>
+      <span class="chip">Alimentos</span>
+      <span class="chip">Beleza</span>
+      <span class="chip">Tecnologia</span>
+      <span class="chip">Serviços</span>
       <span class="fnote">Busca e filtros serão ativados quando o catálogo for publicado.</span>
     </div>
 
     <!-- grade de marcas (exemplos ilustrativos) -->
-    <div class="marca-grid">
-      <div class="marca reveal">
-        <div class="top"><span class="badge">Exemplo</span><span class="nm">Aurora</span></div>
-        <div class="body">
-          <span class="seg">Cosméticos e beleza</span>
-          <div class="chips"><span class="chip">NCL 03</span><span class="chip ok">Registrada</span></div>
-          <span class="price">Valor sob consulta</span>
-          <a class="btn btn-primary js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a>
-        </div>
+    <div class="market-grid">
+      <div class="mk-card reveal">
+        <span class="exbadge">Exemplo</span>
+        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span></div>
+        <div class="mk-name">Aurora</div>
+        <div class="mk-niche">NCL 03 · Cosméticos e beleza</div>
+        <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
+        <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
-      <div class="marca reveal" style="transition-delay:.05s">
-        <div class="top"><span class="badge">Exemplo</span><span class="nm">Volpe</span></div>
-        <div class="body">
-          <span class="seg">Moda e vestuário</span>
-          <div class="chips"><span class="chip">NCL 25</span><span class="chip ok">Registrada</span></div>
-          <span class="price">Valor sob consulta</span>
-          <a class="btn btn-primary js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a>
-        </div>
+      <div class="mk-card reveal" style="transition-delay:.05s">
+        <span class="exbadge">Exemplo</span>
+        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span></div>
+        <div class="mk-name">Volpe</div>
+        <div class="mk-niche">NCL 25 · Moda e vestuário</div>
+        <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
+        <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
-      <div class="marca reveal" style="transition-delay:.1s">
-        <div class="top"><span class="badge">Exemplo</span><span class="nm">Maré</span></div>
-        <div class="body">
-          <span class="seg">Alimentos e bebidas</span>
-          <div class="chips"><span class="chip">NCL 30</span><span class="chip ok">Registrada</span></div>
-          <span class="price">Valor sob consulta</span>
-          <a class="btn btn-primary js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a>
-        </div>
+      <div class="mk-card reveal" style="transition-delay:.1s">
+        <span class="exbadge">Exemplo</span>
+        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span></div>
+        <div class="mk-name">Maré</div>
+        <div class="mk-niche">NCL 30 · Alimentos e bebidas</div>
+        <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
+        <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
-      <div class="marca reveal">
-        <div class="top"><span class="badge">Exemplo</span><span class="nm">Cumbuca</span></div>
-        <div class="body">
-          <span class="seg">Restaurantes e gastronomia</span>
-          <div class="chips"><span class="chip">NCL 43</span><span class="chip wait">Em exame</span></div>
-          <span class="price">Valor sob consulta</span>
-          <a class="btn btn-primary js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a>
-        </div>
+      <div class="mk-card reveal">
+        <span class="exbadge">Exemplo</span>
+        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span></div>
+        <div class="mk-name">Cumbuca</div>
+        <div class="mk-niche">NCL 43 · Restaurantes e gastronomia</div>
+        <div class="stats"><div><b class="wait">Em exame</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
+        <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
-      <div class="marca reveal" style="transition-delay:.05s">
-        <div class="top"><span class="badge">Exemplo</span><span class="nm">Lumen</span></div>
-        <div class="body">
-          <span class="seg">Tecnologia e software</span>
-          <div class="chips"><span class="chip">NCL 09</span><span class="chip ok">Registrada</span></div>
-          <span class="price">Valor sob consulta</span>
-          <a class="btn btn-primary js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a>
-        </div>
+      <div class="mk-card reveal" style="transition-delay:.05s">
+        <span class="exbadge">Exemplo</span>
+        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span></div>
+        <div class="mk-name">Lumen</div>
+        <div class="mk-niche">NCL 09 · Tecnologia e software</div>
+        <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
+        <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
-      <div class="marca reveal" style="transition-delay:.1s">
-        <div class="top"><span class="badge">Exemplo</span><span class="nm">Brava</span></div>
-        <div class="body">
-          <span class="seg">Serviços financeiros</span>
-          <div class="chips"><span class="chip">NCL 36</span><span class="chip ok">Registrada</span></div>
-          <span class="price">Valor sob consulta</span>
-          <a class="btn btn-primary js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a>
-        </div>
+      <div class="mk-card reveal" style="transition-delay:.1s">
+        <span class="exbadge">Exemplo</span>
+        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span></div>
+        <div class="mk-name">Brava</div>
+        <div class="mk-niche">NCL 36 · Serviços financeiros</div>
+        <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
+        <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
+    </div>
+
+    <div class="market-cta reveal">
+      <a id="waCatalogo" href="#" target="_blank" rel="noopener">Ver o catálogo completo pelo WhatsApp <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
 
     <!-- anuncie sua marca -->
@@ -223,8 +242,21 @@ const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.t
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 ['navWa','footWa','waFoot','waFloat'].forEach(id=>{const el=document.getElementById(id);if(el)el.href=waBase("Olá! Vim pelo catálogo de marcas da LIV e gostaria de falar com um especialista.");});
 const wav=document.getElementById('waAviso'); if(wav)wav.href=waBase("Olá! Quero saber sobre as marcas à venda da LIV (comprar ou anunciar a minha).");
+const wac=document.getElementById('waCatalogo'); if(wac)wac.href=waBase("Olá! Gostaria de ver o catálogo completo de marcas à venda da LIV.");
 const wan=document.getElementById('waAnunciar'); if(wan)wan.href=waBase("Olá! Tenho uma marca registrada e gostaria de anunciá-la para venda com a LIV.");
 document.querySelectorAll('.js-wa-interesse').forEach(a=>a.href=waBase("Olá! Tenho interesse em uma marca à venda anunciada pela LIV. Podem me dar mais detalhes?"));
+
+/* efeito 3D: inclinação sutil dos cards seguindo o mouse (só em telas com mouse) */
+if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+  document.querySelectorAll('.mk-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-0.5, y=(e.clientY-r.top)/r.height-0.5;
+      card.style.transform=`rotateY(${x*7}deg) rotateX(${-y*7}deg) translateY(-6px)`;
+    });
+    card.addEventListener('mouseleave',()=>{card.style.transform='';});
+  });
+}
 </script>
 </body>
 </html>
