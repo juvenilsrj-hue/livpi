@@ -31,19 +31,24 @@
 
 /* grade + cards 3D */
 .market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:26px;perspective:1100px}
-.mk-card{position:relative;height:360px;perspective:1300px;cursor:pointer}
+.mk-card{position:relative;height:318px;perspective:1300px;cursor:pointer}
 .mk-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,.15,.2,1)}
 .mk-card.flipped .mk-inner{transform:rotateY(180deg)}
-.mk-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;border:1px solid rgba(184,147,90,.4);border-top:3px solid var(--brass);border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;box-shadow:0 20px 44px -30px rgba(15,37,54,.32);overflow:hidden}
+.mk-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;border:1px solid rgba(184,147,90,.4);border-top:3px solid var(--brass);border-radius:18px;padding:22px 24px 24px;display:flex;flex-direction:column;box-shadow:0 20px 44px -30px rgba(15,37,54,.32);overflow:hidden}
 .mk-card:hover .mk-face{box-shadow:0 34px 66px -34px rgba(15,37,54,.42)}
 .mk-back{transform:rotateY(180deg)}
 .flip-hint{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;font-weight:600;color:#9a7330;cursor:pointer}
-.mk-front .flip-hint{margin-top:auto;margin-bottom:14px}
+.mk-front .flip-hint{margin-top:auto;margin-bottom:18px}
 .flip-hint .ic{width:27px;height:27px;border-radius:50%;background:var(--brass);color:var(--midnight);display:grid;place-items:center;flex-shrink:0;box-shadow:0 6px 14px -6px rgba(184,147,90,.8);transition:transform .55s cubic-bezier(.4,.15,.2,1),background .25s}
-.mk-card:hover .flip-hint .ic{transform:rotate(-180deg);background:var(--brass-light)}
+.mk-card:hover .flip-hint .ic{transform:translateX(3px);background:var(--brass-light)}
 .mk-back-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .mk-back-head b{font-family:var(--serif);font-weight:400;font-size:18px;color:var(--midnight)}
 .mk-back-head .voltar{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--stone)}
+.mk-detail{flex:1;overflow-y:auto;margin-bottom:10px}
+.mk-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
+.mk-row .lb{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--stone);white-space:nowrap}
+.mk-row .vl{font-size:12.5px;color:var(--midnight);font-weight:500;text-align:right}
+.mk-cls-head{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9a7330;margin:13px 0 7px}
 .mk-cls-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .mk-cls{background:var(--creme);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .mk-cls b{display:block;font-family:var(--serif);font-size:14px;color:var(--midnight);margin-bottom:2px}
@@ -53,17 +58,18 @@
 .extag{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9a7330;background:rgba(184,147,90,.12);border:1px solid rgba(184,147,90,.3);padding:3px 9px;border-radius:50px;white-space:nowrap}
 .mk-logo{margin-left:auto;position:relative;overflow:hidden;width:82px;height:46px;border:1px solid var(--line);border-radius:9px;background:var(--creme);display:grid;place-items:center;color:var(--stone);flex-shrink:0}
 .mk-logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:4px}
-.plat{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:600;letter-spacing:.03em;color:var(--stone)}
+.plat{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;letter-spacing:.02em;color:var(--stone)}
 .plat .pico{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:rgba(184,147,90,.16);color:#9a7330}
-.mk-name{font-family:var(--serif);font-size:26px;color:var(--midnight);margin:2px 0 3px}
+.mk-name{font-family:var(--serif);font-size:25px;color:var(--midnight);margin:4px 0 16px}
 .mk-niche{font-size:12.5px;color:var(--stone);margin-bottom:16px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
-.stats div{background:var(--creme);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-.stats b{display:block;font-size:14px;color:var(--midnight);font-family:var(--serif);font-weight:400}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:6px}
+.stats div{background:var(--creme);border:1px solid var(--line);border-radius:10px;padding:9px 12px;display:flex;flex-direction:column-reverse;gap:3px}
+.stats b{font-size:14px;color:var(--midnight);font-family:var(--serif);font-weight:400;display:flex;align-items:center;gap:5px}
 .stats b.ok{color:#3c6b4f}
+.stats b.ok::before{content:"\2713";font-weight:700;font-size:12px;font-family:var(--sans)}
 .stats b.wait{color:#9a7330}
 .stats span{font-size:9.5px;color:var(--stone);letter-spacing:.05em;text-transform:uppercase}
-.mk-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:15px}
+.mk-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:18px}
 .mk-foot .price small{display:block;font-size:9.5px;color:var(--stone);letter-spacing:.06em;text-transform:uppercase}
 .mk-foot .price b{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--midnight)}
 .mk-foot a{font-size:12.5px;font-weight:600;color:var(--midnight);display:inline-flex;align-items:center;gap:6px;background:var(--brass);border:1px solid var(--brass);padding:9px 15px;border-radius:50px;transition:.25s}
@@ -262,29 +268,33 @@ _chips.forEach(chip=>chip.addEventListener('click',()=>{
   _cards.forEach(card=>{card.style.display=(f==='all'||card.dataset.cat===f)?'':'none';});
 }));
 
-/* card vira (flip) mostrando classes + atuação; o botão de interesse fica nas duas faces */
-const CLASSES={
-  "Gastronomia a Dois":[["NCL 09","Software, aplicativos e aparelhos eletrônicos."]],
-  "Aurora":[["NCL 03","Cosméticos, perfumaria e produtos de higiene pessoal."]],
-  "Volpe":[["NCL 25","Vestuário, calçados e artigos de moda."]],
-  "Maré":[["NCL 30","Café, temperos e produtos alimentícios à base de cereais."]],
-  "Cumbuca":[["NCL 43","Serviços de alimentação, restaurantes e catering."]],
-  "Lumen":[["NCL 09","Softwares, aplicativos e equipamentos eletrônicos."]],
-  "Brava":[["NCL 36","Serviços financeiros, seguros e gestão de ativos."]]
+/* card vira (flip): verso traz Situação/Apresentação/Natureza + classes e atuação; botão de interesse nas duas faces */
+const DETAILS={
+  "Gastronomia a Dois":{s:"Registro de marca em vigor",a:"Mista",n:"Produtos e/ou Serviço",c:[["NCL 09","Aparelhos e instrumentos científicos, software e equipamentos eletrônicos."]]},
+  "Aurora":{s:"Registro de marca em vigor",a:"Nominativa",n:"Produto",c:[["NCL 03","Cosméticos, perfumaria e produtos de higiene pessoal."]]},
+  "Volpe":{s:"Registro de marca em vigor",a:"Mista",n:"Produto",c:[["NCL 25","Vestuário, calçados e artigos de moda."]]},
+  "Maré":{s:"Registro de marca em vigor",a:"Nominativa",n:"Produto",c:[["NCL 30","Café, temperos e produtos alimentícios à base de cereais."]]},
+  "Cumbuca":{s:"Pedido em exame",a:"Mista",n:"Serviço",c:[["NCL 43","Serviços de alimentação, restaurantes e fornecimento de refeições."]]},
+  "Lumen":{s:"Registro de marca em vigor",a:"Nominativa",n:"Produto",c:[["NCL 09","Softwares, aplicativos e equipamentos eletrônicos."]]},
+  "Brava":{s:"Registro de marca em vigor",a:"Mista",n:"Serviço",c:[["NCL 36","Serviços financeiros, seguros e gestão de ativos."]]}
 };
-const _rot='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg>';
+const _ar='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const _bk='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>';
 document.querySelectorAll('.mk-card').forEach(card=>{
   const nameEl=card.querySelector('.mk-name');
   const name=nameEl?nameEl.textContent.trim():'';
   const inner=document.createElement('div');inner.className='mk-inner';
   const front=document.createElement('div');front.className='mk-face mk-front';
   while(card.firstChild){front.appendChild(card.firstChild);}
+  const niche=front.querySelector('.mk-niche');if(niche)niche.remove();
   const foot=front.querySelector('.mk-foot');
-  const hint=document.createElement('span');hint.className='flip-hint';hint.innerHTML='Ver mais detalhes <span class="ic">'+_rot+'</span>';
+  const hint=document.createElement('span');hint.className='flip-hint';hint.innerHTML='Ver mais detalhes <span class="ic">'+_ar+'</span>';
   if(foot)front.insertBefore(hint,foot);else front.appendChild(hint);
-  const list=(CLASSES[name]||[["Classes","Informadas durante a negociação."]]).map(c=>'<div class="mk-cls"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>').join('');
+  const d=DETAILS[name]||{s:"Sob consulta",a:"Sob consulta",n:"Sob consulta",c:[["Classe","Informada na negociação."]]};
+  const rows='<div class="mk-row"><span class="lb">Situação</span><span class="vl">'+d.s+'</span></div><div class="mk-row"><span class="lb">Apresentação</span><span class="vl">'+d.a+'</span></div><div class="mk-row"><span class="lb">Natureza</span><span class="vl">'+d.n+'</span></div>';
+  const cls=d.c.map(c=>'<div class="mk-cls"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>').join('');
   const back=document.createElement('div');back.className='mk-face mk-back';
-  back.innerHTML='<div class="mk-back-head"><b>Classes e atuação</b><span class="voltar">'+_rot+' Voltar</span></div><div class="mk-cls-list">'+list+'</div>'+(foot?foot.outerHTML:'');
+  back.innerHTML='<div class="mk-back-head"><b>Detalhes da marca</b><span class="voltar">'+_bk+' Voltar</span></div><div class="mk-detail">'+rows+'<div class="mk-cls-head">Classes e atuação</div>'+cls+'</div>'+(foot?foot.outerHTML:'');
   inner.appendChild(front);inner.appendChild(back);
   card.appendChild(inner);
   card.addEventListener('click',e=>{if(e.target.closest('a'))return;card.classList.toggle('flipped');});
