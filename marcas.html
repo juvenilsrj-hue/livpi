@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marcas à venda · LIV Propriedade Intelectual</title>
+<meta name="description" content="Marcas registradas no INPI disponíveis para aquisição, com transferência de titularidade segura conduzida pela LIV Propriedade Intelectual.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="blog-style.css">
+<style>
+/* ===== Marcas à venda (catálogo) ===== */
+.notice{display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:space-between;background:linear-gradient(120deg,rgba(184,147,90,.16),rgba(184,147,90,.04));border:1px solid rgba(184,147,90,.34);border-radius:16px;padding:18px 26px;margin-bottom:34px}
+.notice .nt{display:flex;gap:14px;align-items:center}
+.notice .ico{width:42px;height:42px;border-radius:11px;background:rgba(184,147,90,.18);color:var(--brass);display:grid;place-items:center;flex-shrink:0}
+.notice p{font-size:14.5px;color:var(--midnight);font-weight:400;max-width:680px}
+.notice .btn{white-space:nowrap}
+
+.filters{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.filters select,.filters input{padding:12px 15px;border:1.5px solid var(--line);border-radius:11px;background:#fff;font-family:var(--sans);font-size:14.5px;color:var(--midnight)}
+.filters select{min-width:220px;cursor:pointer}
+.filters input{flex:1;min-width:200px}
+.filters select:focus,.filters input:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px rgba(184,147,90,.16)}
+.filters .fnote{width:100%;font-size:12px;color:var(--stone);margin-top:-4px}
+
+.marca-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:24px}
+.marca{background:var(--creme);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .35s,box-shadow .35s;position:relative}
+.marca:hover{transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(15,37,54,.3)}
+.marca .top{height:128px;background:linear-gradient(135deg,var(--midnight),var(--brass));display:grid;place-items:center;position:relative}
+.marca .top .nm{font-family:var(--serif);font-size:28px;color:var(--creme);letter-spacing:.01em}
+.marca .badge{position:absolute;top:12px;left:12px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(250,248,244,.92);color:var(--midnight);padding:4px 10px;border-radius:50px}
+.marca .body{padding:22px;display:flex;flex-direction:column;flex:1;gap:12px}
+.marca .seg{font-size:14px;color:var(--stone);font-weight:300}
+.marca .chips{display:flex;gap:8px;flex-wrap:wrap}
+.marca .chip{font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--stone);background:var(--creme-warm);border:1px solid var(--line);padding:5px 11px;border-radius:50px}
+.marca .chip.ok{color:#3c6b4f;background:rgba(60,107,79,.1);border-color:rgba(60,107,79,.25)}
+.marca .chip.wait{color:#9a7330;background:rgba(184,147,90,.12);border-color:rgba(184,147,90,.3)}
+.marca .price{font-family:var(--serif);font-size:18px;color:var(--midnight);margin-top:auto;padding-top:6px}
+.marca .btn{width:100%;justify-content:center;margin-top:4px}
+
+/* faixa "anuncie sua marca" (escura) */
+.sell-cta{background:var(--midnight);color:var(--creme);border-radius:22px;margin-top:56px;padding:48px 44px;text-align:center;overflow:hidden;position:relative}
+.sell-cta::after{content:"";position:absolute;bottom:-60px;right:-50px;width:220px;height:220px;border:1px solid var(--line-light);border-radius:50%}
+.sell-cta .eyebrow{color:var(--brass-light);justify-content:center}
+.sell-cta .eyebrow::before{background:var(--brass-light)}
+.sell-cta h2{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.2vw,38px);margin:14px 0 12px;line-height:1.12}
+.sell-cta p{font-size:16px;color:var(--stone-soft);font-weight:300;max-width:620px;margin:0 auto 26px}
+.sell-cta .btn{font-size:16px;padding:15px 32px}
+
+@media(max-width:980px){.marca-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.marca-grid{grid-template-columns:1fr}.notice{flex-direction:column;align-items:flex-start}.filters select{min-width:0;width:100%}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="wrap nav">
+    <a href="index.html" class="logo" aria-label="LIV Propriedade Intelectual">
+      <img class="liv-mark" src="liv_mark_dark.png" alt="LIV">
+      <span class="logo-txt">Propriedade Intelectual</span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html#quem-somos">Quem somos</a>
+      <a href="index.html#atuacao">Como atuamos</a>
+      <a href="index.html#compra-venda">Compra e venda de marcas</a>
+      <a href="index.html#defesa">Defesa &amp; Recursos</a>
+      <a href="index.html#registro">Registro</a>
+      <a href="blog.html">Blog</a>
+      <a href="#" class="btn btn-primary" id="navWa">Falar com a LIV</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- PAGE HEAD -->
+<section class="page-head">
+  <div class="wrap">
+    <div class="topbar"><a href="index.html#compra-venda" class="back"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> Voltar</a></div>
+    <span class="eyebrow">Compra e venda de marcas</span>
+    <h1>Marcas registradas à venda.</h1>
+    <p>Marcas com registro ativo no INPI, disponíveis para aquisição com transferência de titularidade segura. Encontrou uma que combina com o seu projeto? A LIV conduz toda a negociação e a cessão.</p>
+  </div>
+</section>
+
+<!-- CATÁLOGO -->
+<section class="pad">
+  <div class="wrap">
+
+    <!-- aviso de catálogo em construção -->
+    <div class="notice reveal">
+      <div class="nt">
+        <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
+        <p><strong>Catálogo em construção.</strong> Estamos selecionando marcas para anunciar aqui. Os exemplos abaixo mostram como cada oportunidade será apresentada. Quer anunciar a sua marca ou ser avisado das novidades?</p>
+      </div>
+      <a class="btn btn-brass" id="waAviso" href="#" target="_blank" rel="noopener">Falar com a LIV</a>
+    </div>
+
+    <!-- filtros (em breve funcionais) -->
+    <div class="filters reveal">
+      <select aria-label="Segmento" disabled>
+        <option>Todos os segmentos</option>
+        <option>Moda e vestuário</option>
+        <option>Alimentos e bebidas</option>
+        <option>Cosméticos e beleza</option>
+        <option>Tecnologia e software</option>
+        <option>Serviços</option>
+      </select>
+      <input type="text" placeholder="Buscar por nome ou classe (NCL)..." disabled>
+      <span class="fnote">Busca e filtros serão ativados quando o catálogo for publicado.</span>
+    </div>
+
+    <!-- grade de marcas (exemplos ilustrativos) -->
+    <div class="marca-grid">
+      <div class="marca reveal">
+        <div class="top"><span class="badge">Exemplo</span><span class="nm">Aurora</span></div>
+        <div class="body">
+          <span class="seg">Cosméticos e beleza</span>
+          <div class="chips"><span class="chip">NCL 03</span><span class="chip ok">Registrada</span></div>
+          <span class="price">Valor sob consulta</span>
+          <a class="btn btn-primary js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a>
+        </div>
+      </div>
+      <div class="marca reveal" style="transition-delay:.05s">
+        <div class="top"><span class="badge">Exemplo</span><span class="nm">Volpe</span></div>
+        <div class="body">
+          <span class="seg">Moda e vestuário</span>
+          <div class="chips"><span class="chip">NCL 25</span><span class="chip ok">Registrada</span></div>
+          <span class="price">Valor sob consulta</span>
+          <a class="btn btn-primary js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a>
+        </div>
+      </div>
+      <div class="marca reveal" style="transition-delay:.1s">
+        <div class="top"><span class="badge">Exemplo</span><span class="nm">Maré</span></div>
+        <div class="body">
+          <span class="seg">Alimentos e bebidas</span>
+          <div class="chips"><span class="chip">NCL 30</span><span class="chip ok">Registrada</span></div>
+          <span class="price">Valor sob consulta</span>
+          <a class="btn btn-primary js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a>
+        </div>
+      </div>
+      <div class="marca reveal">
+        <div class="top"><span class="badge">Exemplo</span><span class="nm">Cumbuca</span></div>
+        <div class="body">
+          <span class="seg">Restaurantes e gastronomia</span>
+          <div class="chips"><span class="chip">NCL 43</span><span class="chip wait">Em exame</span></div>
+          <span class="price">Valor sob consulta</span>
+          <a class="btn btn-primary js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a>
+        </div>
+      </div>
+      <div class="marca reveal" style="transition-delay:.05s">
+        <div class="top"><span class="badge">Exemplo</span><span class="nm">Lumen</span></div>
+        <div class="body">
+          <span class="seg">Tecnologia e software</span>
+          <div class="chips"><span class="chip">NCL 09</span><span class="chip ok">Registrada</span></div>
+          <span class="price">Valor sob consulta</span>
+          <a class="btn btn-primary js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a>
+        </div>
+      </div>
+      <div class="marca reveal" style="transition-delay:.1s">
+        <div class="top"><span class="badge">Exemplo</span><span class="nm">Brava</span></div>
+        <div class="body">
+          <span class="seg">Serviços financeiros</span>
+          <div class="chips"><span class="chip">NCL 36</span><span class="chip ok">Registrada</span></div>
+          <span class="price">Valor sob consulta</span>
+          <a class="btn btn-primary js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- anuncie sua marca -->
+    <div class="sell-cta reveal">
+      <span class="eyebrow">Para quem tem uma marca</span>
+      <h2>Tem uma marca registrada parada?</h2>
+      <p>Transforme um ativo sem uso em oportunidade. Anuncie a sua marca com a LIV e alcance quem procura exatamente por ela, com avaliação técnica e transferência segura no INPI.</p>
+      <a class="btn btn-brass" id="waAnunciar" href="#" target="_blank" rel="noopener">Anunciar minha marca</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo">
+          <img class="liv-mark" src="liv_mark_light.png" alt="LIV">
+          <span class="logo-txt">Propriedade Intelectual</span>
+        </div>
+        <p>Registro e defesa de marcas no INPI, com análise de viabilidade gratuita. Proteja sua marca desde o primeiro dia.</p>
+        <div class="foot-social">
+          <a href="https://www.instagram.com/liv.propriedadeintelectual" target="_blank" rel="noopener" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg></a>
+          <a href="https://www.linkedin.com/company/134894017/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0zM.5 8h4V24h-4zM8 8h3.8v2.2h.05c.53-1 1.83-2.2 3.77-2.2 4.03 0 4.78 2.65 4.78 6.1V24h-4v-7.1c0-1.7-.03-3.9-2.38-3.9-2.38 0-2.75 1.86-2.75 3.78V24H8z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col"><h5>Serviços</h5><a href="index.html#registro">Registro de marca</a><a href="index.html#defesa">Defesa &amp; Recursos</a><a href="index.html#viabilidade">Viabilidade grátis</a><a href="marcas.html">Marcas à venda</a></div>
+      <div class="foot-col"><h5>Empresa</h5><a href="index.html#quem-somos">Quem somos</a><a href="blog.html">Blog</a><a href="#" id="footWa">Contato</a><a href="index.html#viabilidade">Análise de viabilidade</a></div>
+      <div class="foot-col"><h5>Contato</h5><a href="#" id="waFoot">WhatsApp</a><a href="mailto:contato@livpi.com.br">contato@livpi.com.br</a><a href="https://www.instagram.com/liv.propriedadeintelectual" target="_blank" rel="noopener">Instagram</a><a href="https://www.linkedin.com/company/134894017/" target="_blank" rel="noopener">LinkedIn</a></div>
+    </div>
+    <div class="foot-bottom">
+      <p class="disclaimer">A LIV atua como consultoria em propriedade intelectual, <strong>credenciada no INPI</strong> e em conformidade com a legislação de propriedade industrial. As marcas exibidas nesta página são exemplos ilustrativos; os dados do INPI refletem a situação na data da consulta.</p>
+      <div class="copy"><span>© 2026 LIV Propriedade Intelectual. Todos os direitos reservados.</span><span>Lages/SC · www.livpi.com.br</span></div>
+    </div>
+  </div>
+</footer>
+
+<a href="#" class="wa-float" id="waFloat" aria-label="WhatsApp">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="#fff"><path d="M20.5 3.4A11.8 11.8 0 0 0 2.1 17.6L1 23l5.5-1.4A11.8 11.8 0 1 0 20.5 3.4zM12 21.3c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.3.9.9-3.2-.2-.4a9.8 9.8 0 1 1 8 4.3zm5.4-7.3c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.5.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.4.1-.6l.5-.5.3-.5v-.5l-.9-2.2c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4a3.4 3.4 0 0 0-1 2.5 5.9 5.9 0 0 0 1.2 3.1 13.4 13.4 0 0 0 5.2 4.6c.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4s.3-1.3.2-1.4-.2-.2-.5-.4z"/></svg>
+</a>
+
+<script>
+const WHATSAPP="5549999647004";
+const waBase=msg=>`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
+const t=document.getElementById('navToggle'),l=document.getElementById('navLinks');
+t.addEventListener('click',()=>l.classList.toggle('open'));
+l.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>l.classList.remove('open')));
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+['navWa','footWa','waFoot','waFloat'].forEach(id=>{const el=document.getElementById(id);if(el)el.href=waBase("Olá! Vim pelo catálogo de marcas da LIV e gostaria de falar com um especialista.");});
+const wav=document.getElementById('waAviso'); if(wav)wav.href=waBase("Olá! Quero saber sobre as marcas à venda da LIV (comprar ou anunciar a minha).");
+const wan=document.getElementById('waAnunciar'); if(wan)wan.href=waBase("Olá! Tenho uma marca registrada e gostaria de anunciá-la para venda com a LIV.");
+document.querySelectorAll('.js-wa-interesse').forEach(a=>a.href=waBase("Olá! Tenho interesse em uma marca à venda anunciada pela LIV. Podem me dar mais detalhes?"));
+</script>
+</body>
+</html>
