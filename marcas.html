@@ -24,7 +24,8 @@
 
 /* filtros (chips) */
 .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.chip{font-size:13px;font-weight:500;padding:8px 16px;border-radius:50px;border:1px solid var(--line);color:var(--stone);background:#fff;cursor:default}
+.chip{font-size:13px;font-weight:500;padding:8px 16px;border-radius:50px;border:1px solid var(--line);color:var(--stone);background:#fff;cursor:pointer;transition:all .25s}
+.chip:hover{color:var(--midnight);border-color:var(--brass)}
 .chip.active{background:var(--brass);color:var(--midnight);border-color:var(--brass)}
 .fnote{width:100%;font-size:12px;color:var(--stone);opacity:.85;margin-top:2px}
 
@@ -94,8 +95,9 @@
   <div class="wrap">
     <div class="topbar"><a href="index.html#compra-venda" class="back"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> Voltar</a></div>
     <span class="eyebrow">Compra e venda de marcas</span>
-    <h1>Marcas registradas à venda.</h1>
-    <p>Marcas com registro ativo no INPI, disponíveis para aquisição com transferência de titularidade segura. Encontrou uma que combina com o seu projeto? A LIV conduz toda a negociação e a cessão.</p>
+    <h1>Marcas prontas para novos negócios.</h1>
+    <p style="margin-bottom:14px">Algumas marcas já nasceram, foram registradas e estão prontas para ganhar um novo caminho.</p>
+    <p>A LIV Propriedade Intelectual aproxima quem possui uma marca registrada disponível de quem busca uma identidade com registro ativo no INPI, conduzindo a negociação e a transferência de titularidade com estratégia, segurança e transparência.</p>
   </div>
 </section>
 
@@ -103,29 +105,19 @@
 <section class="pad mk">
   <div class="wrap">
 
-    <!-- aviso de catálogo em construção -->
-    <div class="notice reveal">
-      <div class="nt">
-        <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
-        <p><strong>Catálogo em construção.</strong> Estamos selecionando marcas para anunciar aqui. Os cards abaixo são exemplos ilustrativos de como cada oportunidade será apresentada.</p>
-      </div>
-      <a class="btn btn-primary" id="waAviso" href="#" target="_blank" rel="noopener">Falar com a LIV</a>
-    </div>
-
-    <!-- filtros (em breve funcionais) -->
+    <!-- filtros por categoria -->
     <div class="filters reveal">
-      <span class="chip active">Todos</span>
-      <span class="chip">Moda</span>
-      <span class="chip">Alimentos</span>
-      <span class="chip">Beleza</span>
-      <span class="chip">Tecnologia</span>
-      <span class="chip">Serviços</span>
-      <span class="fnote">Busca e filtros serão ativados quando o catálogo for publicado.</span>
+      <span class="chip active" data-filter="all">Todos</span>
+      <span class="chip" data-filter="moda">Moda</span>
+      <span class="chip" data-filter="alimentos">Alimentos</span>
+      <span class="chip" data-filter="beleza">Beleza</span>
+      <span class="chip" data-filter="tech">Tecnologia</span>
+      <span class="chip" data-filter="servicos">Serviços</span>
     </div>
 
     <!-- grade de marcas (exemplos ilustrativos) -->
     <div class="market-grid">
-      <div class="mk-card reveal">
+      <div class="mk-card reveal" data-cat="beleza">
         <span class="exbadge">Exemplo</span>
         <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span></div>
         <div class="mk-name">Aurora</div>
@@ -133,7 +125,7 @@
         <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
         <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
-      <div class="mk-card reveal" style="transition-delay:.05s">
+      <div class="mk-card reveal" data-cat="moda" style="transition-delay:.05s">
         <span class="exbadge">Exemplo</span>
         <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span></div>
         <div class="mk-name">Volpe</div>
@@ -141,7 +133,7 @@
         <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
         <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
-      <div class="mk-card reveal" style="transition-delay:.1s">
+      <div class="mk-card reveal" data-cat="alimentos" style="transition-delay:.1s">
         <span class="exbadge">Exemplo</span>
         <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span></div>
         <div class="mk-name">Maré</div>
@@ -149,7 +141,7 @@
         <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
         <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
-      <div class="mk-card reveal">
+      <div class="mk-card reveal" data-cat="alimentos">
         <span class="exbadge">Exemplo</span>
         <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span></div>
         <div class="mk-name">Cumbuca</div>
@@ -157,7 +149,7 @@
         <div class="stats"><div><b class="wait">Em exame</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
         <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
-      <div class="mk-card reveal" style="transition-delay:.05s">
+      <div class="mk-card reveal" data-cat="tech" style="transition-delay:.05s">
         <span class="exbadge">Exemplo</span>
         <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span></div>
         <div class="mk-name">Lumen</div>
@@ -165,7 +157,7 @@
         <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
         <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
-      <div class="mk-card reveal" style="transition-delay:.1s">
+      <div class="mk-card reveal" data-cat="servicos" style="transition-delay:.1s">
         <span class="exbadge">Exemplo</span>
         <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span></div>
         <div class="mk-name">Brava</div>
@@ -236,6 +228,16 @@ const wav=document.getElementById('waAviso'); if(wav)wav.href=waBase("Olá! Quer
 const wac=document.getElementById('waCatalogo'); if(wac)wac.href=waBase("Olá! Gostaria de ver o catálogo completo de marcas à venda da LIV.");
 const wan=document.getElementById('waAnunciar'); if(wan)wan.href=waBase("Olá! Tenho uma marca registrada e gostaria de anunciá-la para venda com a LIV.");
 document.querySelectorAll('.js-wa-interesse').forEach(a=>a.href=waBase("Olá! Tenho interesse em uma marca à venda anunciada pela LIV. Podem me dar mais detalhes?"));
+
+/* filtro por categoria */
+const _chips=document.querySelectorAll('.chip');
+const _cards=document.querySelectorAll('.mk-card');
+_chips.forEach(chip=>chip.addEventListener('click',()=>{
+  _chips.forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  const f=chip.dataset.filter;
+  _cards.forEach(card=>{card.style.display=(f==='all'||card.dataset.cat===f)?'':'none';});
+}));
 
 /* efeito 3D: inclinação sutil dos cards seguindo o mouse (só em telas com mouse) */
 if(matchMedia('(hover:hover) and (pointer:fine)').matches){
