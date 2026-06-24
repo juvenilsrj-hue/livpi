@@ -140,3 +140,13 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:60px 0 30
   .nl-note{text-align:center}
   .cta-box{flex-direction:column;align-items:flex-start}
 }
+
+/* ===== rodapé minimalista ===== */
+footer{background:var(--midnight-deep);color:var(--stone-soft);padding:34px 0 22px;margin-top:60px}
+.foot-min{display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--line-light)}
+.foot-min .logo-txt{color:var(--stone-soft)}
+.foot-links{display:flex;flex-wrap:wrap;gap:9px 20px;justify-content:center}
+.foot-links a{font-size:14px;font-weight:500;color:var(--stone-soft);transition:color .25s}
+.foot-links a:hover{color:var(--brass-light)}
+.foot-base{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:16px;font-size:12.5px;color:var(--stone-soft);opacity:.8}
+@media(max-width:760px){.foot-min{flex-direction:column;align-items:center;text-align:center}.foot-base{flex-direction:column;align-items:center;text-align:center;gap:4px}}
