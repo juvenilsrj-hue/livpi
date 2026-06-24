@@ -161,6 +161,33 @@ section{position:relative}
 .service h3{font-family:var(--serif);font-weight:400;font-size:24px;margin-bottom:10px}
 .service p{color:var(--stone);font-size:14.5px;font-weight:300}
 
+/* ===== COMPRA E VENDA DE MARCAS (seção escura) ===== */
+#compra-venda{background:var(--midnight);color:var(--creme);overflow:hidden;scroll-margin-top:80px}
+#compra-venda .eyebrow{color:var(--brass-light)}
+#compra-venda .eyebrow::before{background:var(--brass-light)}
+#compra-venda .sec-head h2{color:var(--creme)}
+#compra-venda .sec-head p{color:var(--stone-soft);text-align:justify}
+.cv-cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:60px}
+.cv-card{background:rgba(250,248,244,.04);border:1px solid var(--line-light);border-radius:18px;padding:38px 34px;transition:all .4s cubic-bezier(.2,.7,.3,1)}
+.cv-card:hover{background:rgba(250,248,244,.07);transform:translateY(-5px);border-color:rgba(184,147,90,.4)}
+.cv-ico{width:52px;height:52px;border-radius:13px;background:rgba(184,147,90,.16);color:var(--brass-light);display:grid;place-items:center;margin-bottom:18px}
+.cv-card h3{font-family:var(--serif);font-weight:400;font-size:26px;color:var(--creme);margin-bottom:12px}
+.cv-card p{font-size:15px;color:var(--stone-soft);font-weight:300;margin-bottom:22px;text-align:justify}
+.cv-link{display:inline-flex;align-items:center;gap:8px;font-size:14.5px;font-weight:600;color:var(--brass-light);transition:color .25s}
+.cv-link svg{transition:transform .25s}
+.cv-link:hover{color:var(--creme)}
+.cv-link:hover svg{transform:translateX(4px)}
+.cv-sub{font-family:var(--serif);font-weight:400;font-size:clamp(23px,2.5vw,31px);color:var(--creme);text-align:center;margin-bottom:32px}
+.steps.cv-steps{grid-template-columns:repeat(4,1fr)}
+.cv-pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:46px}
+.cv-pill{padding:24px 22px;border-radius:14px;border:1px solid var(--line-light);background:rgba(250,248,244,.03)}
+.cv-pill .pico{width:38px;height:38px;border-radius:10px;background:rgba(184,147,90,.16);color:var(--brass-light);display:grid;place-items:center;margin-bottom:12px}
+.cv-pill b{display:block;font-size:15px;color:var(--creme);font-weight:600;margin-bottom:4px}
+.cv-pill span:not(.pico){font-size:13px;color:var(--stone-soft);font-weight:300;line-height:1.5}
+@media(max-width:1040px){.steps.cv-steps{grid-template-columns:repeat(2,1fr)}.cv-pillars{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:980px){.cv-cols{grid-template-columns:1fr}}
+@media(max-width:600px){.steps.cv-steps{grid-template-columns:1fr}.cv-pillars{grid-template-columns:1fr}}
+
 /* ===== VIABILIDADE (form) ===== */
 #viabilidade{background:var(--creme)}
 .analise-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:58px;align-items:start}
@@ -320,21 +347,21 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
       <p>Da análise ao registro, da defesa à nova oportunidade de mercado para a sua marca.</p>
     </div>
     <div class="atua-grid">
-      <div class="atua-card reveal" id="compra-venda" style="scroll-margin-top:100px">
+      <a class="atua-card reveal" href="#compra-venda">
         <span class="ai"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13"/><path d="M14 5l3 3-3 3"/><path d="M20 16H7"/><path d="M10 13l-3 3 3 3"/></svg></span>
         <h3>Compra e venda de marcas</h3>
         <p>A LIV Propriedade Intelectual irá conectar marcas registradas sem uso a empreendedores que buscam uma marca pronta para crescer com mais segurança, agilidade e estratégia.</p>
-      </div>
-      <div class="atua-card reveal" style="transition-delay:.08s">
+      </a>
+      <a class="atua-card reveal" href="#defesa" style="transition-delay:.08s">
         <span class="ai"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
         <h3>Defesa &amp; Recursos</h3>
         <p>Quando sua marca enfrenta oposição, indeferimento, nulidade ou caducidade, atuamos com análise técnica, estratégia e condução clara para defender o seu processo no INPI.</p>
-      </div>
-      <div class="atua-card reveal" style="transition-delay:.16s">
+      </a>
+      <a class="atua-card reveal" href="#registro" style="transition-delay:.16s">
         <span class="ai"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M9 14.5 7.5 22 12 19l4.5 3L15 14.5"/></svg></span>
         <h3>Registro de marca</h3>
         <p>Antes do protocolo, analisamos a viabilidade. Depois, acompanhamos cada etapa no INPI para proteger o nome que representa o seu negócio.</p>
-      </div>
+      </a>
     </div>
   </div>
 </section>
@@ -411,6 +438,52 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
         <h3>Notificação extrajudicial</h3>
         <p>Identificou alguém usando uma marca igual ou semelhante à sua? Preparamos notificações extrajudiciais para formalizar a situação e buscar a interrupção do uso indevido com seriedade e estratégia.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= COMPRA E VENDA ========================= -->
+<section id="compra-venda" class="pad">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Compra e venda de marcas</span>
+      <h2>Toda marca registrada é um ativo. E todo ativo pode mudar de dono.</h2>
+      <p>A LIV intermedia a compra e a venda de marcas já registradas no INPI, com pagamento seguro e cessão formalizada. Quem tem um registro parado transforma ele em oportunidade. Quem quer empreender entra no mercado com um nome pronto e protegido.</p>
+    </div>
+
+    <div class="cv-cols">
+      <div class="cv-card reveal">
+        <span class="cv-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>
+        <h3>Para quem tem uma marca</h3>
+        <p>Tem um registro que não usa mais? A LIV avalia o valor da sua marca, apresenta a oportunidade com discrição e conduz a venda até a transferência oficial no INPI. Um ativo parado vira retorno.</p>
+        <a class="cv-link" id="waVender" href="#" target="_blank" rel="noopener">Quero vender minha marca <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="cv-card reveal" style="transition-delay:.08s">
+        <span class="cv-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
+        <h3>Para quem quer empreender</h3>
+        <p>Quer começar com um nome já protegido? Encontramos a marca certa para o seu segmento, validamos a situação dela no INPI e conduzimos a aquisição com segurança. Entrada imediata, sem a fila do registro.</p>
+        <a class="cv-link" id="waComprar" href="#" target="_blank" rel="noopener">Quero comprar uma marca <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+
+    <h3 class="cv-sub reveal">Como conduzimos a negociação</h3>
+    <div class="steps cv-steps">
+      <div class="step reveal"><div class="n">1</div><h4>Avaliação da marca</h4><p>Analisamos histórico de uso, distintividade, estágio no INPI, classes e segmento para chegar a um valor justo.</p></div>
+      <div class="step reveal" style="transition-delay:.06s"><div class="n">2</div><h4>Apresentação e proposta</h4><p>Conectamos vendedor e comprador com discrição e conduzimos a negociação até um acordo claro entre as partes.</p></div>
+      <div class="step reveal" style="transition-delay:.12s"><div class="n">3</div><h4>Pagamento seguro</h4><p>O valor fica retido com a LIV e só é liberado ao vendedor depois que a transferência é efetivada. Segurança para os dois lados.</p></div>
+      <div class="step reveal" style="transition-delay:.18s"><div class="n">4</div><h4>Cessão no INPI</h4><p>Formalizamos o instrumento de cessão, recolhemos a GRU e acompanhamos a averbação até a marca constar no nome do comprador.</p></div>
+    </div>
+
+    <div class="cv-pillars reveal">
+      <div class="cv-pill"><span class="pico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M9 13.5 7.5 22 12 19l4.5 3L15 13.5"/></svg></span><b>Credenciada no INPI</b><span>Cada etapa conduzida por quem entende do processo.</span></div>
+      <div class="cv-pill"><span class="pico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><b>Pagamento seguro</b><span>O dinheiro fica protegido até a transferência sair.</span></div>
+      <div class="cv-pill"><span class="pico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><b>Cessão formalizada</b><span>Contrato, GRU e averbação na RPI, com validade jurídica.</span></div>
+      <div class="cv-pill"><span class="pico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span><b>Análise da marca</b><span>Conferimos se o registro está regular, ativo e apto à transferência.</span></div>
+    </div>
+
+    <div class="callout reveal">
+      <span class="shield"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>
+      <p><strong>A comissão é apresentada na negociação.</strong> Cada marca é única, então avaliamos caso a caso e combinamos tudo com transparência antes de qualquer acordo.</p>
     </div>
   </div>
 </section>
@@ -634,6 +707,10 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 /* WhatsApp links */
 const msgGeral = "Olá! Vim pelo site da LIV e gostaria de falar com um especialista.";
 ['navWa','heroWa','footWa','waFoot','waFloat'].forEach(id => { const el = document.getElementById(id); if (el) el.href = waBase(msgGeral); });
+const msgVender = "Olá! Tenho uma marca registrada e gostaria de avaliar a venda dela com a LIV.";
+const msgComprar = "Olá! Tenho interesse em comprar uma marca já registrada. Podem me ajudar a encontrar?";
+const _wv = document.getElementById('waVender'); if (_wv) _wv.href = waBase(msgVender);
+const _wc = document.getElementById('waComprar'); if (_wc) _wc.href = waBase(msgComprar);
 
 /* Formulário de viabilidade. TODOS os campos obrigatórios.
    Por ora envia o lead via WhatsApp; quando o backend de viabilidade estiver
