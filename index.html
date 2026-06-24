@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LIV Propriedade Intelectual — Registro e defesa de marcas no INPI</title>
+<title>LIV Propriedade Intelectual · Registro e defesa de marcas no INPI</title>
 <meta name="description" content="LIV Propriedade Intelectual: registro de marcas no INPI, defesa em oposições e recursos, e análise de viabilidade gratuita. Proteja sua marca desde o primeiro dia.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,7 +54,7 @@ header.scrolled{background:rgba(250,248,244,.9);backdrop-filter:blur(14px);box-s
 .btn-brass:hover{background:var(--brass-light);transform:translateY(-2px);box-shadow:0 12px 30px -10px rgba(184,147,90,.55)}
 .btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--midnight)}
 .btn-ghost:hover{border-color:var(--midnight);transform:translateY(-2px)}
-/* botão "Falar com a LIV" no cabeçalho — menor e mais discreto */
+/* botão "Falar com a LIV" no cabeçalho, menor e mais discreto */
 .nav-links a.btn-primary{color:var(--creme);font-size:13px;font-weight:600;padding:9px 18px}
 .nav-toggle{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px}
 .nav-toggle span{width:24px;height:2px;background:var(--midnight);transition:.3s}
@@ -364,11 +364,11 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
     <div class="sec-head center reveal">
       <span class="eyebrow">Registro de marca</span>
       <h2>Como registrar a sua marca, passo a passo.</h2>
-      <p>Do nome à proteção definitiva no INPI. Conduzimos cada etapa por você — com a estratégia certa desde o começo.</p>
+      <p>Do nome à proteção definitiva no INPI. Conduzimos cada etapa por você, com a estratégia certa desde o começo.</p>
     </div>
     <div class="steps">
       <div class="step reveal"><div class="n">1</div><h4>Pesquisa de viabilidade</h4><p>Verificamos se o nome está livre no INPI e o risco de conflito com marcas anteriores.</p></div>
-      <div class="step reveal" style="transition-delay:.06s"><div class="n">2</div><h4>Definição das classes</h4><p>Identificamos as classes (NCL) corretas para o seu ramo — protegendo o que importa.</p></div>
+      <div class="step reveal" style="transition-delay:.06s"><div class="n">2</div><h4>Definição das classes</h4><p>Identificamos as classes (NCL) corretas para o seu ramo, protegendo o que importa.</p></div>
       <div class="step reveal" style="transition-delay:.12s"><div class="n">3</div><h4>Depósito no INPI</h4><p>Protocolamos o pedido com a documentação correta e a melhor estratégia de proteção.</p></div>
       <div class="step reveal" style="transition-delay:.18s"><div class="n">4</div><h4>Acompanhamento do exame</h4><p>Monitoramos publicações, exigências e eventuais oposições até a decisão final.</p></div>
       <div class="step reveal" style="transition-delay:.24s"><div class="n">5</div><h4>Concessão do registro</h4><p>Sai o certificado: a marca é sua, com validade de 10 anos renováveis.</p></div>
@@ -376,7 +376,7 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
     </div>
     <div class="callout reveal">
       <span class="shield"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
-      <p><strong>Proteja desde o nascimento da marca.</strong> Quanto antes você registra, menor o risco de perder o nome para um concorrente — e de ter que reconstruir tudo do zero. O melhor momento para registrar é quando a ideia nasce.</p>
+      <p><strong>Proteja desde o nascimento da marca.</strong> Quanto antes você registra, menor o risco de perder o nome para um concorrente e de ter que reconstruir tudo do zero. O melhor momento para registrar é quando a ideia nasce.</p>
     </div>
   </div>
 </section>
@@ -421,7 +421,7 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
     <div class="analise-copy reveal">
       <span class="eyebrow">Grátis · sem compromisso</span>
       <h2>Análise de viabilidade da sua marca.</h2>
-      <p>Preencha os dados abaixo. Nossa equipe roda a análise de viabilidade — disponibilidade no INPI, risco de conflito e classes recomendadas — e envia o <strong>diagnóstico completo direto no seu e-mail</strong>.</p>
+      <p>Preencha os dados abaixo. Nossa equipe roda a análise de viabilidade (disponibilidade no INPI, risco de conflito e classes recomendadas) e envia o <strong>diagnóstico completo direto no seu e-mail</strong>.</p>
       <ul class="analise-steps">
         <li><span class="n">1</span><div><b>Você envia os dados</b><span>Leva menos de um minuto no formulário ao lado.</span></div></li>
         <li><span class="n">2</span><div><b>Rodamos a análise</b><span>Verificamos anterioridades e as classes certas pro seu ramo.</span></div></li>
@@ -635,7 +635,7 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 const msgGeral = "Olá! Vim pelo site da LIV e gostaria de falar com um especialista.";
 ['navWa','heroWa','footWa','waFoot','waFloat'].forEach(id => { const el = document.getElementById(id); if (el) el.href = waBase(msgGeral); });
 
-/* Formulário de viabilidade — TODOS os campos obrigatórios.
+/* Formulário de viabilidade. TODOS os campos obrigatórios.
    Por ora envia o lead via WhatsApp; quando o backend de viabilidade estiver
    conectado, trocar este handler por um POST para o endpoint que gera e envia
    o diagnóstico por e-mail. */
