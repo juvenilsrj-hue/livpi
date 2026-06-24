@@ -31,8 +31,23 @@
 
 /* grade + cards 3D */
 .market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:26px;perspective:1100px}
-.mk-card{position:relative;background:#fff;border:1px solid rgba(184,147,90,.4);border-top:3px solid var(--brass);border-radius:18px;padding:24px;transform-style:preserve-3d;transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s,border-color .3s;box-shadow:0 20px 44px -30px rgba(15,37,54,.32);will-change:transform}
-.mk-card:hover{border-color:rgba(184,147,90,.5);box-shadow:0 36px 70px -34px rgba(15,37,54,.42)}
+.mk-card{position:relative;height:360px;perspective:1300px;cursor:pointer}
+.mk-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,.15,.2,1)}
+.mk-card.flipped .mk-inner{transform:rotateY(180deg)}
+.mk-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;border:1px solid rgba(184,147,90,.4);border-top:3px solid var(--brass);border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;box-shadow:0 20px 44px -30px rgba(15,37,54,.32);overflow:hidden}
+.mk-card:hover .mk-face{box-shadow:0 34px 66px -34px rgba(15,37,54,.42)}
+.mk-back{transform:rotateY(180deg)}
+.flip-hint{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:#9a7330}
+.mk-front .flip-hint{margin-top:auto;margin-bottom:14px}
+.flip-hint svg{transition:transform .5s}
+.mk-card:hover .flip-hint svg{transform:rotate(-45deg)}
+.mk-back-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.mk-back-head b{font-family:var(--serif);font-weight:400;font-size:18px;color:var(--midnight)}
+.mk-back-head .voltar{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--stone)}
+.mk-cls-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.mk-cls{background:var(--creme);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.mk-cls b{display:block;font-family:var(--serif);font-size:14px;color:var(--midnight);margin-bottom:2px}
+.mk-cls span{font-size:11.5px;color:var(--stone);line-height:1.45}
 .mk-card .exbadge{position:absolute;top:14px;right:14px;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--stone);background:var(--creme-warm);border:1px solid var(--line);padding:3px 9px;border-radius:50px}
 .mk-top{display:flex;align-items:center;gap:8px;margin-bottom:14px}
 .extag{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9a7330;background:rgba(184,147,90,.12);border:1px solid rgba(184,147,90,.3);padding:3px 9px;border-radius:50px;white-space:nowrap}
@@ -121,49 +136,49 @@
     <!-- grade de marcas (exemplos ilustrativos) -->
     <div class="market-grid">
       <div class="mk-card reveal" data-cat="tech">
-        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="mk-logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg><img src="logo-gastronomia-a-dois.png" alt="Gastronomia a Dois" onerror="this.remove()"></span></div>
+        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="mk-logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg><img src="logo-gastronomia-a-dois.png" alt="Gastronomia a Dois" onerror="this.remove()"></span></div>
         <div class="mk-name">Gastronomia a Dois</div>
         <div class="mk-niche">NCL 09 · Eletrônicos e software</div>
         <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
         <div class="mk-foot"><div class="price"><small>valor</small><b>R$ 10.000</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
       <div class="mk-card reveal" data-cat="beleza">
-        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
+        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
         <div class="mk-name">Aurora</div>
         <div class="mk-niche">NCL 03 · Cosméticos e beleza</div>
         <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
         <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
       <div class="mk-card reveal" data-cat="moda" style="transition-delay:.05s">
-        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
+        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
         <div class="mk-name">Volpe</div>
         <div class="mk-niche">NCL 25 · Moda e vestuário</div>
         <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
         <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
       <div class="mk-card reveal" data-cat="alimentos" style="transition-delay:.1s">
-        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
+        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
         <div class="mk-name">Maré</div>
         <div class="mk-niche">NCL 30 · Alimentos e bebidas</div>
         <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
         <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
       <div class="mk-card reveal" data-cat="alimentos">
-        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
+        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
         <div class="mk-name">Cumbuca</div>
         <div class="mk-niche">NCL 43 · Restaurantes e gastronomia</div>
         <div class="stats"><div><b class="wait">Em exame</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
         <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
       <div class="mk-card reveal" data-cat="tech" style="transition-delay:.05s">
-        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
+        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
         <div class="mk-name">Lumen</div>
         <div class="mk-niche">NCL 09 · Tecnologia e software</div>
         <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
         <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
       <div class="mk-card reveal" data-cat="servicos" style="transition-delay:.1s">
-        <div class="mk-top"><span class="plat"><span class="pico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
+        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
         <div class="mk-name">Brava</div>
         <div class="mk-niche">NCL 36 · Serviços financeiros</div>
         <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
@@ -247,17 +262,33 @@ _chips.forEach(chip=>chip.addEventListener('click',()=>{
   _cards.forEach(card=>{card.style.display=(f==='all'||card.dataset.cat===f)?'':'none';});
 }));
 
-/* efeito 3D: inclinação sutil dos cards seguindo o mouse (só em telas com mouse) */
-if(matchMedia('(hover:hover) and (pointer:fine)').matches){
-  document.querySelectorAll('.mk-card').forEach(card=>{
-    card.addEventListener('mousemove',e=>{
-      const r=card.getBoundingClientRect();
-      const x=(e.clientX-r.left)/r.width-0.5, y=(e.clientY-r.top)/r.height-0.5;
-      card.style.transform=`rotateY(${x*7}deg) rotateX(${-y*7}deg) translateY(-6px)`;
-    });
-    card.addEventListener('mouseleave',()=>{card.style.transform='';});
-  });
-}
+/* card vira (flip) mostrando classes + atuação; o botão de interesse fica nas duas faces */
+const CLASSES={
+  "Gastronomia a Dois":[["NCL 09","Software, aplicativos e aparelhos eletrônicos."]],
+  "Aurora":[["NCL 03","Cosméticos, perfumaria e produtos de higiene pessoal."]],
+  "Volpe":[["NCL 25","Vestuário, calçados e artigos de moda."]],
+  "Maré":[["NCL 30","Café, temperos e produtos alimentícios à base de cereais."]],
+  "Cumbuca":[["NCL 43","Serviços de alimentação, restaurantes e catering."]],
+  "Lumen":[["NCL 09","Softwares, aplicativos e equipamentos eletrônicos."]],
+  "Brava":[["NCL 36","Serviços financeiros, seguros e gestão de ativos."]]
+};
+const _rot='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg>';
+document.querySelectorAll('.mk-card').forEach(card=>{
+  const nameEl=card.querySelector('.mk-name');
+  const name=nameEl?nameEl.textContent.trim():'';
+  const inner=document.createElement('div');inner.className='mk-inner';
+  const front=document.createElement('div');front.className='mk-face mk-front';
+  while(card.firstChild){front.appendChild(card.firstChild);}
+  const foot=front.querySelector('.mk-foot');
+  const hint=document.createElement('span');hint.className='flip-hint';hint.innerHTML='Ver classes e atuação '+_rot;
+  if(foot)front.insertBefore(hint,foot);else front.appendChild(hint);
+  const list=(CLASSES[name]||[["Classes","Informadas durante a negociação."]]).map(c=>'<div class="mk-cls"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>').join('');
+  const back=document.createElement('div');back.className='mk-face mk-back';
+  back.innerHTML='<div class="mk-back-head"><b>Classes e atuação</b><span class="voltar">'+_rot+' Voltar</span></div><div class="mk-cls-list">'+list+'</div>'+(foot?foot.outerHTML:'');
+  inner.appendChild(front);inner.appendChild(back);
+  card.appendChild(inner);
+  card.addEventListener('click',e=>{if(e.target.closest('a'))return;card.classList.toggle('flipped');});
+});
 </script>
 </body>
 </html>
