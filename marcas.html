@@ -10,65 +10,56 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="blog-style.css">
 <style>
-/* ===== Marcas à venda, marketplace escuro (paleta LIV) ===== */
-/* page-head escuro */
-.page-head{background:var(--midnight)}
-.page-head .eyebrow{color:var(--brass-light)}
-.page-head .eyebrow::before{background:var(--brass-light)}
-.page-head h1{color:var(--creme)}
-.page-head p{color:var(--stone-soft)}
-.page-head .back{background:rgba(250,248,244,.06);border-color:var(--line-light);color:var(--stone-soft)}
-.page-head .back:hover{color:var(--brass-light);border-color:var(--brass-light)}
-
-/* seção do catálogo (escura) */
-.mk{background:var(--midnight);color:var(--creme)}
+/* ===== Marcas à venda, marketplace claro (paleta LIV) ===== */
+/* seção do catálogo (clara, areia) */
+.mk{background:var(--creme-warm)}
 
 /* aviso */
-.notice{display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:space-between;background:linear-gradient(120deg,rgba(184,147,90,.16),rgba(184,147,90,.04));border:1px solid rgba(184,147,90,.32);border-radius:16px;padding:18px 26px;margin-bottom:28px}
+.notice{display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:space-between;background:linear-gradient(120deg,rgba(184,147,90,.15),rgba(184,147,90,.04));border:1px solid rgba(184,147,90,.34);border-radius:16px;padding:18px 26px;margin-bottom:28px}
 .notice .nt{display:flex;gap:14px;align-items:center}
-.notice .ico{width:42px;height:42px;border-radius:11px;background:rgba(184,147,90,.18);color:var(--brass-light);display:grid;place-items:center;flex-shrink:0}
-.notice p{font-size:14.5px;color:var(--creme);font-weight:300;max-width:680px}
-.notice p strong{color:var(--creme);font-weight:600}
+.notice .ico{width:42px;height:42px;border-radius:11px;background:rgba(184,147,90,.16);color:var(--brass);display:grid;place-items:center;flex-shrink:0}
+.notice p{font-size:14.5px;color:var(--midnight);font-weight:400;max-width:680px}
+.notice p strong{color:var(--midnight);font-weight:600}
 .notice .btn{white-space:nowrap}
 
 /* filtros (chips) */
 .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.chip{font-size:13px;font-weight:500;padding:8px 16px;border-radius:50px;border:1px solid var(--line-light);color:var(--stone-soft);background:transparent;cursor:default}
+.chip{font-size:13px;font-weight:500;padding:8px 16px;border-radius:50px;border:1px solid var(--line);color:var(--stone);background:#fff;cursor:default}
 .chip.active{background:var(--brass);color:var(--midnight);border-color:var(--brass)}
-.fnote{width:100%;font-size:12px;color:var(--stone-soft);opacity:.75;margin-top:2px}
+.fnote{width:100%;font-size:12px;color:var(--stone);opacity:.85;margin-top:2px}
 
 /* grade + cards 3D */
 .market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:26px;perspective:1100px}
-.mk-card{position:relative;background:linear-gradient(165deg,rgba(250,248,244,.06),rgba(250,248,244,.015));border:1px solid var(--line-light);border-radius:18px;padding:24px;transform-style:preserve-3d;transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s,border-color .3s;box-shadow:0 20px 44px -28px rgba(0,0,0,.8),inset 0 1px 0 rgba(250,248,244,.07);will-change:transform}
-.mk-card:hover{border-color:rgba(184,147,90,.45);box-shadow:0 38px 72px -34px rgba(0,0,0,.9),inset 0 1px 0 rgba(250,248,244,.1)}
-.mk-card .exbadge{position:absolute;top:14px;right:14px;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--stone-soft);background:rgba(250,248,244,.06);border:1px solid var(--line-light);padding:3px 9px;border-radius:50px}
+.mk-card{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;transform-style:preserve-3d;transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s,border-color .3s;box-shadow:0 20px 44px -30px rgba(15,37,54,.32);will-change:transform}
+.mk-card:hover{border-color:rgba(184,147,90,.5);box-shadow:0 36px 70px -34px rgba(15,37,54,.42)}
+.mk-card .exbadge{position:absolute;top:14px;right:14px;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--stone);background:var(--creme-warm);border:1px solid var(--line);padding:3px 9px;border-radius:50px}
 .mk-top{display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.plat{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:600;letter-spacing:.03em;color:var(--stone-soft)}
+.plat{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:600;letter-spacing:.03em;color:var(--stone)}
 .plat .pico{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--brass);color:var(--midnight)}
-.mk-name{font-family:var(--serif);font-size:26px;color:var(--creme);margin:2px 0 3px}
-.mk-niche{font-size:12.5px;color:var(--stone-soft);margin-bottom:16px}
+.mk-name{font-family:var(--serif);font-size:26px;color:var(--midnight);margin:2px 0 3px}
+.mk-niche{font-size:12.5px;color:var(--stone);margin-bottom:16px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
-.stats div{background:rgba(250,248,244,.04);border:1px solid var(--line-light);border-radius:10px;padding:10px 12px}
-.stats b{display:block;font-size:14px;color:var(--creme);font-family:var(--serif);font-weight:400}
-.stats b.ok{color:#7fdca6}
-.stats b.wait{color:var(--brass-light)}
-.stats span{font-size:9.5px;color:var(--stone-soft);letter-spacing:.05em;text-transform:uppercase}
-.mk-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line-light);padding-top:15px}
-.mk-foot .price small{display:block;font-size:9.5px;color:var(--stone-soft);letter-spacing:.06em;text-transform:uppercase}
-.mk-foot .price b{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--brass-light)}
-.mk-foot a{font-size:12.5px;font-weight:600;color:var(--creme);display:inline-flex;align-items:center;gap:6px;background:rgba(250,248,244,.06);border:1px solid var(--line-light);padding:9px 15px;border-radius:50px;transition:.25s}
+.stats div{background:var(--creme-warm);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stats b{display:block;font-size:14px;color:var(--midnight);font-family:var(--serif);font-weight:400}
+.stats b.ok{color:#3c6b4f}
+.stats b.wait{color:#9a7330}
+.stats span{font-size:9.5px;color:var(--stone);letter-spacing:.05em;text-transform:uppercase}
+.mk-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:15px}
+.mk-foot .price small{display:block;font-size:9.5px;color:var(--stone);letter-spacing:.06em;text-transform:uppercase}
+.mk-foot .price b{font-family:var(--serif);font-size:18px;font-weight:400;color:#9a7330}
+.mk-foot a{font-size:12.5px;font-weight:600;color:var(--creme);display:inline-flex;align-items:center;gap:6px;background:var(--midnight);border:1px solid var(--midnight);padding:9px 15px;border-radius:50px;transition:.25s}
 .mk-foot a:hover{background:var(--brass);color:var(--midnight);border-color:var(--brass)}
 
 .market-cta{text-align:center;margin-top:30px}
-.market-cta a{font-size:14px;font-weight:600;color:var(--brass-light);display:inline-flex;gap:8px;align-items:center;justify-content:center}
-.market-cta a:hover{color:var(--creme)}
+.market-cta a{font-size:14px;font-weight:600;color:var(--brass);display:inline-flex;gap:8px;align-items:center;justify-content:center}
+.market-cta a:hover{color:var(--midnight)}
 
 /* anuncie sua marca */
-.sell-cta{background:linear-gradient(120deg,rgba(184,147,90,.16),rgba(184,147,90,.05));border:1px solid rgba(184,147,90,.32);border-radius:20px;margin-top:50px;padding:42px 40px;text-align:center;position:relative;overflow:hidden}
-.sell-cta .eyebrow{color:var(--brass-light);justify-content:center}
-.sell-cta .eyebrow::before{background:var(--brass-light)}
-.sell-cta h2{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.2vw,36px);color:var(--creme);margin:12px 0 12px;line-height:1.12}
-.sell-cta p{font-size:15.5px;color:var(--stone-soft);font-weight:300;max-width:600px;margin:0 auto 24px}
+.sell-cta{background:linear-gradient(120deg,rgba(184,147,90,.15),rgba(184,147,90,.05));border:1px solid rgba(184,147,90,.34);border-radius:20px;margin-top:50px;padding:42px 40px;text-align:center;position:relative;overflow:hidden}
+.sell-cta .eyebrow{color:var(--brass);justify-content:center}
+.sell-cta .eyebrow::before{background:var(--brass)}
+.sell-cta h2{font-family:var(--serif);font-weight:400;font-size:clamp(26px,3.2vw,36px);color:var(--midnight);margin:12px 0 12px;line-height:1.12}
+.sell-cta p{font-size:15.5px;color:var(--stone);font-weight:300;max-width:600px;margin:0 auto 24px}
 .sell-cta .btn{font-size:16px;padding:15px 32px}
 
 @media(max-width:980px){.market-grid{grid-template-columns:1fr 1fr}}
@@ -118,7 +109,7 @@
         <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
         <p><strong>Catálogo em construção.</strong> Estamos selecionando marcas para anunciar aqui. Os cards abaixo são exemplos ilustrativos de como cada oportunidade será apresentada.</p>
       </div>
-      <a class="btn btn-brass" id="waAviso" href="#" target="_blank" rel="noopener">Falar com a LIV</a>
+      <a class="btn btn-primary" id="waAviso" href="#" target="_blank" rel="noopener">Falar com a LIV</a>
     </div>
 
     <!-- filtros (em breve funcionais) -->
@@ -193,7 +184,7 @@
       <span class="eyebrow">Para quem tem uma marca</span>
       <h2>Tem uma marca registrada parada?</h2>
       <p>Transforme um ativo sem uso em oportunidade. Anuncie a sua marca com a LIV e alcance quem procura exatamente por ela, com avaliação técnica e transferência segura no INPI.</p>
-      <a class="btn btn-brass" id="waAnunciar" href="#" target="_blank" rel="noopener">Anunciar minha marca</a>
+      <a class="btn btn-primary" id="waAnunciar" href="#" target="_blank" rel="noopener">Anunciar minha marca</a>
     </div>
 
   </div>
