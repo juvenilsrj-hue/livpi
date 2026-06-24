@@ -262,17 +262,17 @@ footer{background:var(--midnight-deep);color:var(--stone-soft);padding:66px 0 32
 .reveal.in{opacity:1;transform:none}
 
 
-/* ===== NOSSOS CLIENTES (vitrine espalhada) ===== */
+/* ===== NOSSOS CLIENTES (vitrine de logos) ===== */
 #clientes{background:var(--creme)}
-.vitrine{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:30px 48px;max-width:980px;margin:14px auto 0;padding:20px 0 40px}
-.vlogo{width:190px;height:126px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 22px 50px -30px rgba(15,37,54,.34);display:grid;place-items:center;padding:18px 22px;transition:transform .45s cubic-bezier(.2,.7,.3,1),box-shadow .45s}
+.vitrine{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;max-width:1120px;margin:16px auto 0;padding:8px 0 16px}
+.vlogo{height:108px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 36px -26px rgba(15,37,54,.3);display:grid;place-items:center;padding:14px 16px;transition:transform .35s cubic-bezier(.2,.7,.3,1),box-shadow .35s}
 .vlogo img{max-width:100%;max-height:100%;object-fit:contain;display:block}
-.vlogo:nth-child(1){transform:rotate(-4deg)}
-.vlogo:nth-child(2){transform:rotate(3deg);margin-top:54px}
-.vlogo:nth-child(3){transform:rotate(-2.5deg);margin-top:16px}
-.vlogo:nth-child(4){transform:rotate(5deg);margin-top:62px}
-.vitrine .vlogo:hover{transform:rotate(0deg) translateY(-10px);box-shadow:0 36px 72px -28px rgba(15,37,54,.5);z-index:2}
-@media(max-width:760px){.vitrine{gap:22px;padding-bottom:20px}.vlogo{width:150px;height:104px;margin-top:0!important;transform:rotate(0deg)!important}}
+.vlogo:nth-child(4n+1){transform:rotate(-1.8deg)}
+.vlogo:nth-child(4n+2){transform:rotate(1.5deg)}
+.vlogo:nth-child(4n+3){transform:rotate(-1deg)}
+.vlogo:nth-child(4n){transform:rotate(2deg)}
+.vitrine .vlogo:hover{transform:rotate(0deg) translateY(-6px);box-shadow:0 26px 52px -26px rgba(15,37,54,.45);z-index:2}
+@media(max-width:760px){.vitrine{grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:14px}.vlogo{height:92px}}
 .wa-float{position:fixed;bottom:26px;right:26px;z-index:90;width:58px;height:58px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 14px 34px -10px rgba(37,211,102,.6);transition:transform .3s}
 .wa-float:hover{transform:scale(1.08)}
 .wa-float .wa-label{position:absolute;right:70px;top:50%;transform:translateY(-50%) translateX(6px);white-space:nowrap;background:var(--midnight);color:var(--creme);font-size:13px;font-weight:600;padding:8px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 10px 24px -10px rgba(0,0,0,.45)}
@@ -622,12 +622,33 @@ footer{background:var(--midnight);color:var(--stone-soft);padding:34px 0 22px;ma
       <p>Algumas das marcas que confiam na LIV para registrar e defender o seu nome.</p>
     </div>
   </div>
-  <!-- vitrine: logos reais, tamanho uniforme, espalhados (sem repetir) -->
+  <!-- vitrine: logos reais dos clientes (tamanho uniforme, leve inclinação) -->
   <div class="vitrine reveal">
-    <div class="vlogo"><img src="logo-gastronomia-a-dois.png" alt="Gastronomia a Dois"></div>
-    <div class="vlogo"><img src="cliente-apiario.jpg" alt="Apiário Flores da Serra"></div>
-    <div class="vlogo"><img src="cliente-com-carinho.png" alt="Com Carinho Baby"></div>
-    <div class="vlogo"><img src="cliente-gold-padel.jpg" alt="Gold Padel Lages"></div>
+    <div class="vlogo"><img src="cliente-01.png" alt="Bizz-up"></div>
+    <div class="vlogo"><img src="cliente-02.jpg" alt="Palco Empreendedor"></div>
+    <div class="vlogo"><img src="cliente-03.jpg" alt="Pelletize"></div>
+    <div class="vlogo"><img src="cliente-04.jpg" alt="Veni Fretes"></div>
+    <div class="vlogo"><img src="cliente-05.jpg" alt="Plant Colar"></div>
+    <div class="vlogo"><img src="cliente-06.jpg" alt="NatuAle"></div>
+    <div class="vlogo"><img src="cliente-07.jpg" alt="Cevey"></div>
+    <div class="vlogo"><img src="cliente-08.jpg" alt="You Deserve"></div>
+    <div class="vlogo"><img src="cliente-09.jpg" alt="Grain Solution"></div>
+    <div class="vlogo"><img src="cliente-10.jpg" alt="Gerencit"></div>
+    <div class="vlogo"><img src="cliente-11.jpg" alt="UEEK"></div>
+    <div class="vlogo"><img src="cliente-12.jpg" alt="Reportana"></div>
+    <div class="vlogo"><img src="cliente-13.jpg" alt="Cliente da LIV"></div>
+    <div class="vlogo"><img src="cliente-14.jpg" alt="Quiron"></div>
+    <div class="vlogo"><img src="cliente-15.jpg" alt="Propenza"></div>
+    <div class="vlogo"><img src="cliente-16.jpg" alt="JCarlo"></div>
+    <div class="vlogo"><img src="cliente-17.jpg" alt="Cliente da LIV"></div>
+    <div class="vlogo"><img src="cliente-18.jpg" alt="DaBen"></div>
+    <div class="vlogo"><img src="cliente-19.jpg" alt="Pedoca da Kris"></div>
+    <div class="vlogo"><img src="cliente-20.jpg" alt="Cliente da LIV"></div>
+    <div class="vlogo"><img src="cliente-21.jpg" alt="Cliente da LIV"></div>
+    <div class="vlogo"><img src="cliente-22.png" alt="Com Carinho Baby"></div>
+    <div class="vlogo"><img src="cliente-23.jpg" alt="Flor de Altitude"></div>
+    <div class="vlogo"><img src="cliente-24.png" alt="Gastronomia a Dois"></div>
+    <div class="vlogo"><img src="cliente-25.jpg" alt="Gold Padel"></div>
   </div>
 </section>
 
