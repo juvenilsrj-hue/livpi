@@ -37,10 +37,10 @@
 .mk-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;border:1px solid rgba(184,147,90,.4);border-top:3px solid var(--brass);border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;box-shadow:0 20px 44px -30px rgba(15,37,54,.32);overflow:hidden}
 .mk-card:hover .mk-face{box-shadow:0 34px 66px -34px rgba(15,37,54,.42)}
 .mk-back{transform:rotateY(180deg)}
-.flip-hint{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:#9a7330}
+.flip-hint{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;font-weight:600;color:#9a7330;cursor:pointer}
 .mk-front .flip-hint{margin-top:auto;margin-bottom:14px}
-.flip-hint svg{transition:transform .5s}
-.mk-card:hover .flip-hint svg{transform:rotate(-45deg)}
+.flip-hint .ic{width:27px;height:27px;border-radius:50%;background:var(--brass);color:var(--midnight);display:grid;place-items:center;flex-shrink:0;box-shadow:0 6px 14px -6px rgba(184,147,90,.8);transition:transform .55s cubic-bezier(.4,.15,.2,1),background .25s}
+.mk-card:hover .flip-hint .ic{transform:rotate(-180deg);background:var(--brass-light)}
 .mk-back-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .mk-back-head b{font-family:var(--serif);font-weight:400;font-size:18px;color:var(--midnight)}
 .mk-back-head .voltar{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--stone)}
@@ -65,7 +65,7 @@
 .stats span{font-size:9.5px;color:var(--stone);letter-spacing:.05em;text-transform:uppercase}
 .mk-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:15px}
 .mk-foot .price small{display:block;font-size:9.5px;color:var(--stone);letter-spacing:.06em;text-transform:uppercase}
-.mk-foot .price b{font-family:var(--serif);font-size:18px;font-weight:400;color:#9a7330}
+.mk-foot .price b{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--midnight)}
 .mk-foot a{font-size:12.5px;font-weight:600;color:var(--midnight);display:inline-flex;align-items:center;gap:6px;background:var(--brass);border:1px solid var(--brass);padding:9px 15px;border-radius:50px;transition:.25s}
 .mk-foot a:hover{background:var(--brass-light);border-color:var(--brass-light)}
 
@@ -280,7 +280,7 @@ document.querySelectorAll('.mk-card').forEach(card=>{
   const front=document.createElement('div');front.className='mk-face mk-front';
   while(card.firstChild){front.appendChild(card.firstChild);}
   const foot=front.querySelector('.mk-foot');
-  const hint=document.createElement('span');hint.className='flip-hint';hint.innerHTML='Ver classes e atuação '+_rot;
+  const hint=document.createElement('span');hint.className='flip-hint';hint.innerHTML='Ver mais detalhes <span class="ic">'+_rot+'</span>';
   if(foot)front.insertBefore(hint,foot);else front.appendChild(hint);
   const list=(CLASSES[name]||[["Classes","Informadas durante a negociação."]]).map(c=>'<div class="mk-cls"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>').join('');
   const back=document.createElement('div');back.className='mk-face mk-back';
