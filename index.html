@@ -62,7 +62,8 @@ header.scrolled{background:rgba(250,248,244,.9);backdrop-filter:blur(14px);box-s
 /* ===== HERO ===== */
 .hero{padding:185px 0 110px;position:relative;overflow:hidden}
 .hero::before{content:"";position:absolute;top:-20%;right:-10%;width:55vw;height:55vw;max-width:760px;max-height:760px;background:radial-gradient(circle,rgba(184,147,90,.10) 0%,transparent 62%);pointer-events:none}
-.hero .reg-mark{position:absolute;right:-3%;bottom:-12%;font-family:var(--serif);font-size:30vw;line-height:.8;color:rgba(184,147,90,.05);pointer-events:none;user-select:none;z-index:0}
+/* ® marca-d'água fixa: acompanha o scroll, bem transparente, atrás do conteúdo interativo */
+.reg-mark{position:fixed;right:-6%;top:50%;transform:translateY(-50%);font-family:var(--serif);font-size:38vw;line-height:.8;color:rgba(184,147,90,.05);pointer-events:none;user-select:none;z-index:1}
 .hero-grid{position:relative}
 .hero-copy{max-width:880px}
 .hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(42px,5.6vw,76px);line-height:1.02;letter-spacing:-.01em;margin:24px 0 22px}
@@ -312,6 +313,7 @@ footer{background:var(--midnight);color:var(--stone-soft);padding:34px 0 22px;ma
 </style>
 </head>
 <body>
+<span class="reg-mark" aria-hidden="true">®</span>
 
 <!-- ========================= HEADER ========================= -->
 <header id="header">
@@ -335,7 +337,6 @@ footer{background:var(--midnight);color:var(--stone-soft);padding:34px 0 22px;ma
 
 <!-- ========================= HERO ========================= -->
 <section class="hero">
-  <span class="reg-mark" aria-hidden="true">®</span>
   <div class="wrap hero-grid">
     <div class="hero-copy reveal">
       <span class="eyebrow">Propriedade Intelectual · INPI</span>
