@@ -23,3 +23,10 @@ inpi-api/cloudflared.exe
 # Credenciais (nunca versionar)
 .env
 inpi-api/.env
+
+# Backend Node (fora do site estatico; manter em repo proprio/privado)
+inpi-api/
+
+# Temporarios de render/preview
+_*.png
+_*.html
