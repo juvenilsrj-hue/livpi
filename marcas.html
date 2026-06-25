@@ -38,12 +38,13 @@
 .mk-card:hover .mk-face{box-shadow:0 34px 66px -34px rgba(15,37,54,.42)}
 .mk-back{transform:rotateY(180deg)}
 .flip-hint{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;font-weight:600;color:#9a7330;cursor:pointer}
-.mk-front .flip-hint{margin-top:auto;margin-bottom:18px}
+.mk-front .flip-hint{margin-top:auto;margin-bottom:18px;align-self:center}
 .flip-hint .ic{width:27px;height:27px;border-radius:50%;background:var(--brass);color:var(--midnight);display:grid;place-items:center;flex-shrink:0;box-shadow:0 6px 14px -6px rgba(184,147,90,.8);transition:transform .55s cubic-bezier(.4,.15,.2,1),background .25s}
 .mk-card:hover .flip-hint .ic{transform:translateX(3px);background:var(--brass-light)}
-.mk-back-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.mk-back-head b{font-family:var(--serif);font-weight:400;font-size:18px;color:var(--midnight)}
-.mk-back-head .voltar{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--stone)}
+.mk-back-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:12px}
+.mk-back-top .voltar{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--stone)}
+.mk-back-title{display:block;font-family:var(--serif);font-weight:400;font-size:18px;color:var(--midnight);margin-bottom:8px}
+.mk-back-top .mk-logo{width:72px;height:40px}
 .mk-detail{flex:1;overflow-y:auto;margin-bottom:10px}
 .mk-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
 .mk-row .lb{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--stone);white-space:nowrap}
@@ -270,7 +271,7 @@ _chips.forEach(chip=>chip.addEventListener('click',()=>{
 
 /* card vira (flip): verso traz Situação/Apresentação/Natureza + classes e atuação; botão de interesse nas duas faces */
 const DETAILS={
-  "Gastronomia a Dois":{s:"Registro de marca em vigor",a:"Mista",n:"Produtos e/ou Serviço",c:[["NCL 09","Aparelhos e instrumentos científicos, software e equipamentos eletrônicos."]]},
+  "Gastronomia a Dois":{s:"Registro de marca em vigor",a:"Mista",n:"Produtos e/ou Serviço",c:[["NCL 09","Software, aplicativos e instrumentos eletrônicos."]]},
   "Aurora":{s:"Registro de marca em vigor",a:"Nominativa",n:"Produto",c:[["NCL 03","Cosméticos, perfumaria e produtos de higiene pessoal."]]},
   "Volpe":{s:"Registro de marca em vigor",a:"Mista",n:"Produto",c:[["NCL 25","Vestuário, calçados e artigos de moda."]]},
   "Maré":{s:"Registro de marca em vigor",a:"Nominativa",n:"Produto",c:[["NCL 30","Café, temperos e produtos alimentícios à base de cereais."]]},
@@ -291,10 +292,11 @@ document.querySelectorAll('.mk-card').forEach(card=>{
   const hint=document.createElement('span');hint.className='flip-hint';hint.innerHTML='Ver mais detalhes <span class="ic">'+_ar+'</span>';
   if(foot)front.insertBefore(hint,foot);else front.appendChild(hint);
   const d=DETAILS[name]||{s:"Sob consulta",a:"Sob consulta",n:"Sob consulta",c:[["Classe","Informada na negociação."]]};
-  const rows='<div class="mk-row"><span class="lb">Situação</span><span class="vl">'+d.s+'</span></div><div class="mk-row"><span class="lb">Apresentação</span><span class="vl">'+d.a+'</span></div><div class="mk-row"><span class="lb">Natureza</span><span class="vl">'+d.n+'</span></div>';
+  const logoHTML=(front.querySelector('.mk-logo')||{}).outerHTML||'';
+  const rows='<div class="mk-row"><span class="lb">Natureza</span><span class="vl">'+d.n+'</span></div>';
   const cls=d.c.map(c=>'<div class="mk-cls"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>').join('');
   const back=document.createElement('div');back.className='mk-face mk-back';
-  back.innerHTML='<div class="mk-back-head"><b>Detalhes da marca</b><span class="voltar">'+_bk+' Voltar</span></div><div class="mk-detail">'+rows+'<div class="mk-cls-head">Classes e atuação</div>'+cls+'</div>'+(foot?foot.outerHTML:'');
+  back.innerHTML='<div class="mk-back-top"><span class="voltar">'+_bk+' Voltar</span>'+logoHTML+'</div><b class="mk-back-title">Detalhes da marca</b><div class="mk-detail">'+rows+'<div class="mk-cls-head">Classes e atuação</div>'+cls+'</div>'+(foot?foot.outerHTML:'');
   inner.appendChild(front);inner.appendChild(back);
   card.appendChild(inner);
   card.addEventListener('click',e=>{if(e.target.closest('a'))return;card.classList.toggle('flipped');});
