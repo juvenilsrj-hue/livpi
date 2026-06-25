@@ -31,8 +31,8 @@
 
 /* grade + cards 3D */
 .market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:26px;perspective:1100px}
-.mk-card{position:relative;height:360px;perspective:1300px;cursor:pointer;transform-style:preserve-3d;transition:transform .25s ease}
-.mk-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,.15,.2,1)}
+.mk-card{position:relative;height:360px;perspective:2600px;cursor:pointer;transform-style:preserve-3d;transition:transform .25s ease}
+.mk-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .85s cubic-bezier(.33,0,.2,1)}
 .mk-card.flipped .mk-inner{transform:rotateY(180deg)}
 .mk-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;border:1px solid rgba(184,147,90,.4);border-top:3px solid var(--brass);border-radius:18px;padding:22px 24px 24px;display:flex;flex-direction:column;box-shadow:0 20px 44px -30px rgba(15,37,54,.32);overflow:hidden}
 .mk-card:hover .mk-face{box-shadow:0 34px 66px -34px rgba(15,37,54,.42)}
