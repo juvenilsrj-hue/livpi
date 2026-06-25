@@ -281,7 +281,6 @@ const DETAILS={
 };
 const _ar='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 const _bk='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>';
-const _tilt=matchMedia('(hover:hover) and (pointer:fine)').matches;
 document.querySelectorAll('.mk-card').forEach(card=>{
   const nameEl=card.querySelector('.mk-name');
   const name=nameEl?nameEl.textContent.trim():'';
@@ -301,10 +300,6 @@ document.querySelectorAll('.mk-card').forEach(card=>{
   inner.appendChild(front);inner.appendChild(back);
   card.appendChild(inner);
   card.addEventListener('click',e=>{if(e.target.closest('a'))return;card.classList.toggle('flipped');});
-  if(_tilt){
-    card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-0.5,y=(e.clientY-r.top)/r.height-0.5;card.style.transform='rotateX('+(-y*3.5).toFixed(2)+'deg) rotateY('+(x*3.5).toFixed(2)+'deg) translateY(-3px)';});
-    card.addEventListener('mouseleave',()=>{card.style.transform='';});
-  }
 });
 </script>
 </body>
