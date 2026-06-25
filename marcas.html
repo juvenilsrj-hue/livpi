@@ -32,8 +32,10 @@ footer{margin-top:0}
 .fnote{width:100%;font-size:12px;color:var(--stone);opacity:.85;margin-top:2px}
 
 /* grade + cards 3D */
-.market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:26px}
-.mk-card{position:relative;height:360px;cursor:pointer}
+.market-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;margin-top:26px}
+.mk-card{position:relative;height:436px;width:368px;max-width:100%;cursor:pointer}
+.mk-obs{font-size:12px;color:var(--stone);line-height:1.55;margin-top:12px}
+.mk-obs b{color:#9a7330;font-weight:700}
 .mk-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .85s cubic-bezier(.33,0,.2,1)}
 .mk-card.flipped .mk-inner{transform:rotateY(180deg)}
 .mk-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;border:1px solid rgba(184,147,90,.4);border-top:3px solid var(--brass);border-radius:18px;padding:22px 24px 24px;display:flex;flex-direction:column;box-shadow:0 20px 44px -30px rgba(15,37,54,.32);overflow:hidden}
@@ -132,14 +134,13 @@ footer{margin-top:0}
 <section class="pad mk">
   <div class="wrap">
 
-    <!-- filtros por categoria -->
-    <div class="filters reveal">
-      <span class="chip active" data-filter="all">Todos</span>
-      <span class="chip" data-filter="moda">Moda</span>
-      <span class="chip" data-filter="alimentos">Alimentos</span>
-      <span class="chip" data-filter="beleza">Beleza</span>
-      <span class="chip" data-filter="tech">Tecnologia</span>
-      <span class="chip" data-filter="servicos">Serviços</span>
+    <!-- aviso de disponibilidade -->
+    <div class="notice reveal">
+      <div class="nt">
+        <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
+        <p><strong>Disponibilidade sob validação.</strong> A situação de cada marca é confirmada com uma consulta atualizada ao INPI no momento da negociação.</p>
+      </div>
+      <a class="btn btn-primary" id="waAviso" href="#" target="_blank" rel="noopener">Falar com a LIV</a>
     </div>
 
     <!-- grade de marcas (exemplos ilustrativos) -->
@@ -150,41 +151,6 @@ footer{margin-top:0}
         <div class="mk-niche">NCL 09 · Eletrônicos e software</div>
         <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
         <div class="mk-foot"><div class="price"><small>valor</small><b>R$ 10.000</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
-      </div>
-      <div class="mk-card reveal" data-cat="beleza">
-        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
-        <div class="mk-name">Aurora</div>
-        <div class="mk-niche">NCL 03 · Cosméticos e beleza</div>
-        <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
-        <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
-      </div>
-      <div class="mk-card reveal" data-cat="moda" style="transition-delay:.05s">
-        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
-        <div class="mk-name">Volpe</div>
-        <div class="mk-niche">NCL 25 · Moda e vestuário</div>
-        <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
-        <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
-      </div>
-      <div class="mk-card reveal" data-cat="alimentos" style="transition-delay:.1s">
-        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
-        <div class="mk-name">Maré</div>
-        <div class="mk-niche">NCL 30 · Alimentos e bebidas</div>
-        <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Nominativa</b><span>tipo de marca</span></div></div>
-        <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
-      </div>
-      <div class="mk-card reveal" data-cat="alimentos">
-        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
-        <div class="mk-name">Cumbuca</div>
-        <div class="mk-niche">NCL 43 · Restaurantes e gastronomia</div>
-        <div class="stats"><div><b class="wait">Em exame</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
-        <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
-      </div>
-      <div class="mk-card reveal" data-cat="servicos" style="transition-delay:.1s">
-        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="extag">Exemplo</span><span class="mk-logo" aria-label="Espaço para o logotipo da marca"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg></span></div>
-        <div class="mk-name">Brava</div>
-        <div class="mk-niche">NCL 36 · Serviços financeiros</div>
-        <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
-        <div class="mk-foot"><div class="price"><small>valor</small><b>sob consulta</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
     </div>
 
@@ -218,6 +184,7 @@ footer{margin-top:0}
         <a href="index.html#viabilidade">Viabilidade</a>
         <a href="marcas.html">Marcas à venda</a>
         <a href="blog.html">Blog</a>
+        <a href="privacidade.html">Privacidade</a>
         <a href="#" id="footWa">Contato</a>
       </nav>
       <div class="foot-social">
@@ -226,8 +193,8 @@ footer{margin-top:0}
       </div>
     </div>
     <div class="foot-base">
-      <span>© 2026 LIV Propriedade Intelectual · Consultoria credenciada no INPI</span>
-      <span>Lages/SC · www.livpi.com.br</span>
+      <span>Atuação estratégica em registro, defesa e transferência de marcas perante o INPI.</span>
+      <span>© 2026 LIV · Lages/SC · www.livpi.com.br</span>
     </div>
   </div>
 </footer>
@@ -266,7 +233,7 @@ _chips.forEach(chip=>chip.addEventListener('click',()=>{
 
 /* card vira (flip): verso traz Situação/Apresentação/Natureza + classes e atuação; botão de interesse nas duas faces */
 const DETAILS={
-  "Gastronomia a Dois":{s:"Registro de marca em vigor",a:"Mista",n:"Produtos e/ou Serviço",c:[["NCL 09","Software, aplicativos e instrumentos eletrônicos."]]},
+  "Gastronomia a Dois":{proc:"936429500",s:"Registro de marca em vigor",a:"Mista",n:"Produtos e/ou Serviço",c:[["NCL 09","Software, aplicativos e instrumentos eletrônicos."]],obs:"Marca em vigor, disponível para cessão via LIV no INPI."},
   "Aurora":{s:"Registro de marca em vigor",a:"Nominativa",n:"Produto",c:[["NCL 03","Cosméticos, perfumaria e produtos de higiene pessoal."]]},
   "Volpe":{s:"Registro de marca em vigor",a:"Mista",n:"Produto",c:[["NCL 25","Vestuário, calçados e artigos de moda."]]},
   "Maré":{s:"Registro de marca em vigor",a:"Nominativa",n:"Produto",c:[["NCL 30","Café, temperos e produtos alimentícios à base de cereais."]]},
@@ -288,10 +255,10 @@ document.querySelectorAll('.mk-card').forEach(card=>{
   if(foot)front.insertBefore(hint,foot);else front.appendChild(hint);
   const d=DETAILS[name]||{s:"Sob consulta",a:"Sob consulta",n:"Sob consulta",c:[["Classe","Informada na negociação."]]};
   const logoHTML=(front.querySelector('.mk-logo')||{}).outerHTML||'';
-  const rows='<div class="mk-row"><span class="lb">Natureza</span><span class="vl">'+d.n+'</span></div>';
+  const rows=(d.proc?'<div class="mk-row"><span class="lb">Processo</span><span class="vl">'+d.proc+'</span></div>':'')+'<div class="mk-row"><span class="lb">Status</span><span class="vl">'+d.s+'</span></div>';
   const cls=d.c.map(c=>'<div class="mk-cls"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>').join('');
   const back=document.createElement('div');back.className='mk-face mk-back';
-  back.innerHTML='<div class="mk-back-top"><span class="voltar">'+_bk+' Voltar</span>'+logoHTML+'</div><b class="mk-back-title">Detalhes da marca</b><div class="mk-detail">'+rows+'<div class="mk-cls-head">Classes e atuação</div>'+cls+'</div>'+(foot?foot.outerHTML:'');
+  back.innerHTML='<div class="mk-back-top"><span class="voltar">'+_bk+' Voltar</span>'+logoHTML+'</div><b class="mk-back-title">Detalhes da marca</b><div class="mk-detail">'+rows+'<div class="mk-cls-head">Classes e atuação</div>'+cls+(d.obs?'<p class="mk-obs"><b>Obs.:</b> '+d.obs+'</p>':'')+'</div>'+(foot?foot.outerHTML:'');
   inner.appendChild(front);inner.appendChild(back);
   card.appendChild(inner);
   card.addEventListener('click',e=>{if(e.target.closest('a'))return;card.classList.toggle('flipped');});
