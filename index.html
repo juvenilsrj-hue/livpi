@@ -180,6 +180,16 @@ section{position:relative}
 .cv-link:hover svg{transform:translateX(4px)}
 .cv-sub{font-family:var(--serif);font-weight:400;font-size:clamp(23px,2.5vw,31px);color:var(--creme);text-align:center;margin-bottom:32px}
 .cv-cta{text-align:center;margin-top:38px}
+.pq-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:8px}
+.pq-item{background:rgba(250,248,244,.04);border:1px solid var(--line-light);border-radius:16px;padding:24px 22px;transition:transform .4s cubic-bezier(.2,.7,.3,1),background .3s,border-color .3s}
+.pq-item:hover{background:rgba(250,248,244,.07);transform:translateY(-5px);border-color:rgba(184,147,90,.4)}
+.pq-ic{width:42px;height:42px;border-radius:11px;background:rgba(184,147,90,.16);color:var(--brass-light);display:grid;place-items:center;margin-bottom:14px}
+.pq-item h4{font-size:16px;color:var(--creme);margin-bottom:7px;font-family:var(--serif);font-weight:500}
+.pq-item p{font-size:13px;color:var(--stone-soft);font-weight:300;line-height:1.5}
+.sec-cta{text-align:center;margin-top:42px}
+.sec-cta .btn{font-size:15px;padding:14px 28px}
+@media(max-width:980px){.pq-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.pq-grid{grid-template-columns:1fr}}
 .cv-cta .btn{font-size:16px;padding:16px 34px;box-shadow:0 16px 40px -16px rgba(184,147,90,.7)}
 .cv-cta .hint{display:block;margin-top:12px;font-size:13px;color:var(--stone-soft);font-weight:300}
 .steps.cv-steps{grid-template-columns:repeat(4,1fr)}
@@ -375,6 +385,26 @@ footer{background:var(--midnight);color:var(--stone-soft);padding:34px 0 22px;ma
   </div>
 </section>
 
+<!-- ========================= POR QUE A LIV ========================= -->
+<section id="porque" class="pad" style="background:var(--midnight)">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow" style="color:var(--brass-light)">Por que a LIV?</span>
+      <h2 style="color:var(--creme)">Tratamos a sua marca como um ativo, do início ao fim.</h2>
+      <p style="color:var(--stone-soft)">Mais do que protocolar pedidos, conduzimos cada etapa com técnica, clareza e estratégia, do registro à defesa e à transferência.</p>
+    </div>
+    <div class="pq-grid">
+      <div class="pq-item reveal"><span class="pq-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><h4>Análise técnica</h4><p>Viabilidade, classes e riscos avaliados com critério antes de cada passo.</p></div>
+      <div class="pq-item reveal" style="transition-delay:.05s"><span class="pq-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><h4>Linguagem clara</h4><p>Explicamos cada etapa sem juridiquês: você entende o que está acontecendo.</p></div>
+      <div class="pq-item reveal" style="transition-delay:.1s"><span class="pq-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></span><h4>Estratégia</h4><p>Decisões pensadas para proteger e valorizar a marca, não só protocolar.</p></div>
+      <div class="pq-item reveal" style="transition-delay:.15s"><span class="pq-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span><h4>Acompanhamento</h4><p>Monitoramos prazos, exigências e publicações até a decisão do INPI.</p></div>
+      <div class="pq-item reveal" style="transition-delay:.05s"><span class="pq-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span><h4>Defesa</h4><p>Recursos, oposições e nulidades conduzidos com técnica e argumentação.</p></div>
+      <div class="pq-item reveal" style="transition-delay:.1s"><span class="pq-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13"/><path d="M14 5l3 3-3 3"/><path d="M20 16H7"/><path d="M10 13l-3 3 3 3"/></svg></span><h4>Transferência</h4><p>Cessão e averbação de titularidade no INPI com segurança jurídica.</p></div>
+      <div class="pq-item reveal" style="transition-delay:.15s"><span class="pq-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 7-7"/><path d="M17 8h4v4"/></svg></span><h4>Visão de ativo</h4><p>Tratamos a marca como patrimônio: pode crescer, ser defendida e negociada.</p></div>
+    </div>
+  </div>
+</section>
+
 <!-- ========================= QUEM SOMOS ========================= -->
 <section id="quem-somos" class="pad">
   <div class="wrap">
@@ -469,6 +499,7 @@ footer{background:var(--midnight);color:var(--stone-soft);padding:34px 0 22px;ma
         <p>Identificou alguém usando uma marca igual ou semelhante à sua? Preparamos notificações extrajudiciais para formalizar a situação e buscar a interrupção do uso indevido com seriedade e estratégia.</p>
       </div>
     </div>
+    <div class="sec-cta reveal"><a class="btn btn-primary" id="waDefesa">Recebeu oposição ou indeferimento? Fale com a LIV <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
   </div>
 </section>
 
@@ -492,6 +523,7 @@ footer{background:var(--midnight);color:var(--stone-soft);padding:34px 0 22px;ma
       <span class="shield"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
       <p><strong>Proteja sua marca antes que ela cresça sem segurança.</strong> Quanto antes você registra, menor o risco de ver outra pessoa tentar ocupar o espaço que o seu negócio está construindo. O melhor momento para proteger uma marca é quando ela nasce.</p>
     </div>
+    <div class="sec-cta reveal"><a class="btn btn-brass" id="waRegistro">Quero registrar minha marca <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
   </div>
 </section>
 
@@ -546,7 +578,7 @@ footer{background:var(--midnight);color:var(--stone-soft);padding:34px 0 22px;ma
           Solicitar viabilidade gratuita
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>
         </button>
-        <p class="form-note">Seus dados são usados apenas para preparar e enviar a sua análise de viabilidade. Os dados do INPI refletem a situação na data da consulta.</p>
+        <p class="form-note">Seus dados (nome, marca, Instagram, e-mail e WhatsApp) são usados apenas para preparar e enviar a sua análise de viabilidade e entrar em contato. Não compartilhamos com terceiros. Ao enviar, você concorda com a nossa <a href="privacidade.html" style="color:var(--brass);text-decoration:underline">Política de Privacidade</a>. Os dados do INPI refletem a situação na data da consulta.</p>
       </div>
       <div class="form-success" id="formSuccess">
         <div class="check"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
@@ -695,6 +727,8 @@ const msgVender = "Olá! Tenho uma marca registrada e gostaria de avaliar a vend
 const msgComprar = "Olá! Tenho interesse em comprar uma marca já registrada. Podem me ajudar a encontrar?";
 const _wv = document.getElementById('waVender'); if (_wv) _wv.href = waBase(msgVender);
 const _wc = document.getElementById('waComprar'); if (_wc) _wc.href = waBase(msgComprar);
+const _wr = document.getElementById('waRegistro'); if (_wr) _wr.href = waBase("Olá! Quero registrar a minha marca no INPI e gostaria de orientação da LIV.");
+const _wd = document.getElementById('waDefesa'); if (_wd) _wd.href = waBase("Olá! Minha marca recebeu oposição ou indeferimento (ou identifiquei uso indevido) e preciso de defesa. Podem me ajudar?");
 
 /* Formulário de viabilidade. TODOS os campos obrigatórios.
    Por ora envia o lead via WhatsApp; quando o backend de viabilidade estiver
