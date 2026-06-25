@@ -302,7 +302,7 @@ document.querySelectorAll('.mk-card').forEach(card=>{
   card.appendChild(inner);
   card.addEventListener('click',e=>{if(e.target.closest('a'))return;card.classList.toggle('flipped');});
   if(_tilt){
-    card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-0.5,y=(e.clientY-r.top)/r.height-0.5;card.style.transform='rotateX('+(-y*6).toFixed(2)+'deg) rotateY('+(x*6).toFixed(2)+'deg) translateY(-5px)';});
+    card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-0.5,y=(e.clientY-r.top)/r.height-0.5;card.style.transform='rotateX('+(-y*3.5).toFixed(2)+'deg) rotateY('+(x*3.5).toFixed(2)+'deg) translateY(-3px)';});
     card.addEventListener('mouseleave',()=>{card.style.transform='';});
   }
 });
