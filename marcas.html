@@ -31,7 +31,7 @@
 
 /* grade + cards 3D */
 .market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:26px;perspective:1100px}
-.mk-card{position:relative;height:360px;perspective:1300px;cursor:pointer}
+.mk-card{position:relative;height:360px;perspective:1300px;cursor:pointer;transform-style:preserve-3d;transition:transform .25s ease}
 .mk-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,.15,.2,1)}
 .mk-card.flipped .mk-inner{transform:rotateY(180deg)}
 .mk-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;border:1px solid rgba(184,147,90,.4);border-top:3px solid var(--brass);border-radius:18px;padding:22px 24px 24px;display:flex;flex-direction:column;box-shadow:0 20px 44px -30px rgba(15,37,54,.32);overflow:hidden}
@@ -281,6 +281,7 @@ const DETAILS={
 };
 const _ar='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 const _bk='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>';
+const _tilt=matchMedia('(hover:hover) and (pointer:fine)').matches;
 document.querySelectorAll('.mk-card').forEach(card=>{
   const nameEl=card.querySelector('.mk-name');
   const name=nameEl?nameEl.textContent.trim():'';
@@ -300,6 +301,10 @@ document.querySelectorAll('.mk-card').forEach(card=>{
   inner.appendChild(front);inner.appendChild(back);
   card.appendChild(inner);
   card.addEventListener('click',e=>{if(e.target.closest('a'))return;card.classList.toggle('flipped');});
+  if(_tilt){
+    card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-0.5,y=(e.clientY-r.top)/r.height-0.5;card.style.transform='rotateX('+(-y*6).toFixed(2)+'deg) rotateY('+(x*6).toFixed(2)+'deg) translateY(-5px)';});
+    card.addEventListener('mouseleave',()=>{card.style.transform='';});
+  }
 });
 </script>
 </body>
