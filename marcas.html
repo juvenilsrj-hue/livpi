@@ -32,9 +32,11 @@ footer{margin-top:0}
 .fnote{width:100%;font-size:12px;color:var(--stone);opacity:.85;margin-top:2px}
 
 /* grade + cards 3D */
-.market-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;margin-top:26px}
-.mk-card{position:relative;height:436px;width:368px;max-width:100%;cursor:pointer}
+.market-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:24px;margin-top:26px;max-width:784px;margin-left:auto;margin-right:auto}
+.mk-card{position:relative;height:404px;width:368px;max-width:100%;cursor:pointer}
 .mk-obs{font-size:12px;color:var(--stone);line-height:1.55;margin-top:12px}
+.mk-sub{font-size:12.5px;color:var(--stone);margin:4px 0 16px}
+.mk-desc{font-size:13.5px;color:var(--midnight);line-height:1.6;margin-bottom:12px}
 .mk-obs b{color:#9a7330;font-weight:700}
 .mk-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .85s cubic-bezier(.33,0,.2,1)}
 .mk-card.flipped .mk-inner{transform:rotateY(180deg)}
@@ -48,7 +50,8 @@ footer{margin-top:0}
 .mk-back-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:12px}
 .mk-back-top .voltar{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--stone)}
 .mk-back-title{display:block;font-family:var(--serif);font-weight:400;font-size:18px;color:var(--midnight);margin-bottom:8px}
-.mk-back-top .mk-logo{width:72px;height:40px}
+.mk-back-top .mk-logo{width:72px;height:40px;margin-bottom:0;border-radius:9px}
+.mk-back-top .mk-logo img{padding:4px}
 .mk-detail{flex:1;overflow-y:auto;margin-bottom:10px}
 .mk-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
 .mk-row .lb{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--stone);white-space:nowrap}
@@ -61,8 +64,8 @@ footer{margin-top:0}
 .mk-card .exbadge{position:absolute;top:14px;right:14px;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--stone);background:var(--creme-warm);border:1px solid var(--line);padding:3px 9px;border-radius:50px}
 .mk-top{display:flex;align-items:center;gap:8px;margin-bottom:14px}
 .extag{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9a7330;background:rgba(184,147,90,.12);border:1px solid rgba(184,147,90,.3);padding:3px 9px;border-radius:50px;white-space:nowrap}
-.mk-logo{margin-left:auto;position:relative;overflow:hidden;width:82px;height:46px;border:1px solid var(--line);border-radius:9px;background:var(--creme);display:grid;place-items:center;color:var(--stone);flex-shrink:0}
-.mk-logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:4px}
+.mk-logo{position:relative;overflow:hidden;width:100%;height:122px;border:1px solid var(--line);border-radius:12px;background:#fff;display:grid;place-items:center;color:var(--stone);margin-bottom:16px}
+.mk-logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:14px}
 .plat{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;letter-spacing:.02em;color:var(--stone)}
 .plat .pico{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:rgba(184,147,90,.16);color:#9a7330}
 .mk-name{font-family:var(--serif);font-size:25px;color:var(--midnight);margin:4px 0 16px}
@@ -143,14 +146,31 @@ footer{margin-top:0}
       <a class="btn btn-primary" id="waAviso" href="#" target="_blank" rel="noopener">Falar com a LIV</a>
     </div>
 
-    <!-- grade de marcas (exemplos ilustrativos) -->
+    <!-- grade de marcas -->
     <div class="market-grid">
-      <div class="mk-card reveal" data-cat="tech">
-        <div class="mk-top"><span class="plat">Marca · INPI</span><span class="mk-logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg><img src="logo-gastronomia-a-dois.png" alt="Gastronomia a Dois" onerror="this.remove()"></span></div>
-        <div class="mk-name">Gastronomia a Dois</div>
-        <div class="mk-niche">NCL 09 · Eletrônicos e software</div>
-        <div class="stats"><div><b class="ok">Registrada</b><span>situação no INPI</span></div><div><b>Mista</b><span>tipo de marca</span></div></div>
-        <div class="mk-foot"><div class="price"><small>valor</small><b>R$ 10.000</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
+      <div class="mk-card reveal" data-cat="all">
+        <div class="mk-top"><span class="plat">Marca · INPI</span></div><span class="mk-logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg><img src="logo-advogadas-serra.png" alt="Advogadas da Serra" onerror="this.remove()"></span>
+        <div class="mk-name">Advogadas da Serra</div>
+        <div class="mk-sub">Disponível para cessão · transferência no INPI</div>
+        <div class="mk-foot"><div class="price"><small>valor</small><b>A combinar</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
+      </div>
+      <div class="mk-card reveal" data-cat="all">
+        <div class="mk-top"><span class="plat">Marca · INPI</span></div><span class="mk-logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg><img src="logo-estilo-do-homem.png" alt="Estilo do Homem" onerror="this.remove()"></span>
+        <div class="mk-name">Estilo do Homem</div>
+        <div class="mk-sub">Disponível para cessão · transferência no INPI</div>
+        <div class="mk-foot"><div class="price"><small>valor</small><b>A combinar</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
+      </div>
+      <div class="mk-card reveal" data-cat="all">
+        <div class="mk-top"><span class="plat">Marca · INPI</span></div><span class="mk-logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg><img src="logo-plint.png" alt="Plint" onerror="this.remove()"></span>
+        <div class="mk-name">Plint</div>
+        <div class="mk-sub">Disponível para cessão · transferência no INPI</div>
+        <div class="mk-foot"><div class="price"><small>valor</small><b>A combinar</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
+      </div>
+      <div class="mk-card reveal" data-cat="all">
+        <div class="mk-top"><span class="plat">Marca · INPI</span></div><span class="mk-logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L6 20"/></svg><img src="logo-day-store.png" alt="Day Store" onerror="this.remove()"></span>
+        <div class="mk-name">Day Store</div>
+        <div class="mk-sub">Disponível para cessão · transferência no INPI</div>
+        <div class="mk-foot"><div class="price"><small>valor</small><b>A combinar</b></div><a class="js-wa-interesse" href="#" target="_blank" rel="noopener">Tenho interesse</a></div>
       </div>
     </div>
 
@@ -233,13 +253,10 @@ _chips.forEach(chip=>chip.addEventListener('click',()=>{
 
 /* card vira (flip): verso traz Situação/Apresentação/Natureza + classes e atuação; botão de interesse nas duas faces */
 const DETAILS={
-  "Gastronomia a Dois":{proc:"936429500",s:"Registro de marca em vigor",a:"Mista",n:"Produtos e/ou Serviço",c:[["NCL 09","Software, aplicativos e instrumentos eletrônicos."]],obs:"Marca em vigor, disponível para cessão via LIV no INPI."},
-  "Aurora":{s:"Registro de marca em vigor",a:"Nominativa",n:"Produto",c:[["NCL 03","Cosméticos, perfumaria e produtos de higiene pessoal."]]},
-  "Volpe":{s:"Registro de marca em vigor",a:"Mista",n:"Produto",c:[["NCL 25","Vestuário, calçados e artigos de moda."]]},
-  "Maré":{s:"Registro de marca em vigor",a:"Nominativa",n:"Produto",c:[["NCL 30","Café, temperos e produtos alimentícios à base de cereais."]]},
-  "Cumbuca":{s:"Pedido em exame",a:"Mista",n:"Serviço",c:[["NCL 43","Serviços de alimentação, restaurantes e fornecimento de refeições."]]},
-  "Lumen":{s:"Registro de marca em vigor",a:"Nominativa",n:"Produto",c:[["NCL 09","Softwares, aplicativos e equipamentos eletrônicos."]]},
-  "Brava":{s:"Registro de marca em vigor",a:"Mista",n:"Serviço",c:[["NCL 36","Serviços financeiros, seguros e gestão de ativos."]]}
+  "Advogadas da Serra":{desc:"Marca do segmento jurídico, ligada à advocacia."},
+  "Estilo do Homem":{desc:"Marca voltada ao público masculino e ao universo de estilo."},
+  "Plint":{desc:"Marca curta, moderna e versátil, pronta para novos projetos."},
+  "Day Store":{desc:"Marca com identidade de loja e varejo."}
 };
 const _ar='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 const _bk='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>';
@@ -253,12 +270,18 @@ document.querySelectorAll('.mk-card').forEach(card=>{
   const foot=front.querySelector('.mk-foot');
   const hint=document.createElement('span');hint.className='flip-hint';hint.innerHTML='Ver mais detalhes <span class="ic">'+_ar+'</span>';
   if(foot)front.insertBefore(hint,foot);else front.appendChild(hint);
-  const d=DETAILS[name]||{s:"Sob consulta",a:"Sob consulta",n:"Sob consulta",c:[["Classe","Informada na negociação."]]};
+  const d=DETAILS[name]||{};
   const logoHTML=(front.querySelector('.mk-logo')||{}).outerHTML||'';
-  const rows=(d.proc?'<div class="mk-row"><span class="lb">Processo</span><span class="vl">'+d.proc+'</span></div>':'')+'<div class="mk-row"><span class="lb">Status</span><span class="vl">'+d.s+'</span></div>';
-  const cls=d.c.map(c=>'<div class="mk-cls"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>').join('');
+  let detail;
+  if(d.c){
+    const rows=(d.proc?'<div class="mk-row"><span class="lb">Processo</span><span class="vl">'+d.proc+'</span></div>':'')+'<div class="mk-row"><span class="lb">Status</span><span class="vl">'+d.s+'</span></div>';
+    const cls=d.c.map(c=>'<div class="mk-cls"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>').join('');
+    detail=rows+'<div class="mk-cls-head">Classes e atuação</div>'+cls+(d.obs?'<p class="mk-obs"><b>Obs.:</b> '+d.obs+'</p>':'');
+  }else{
+    detail='<p class="mk-desc">'+(d.desc||'Marca disponível para aquisição, com transferência de titularidade conduzida pela LIV.')+'</p><p class="mk-obs"><b>Como funciona:</b> a situação, a classe e a apresentação da marca são confirmadas com uma consulta atualizada ao INPI no momento da negociação, e a transferência de titularidade é conduzida pela LIV.</p>';
+  }
   const back=document.createElement('div');back.className='mk-face mk-back';
-  back.innerHTML='<div class="mk-back-top"><span class="voltar">'+_bk+' Voltar</span>'+logoHTML+'</div><b class="mk-back-title">Detalhes da marca</b><div class="mk-detail">'+rows+'<div class="mk-cls-head">Classes e atuação</div>'+cls+(d.obs?'<p class="mk-obs"><b>Obs.:</b> '+d.obs+'</p>':'')+'</div>'+(foot?foot.outerHTML:'');
+  back.innerHTML='<div class="mk-back-top"><span class="voltar">'+_bk+' Voltar</span>'+logoHTML+'</div><b class="mk-back-title">'+name+'</b><div class="mk-detail">'+detail+'</div>'+(foot?foot.outerHTML:'');
   inner.appendChild(front);inner.appendChild(back);
   card.appendChild(inner);
   card.addEventListener('click',e=>{if(e.target.closest('a'))return;card.classList.toggle('flipped');});
