@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>LIV · Administração</title>
+<style>
+  :root{ --bg:#f7f3ec; --card:#fffdf8; --ink:#22201c; --muted:#7a7164; --line:#e7dfd1; --brass:#9a7b3f; --brass2:#b8995a; --ok:#1f7a4d; --warn:#9a6a18; --bad:#9a3b2f; --info:#2f6f9a; }
+  *{ box-sizing:border-box } html,body{ height:100%; margin:0 }
+  body{ font-family:'Plus Jakarta Sans',system-ui,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--ink); display:flex; flex-direction:column; overflow:hidden }
+  a{ color:var(--brass) }
+  /* login */
+  #login{ min-height:100%; display:flex; align-items:center; justify-content:center; padding:24px }
+  .lbox{ background:var(--card); border:1px solid var(--line); border-radius:18px; padding:28px 26px; width:360px; box-shadow:0 14px 44px rgba(120,95,45,.12) }
+  .logo{ display:flex; flex-direction:column; align-items:center; gap:8px; margin-bottom:18px }
+  .logo img{ height:52px } .logo .cap{ font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--brass) }
+  #login label{ font-size:12px; color:var(--muted); display:block; margin:8px 0 -2px }
+  #login input{ width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:10px; font-size:14px; background:#fff; color:var(--ink); margin-top:6px }
+  #login button{ width:100%; padding:12px; border:0; border-radius:10px; background:var(--brass); color:#fff; font-weight:700; font-size:15px; cursor:pointer; margin-top:14px }
+  .msg{ font-size:13px; padding:9px 11px; border-radius:9px; margin-top:12px } .msg.erro{ background:#f4e6e3; color:var(--bad) }
+  /* app */
+  #app{ display:none; flex-direction:column; height:100%; flex:1; min-height:0 }
+  nav{ display:flex; align-items:center; gap:6px; padding:8px 14px; background:var(--card); border-bottom:1px solid var(--line); flex:0 0 auto }
+  .brand{ font-weight:700; font-size:14px; margin-right:14px; color:var(--brass) }
+  .tab{ text-decoration:none; color:var(--ink); padding:6px 12px; border-radius:9px; cursor:pointer; border:1px solid transparent; line-height:1.15; background:transparent; font:inherit }
+  .tab b{ display:block; font-size:13px; font-weight:700 } .tab span{ font-size:11px; color:var(--muted) }
+  .tab.on{ background:#f3ead7; border-color:var(--brass) }
+  .who{ margin-left:auto; font-size:12px; color:var(--muted) }
+  .sair{ text-decoration:none; color:var(--muted); font-size:12px; border:1px solid var(--line); padding:7px 12px; border-radius:9px; margin-left:10px; cursor:pointer; background:#fff }
+  header.sub{ padding:12px 20px 0 }
+  .bar{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:10px 20px }
+  select,input,button{ font-family:inherit; font-size:13px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink) }
+  button{ background:var(--brass); color:#fff; border:0; font-weight:600; cursor:pointer }
+  button.ghost{ background:#fff; color:var(--brass); border:1px solid var(--line) }
+  .status{ color:var(--muted); font-size:12.5px }
+  .board{ flex:1; min-height:0; display:flex; gap:12px; padding:6px 20px 20px; overflow-x:auto; overflow-y:hidden; align-items:stretch }
+  .col{ flex:0 0 268px; background:#f1ece1; border:1px solid var(--line); border-radius:12px; display:flex; flex-direction:column; max-height:100%; min-height:0 }
+  .col h2{ flex:0 0 auto; font-size:12px; text-transform:uppercase; letter-spacing:.06em; margin:0; padding:11px 13px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line) }
+  .col h2 .hr{ display:flex; gap:7px; align-items:center } .ren{ cursor:pointer; color:var(--muted); font-size:12px } .ren:hover{ color:var(--brass) }
+  .col h2 .c{ font-weight:700; color:var(--muted); font-size:12px; background:#fff; border-radius:999px; padding:1px 8px }
+  .col .body{ padding:10px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; flex:1; min-height:0 }
+  .lead{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px; cursor:grab }
+  .cab{ display:flex; align-items:center; gap:8px } .mono{ width:32px;height:32px;border-radius:8px;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto }
+  .nome{ font-weight:700; font-size:13.5px; line-height:1.25 }
+  .meta{ color:var(--muted); font-size:11.5px; margin-top:4px; line-height:1.45 }
+  .tags{ display:flex; gap:5px; flex-wrap:wrap; margin-top:6px } .tag{ font-size:10px; font-weight:700; padding:2px 7px; border-radius:999px }
+  .tag.indeferido{ background:#f4e6e3; color:var(--bad) } .tag.oposicao,.tag.exigencia{ background:#f6efdd; color:var(--warn) } .tag.outro{ background:#eee9df; color:var(--muted) }
+  .tag.PJ{ background:#e4eef5; color:var(--info) } .tag.PF,.tag.q{ background:#eee9df; color:var(--muted) }
+  .chips{ display:flex; gap:4px; flex-wrap:wrap; margin-top:6px } .chip{ font-size:10px; font-weight:700; color:#fff; padding:2px 7px; border-radius:999px }
+  .oplim{ display:inline-block; font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:6px; background:#e4eef5; color:var(--info); margin-top:6px } .oplim.urg{ background:#f6efdd; color:var(--warn) } .oplim.venc{ background:#eee9df; color:#5f5e5a }
+  .due{ display:inline-block; font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:6px; background:#eee9df; color:var(--muted); margin-top:6px } .due.atras{ background:#f4e6e3; color:var(--bad) }
+  .canais{ display:flex; gap:6px; flex-wrap:wrap; margin-top:8px } .canal{ font-size:11px; font-weight:600; text-decoration:none; color:var(--brass); border:1px solid var(--line); padding:4px 8px; border-radius:7px; background:#fff }
+  .canal.wa{ color:var(--ok); border-color:#cfe6d8 } .canal.ig{ color:#b03a6e; border-color:#eccfdc } .canal.em{ color:var(--info); border-color:#cfe0ec }
+  .modalbg{ position:fixed; inset:0; background:rgba(34,32,28,.45); display:none; align-items:flex-start; justify-content:center; padding:28px 14px; overflow-y:auto; z-index:50 }
+  .modalcard{ background:var(--bg); width:640px; max-width:100%; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.28) }
+  .mhead{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:15px 18px; border-bottom:1px solid var(--line); background:var(--card); border-radius:14px 14px 0 0 }
+  .mhead h3{ margin:0; font-size:17px } .mhead .s{ font-size:12px; color:var(--muted); margin-top:3px }
+  .mx{ border:0; background:transparent; font-size:22px; cursor:pointer; color:var(--muted) }
+  .mbody{ padding:16px 18px; display:flex; flex-direction:column; gap:15px }
+  .sec h4{ margin:0 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--brass) }
+  .mrow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center } .mrow label{ font-size:12px; color:var(--muted) }
+  .et{ font-size:11px; font-weight:700; color:#fff; padding:4px 9px; border-radius:7px; cursor:pointer; border:2px solid transparent; opacity:.45 } .et.on{ opacity:1; border-color:rgba(0,0,0,.3) }
+  .coment{ background:var(--card); border:1px solid var(--line); border-radius:9px; padding:8px 10px; font-size:12.5px; margin-bottom:6px } .coment .ctxt{ white-space:pre-wrap } .coment .q{ color:var(--muted); font-size:11px; margin-top:3px }
+  .cedit{ cursor:pointer; color:var(--brass) } .cdel{ cursor:pointer; color:var(--bad) }
+  textarea{ width:100%; border:1px solid var(--line); border-radius:9px; padding:9px; font-family:inherit; font-size:13px; min-height:54px; background:#fff; color:var(--ink) }
+  .painel{ padding:26px; color:var(--muted); font-size:14px; line-height:1.7 } .painel h3{ color:var(--ink) }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <form class="lbox" id="loginForm">
+    <div class="logo"><img src="/liv_mark_dark.png" alt="LIV"><span class="cap">Administração</span></div>
+    <label>E-mail</label><input type="email" id="email" autocomplete="username" autofocus>
+    <label>Senha</label><input type="password" id="senha" autocomplete="current-password">
+    <button type="submit">Entrar</button>
+    <div id="loginMsg"></div>
+  </form>
+</div>
+
+<div id="app">
+  <nav>
+    <span class="brand">LIV · Administração</span>
+    <button class="tab on" data-tab="leads"><b>Leads</b><span>Kanban de prospecção</span></button>
+    <button class="tab" data-tab="dashboard"><b>Dashboard</b><span>RPI · panorama</span></button>
+    <button class="tab" data-tab="carteira"><b>Carteira</b><span>Camila de Liz</span></button>
+    <button class="tab" data-tab="consulta"><b>Consulta</b><span>busca INPI</span></button>
+    <span class="who" id="who"></span>
+    <button class="sair" id="sair">Sair</button>
+  </nav>
+
+  <div id="view-leads" style="display:flex; flex-direction:column; flex:1; min-height:0">
+    <div class="bar">
+      <button id="btNovoCard">+ Novo card</button>
+      <button class="ghost" id="btNovaCol">+ Coluna</button>
+      <span style="width:8px"></span>
+      <span class="status">Filtros:</span>
+      <select id="fPessoa"><option value="">Pessoa: todas</option><option value="PJ">PJ</option><option value="PF">PF</option><option value="?">A classificar</option></select>
+      <select id="fProblema"><option value="">Problema: todos</option><option value="indeferido">Indeferido</option><option value="oposicao">Oposição</option><option value="exigencia">Exigência</option></select>
+      <select id="fUF" style="min-width:172px"></select>
+      <input id="fTxt" placeholder="buscar titular…" style="min-width:150px">
+      <span class="status" id="status"></span>
+    </div>
+    <div class="board" id="board"></div>
+  </div>
+
+  <div id="view-dashboard" class="painel" style="display:none"></div>
+  <div id="view-carteira" class="painel" style="display:none"></div>
+  <div id="view-consulta" class="painel" style="display:none"></div>
+</div>
+
+<div class="modalbg" id="modal"><div class="modalcard" id="modalcard"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// ===== CONFIG (preencher com os dados do projeto Supabase) ====================
+const SUPABASE_URL = "https://fptkrfvbkxrzhvqgvime.supabase.co";
+const SUPABASE_ANON = "sb_publishable_2ItWHYF3hao6aYP4SONG0A_DpGyAuR3";  // publishable (pública)
+// =============================================================================
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+const $ = s => document.querySelector(s);
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const novoId = () => 'i'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+let STAGES=[], LEADS=[], ETIQ=[];
+
+const REGIOES={Norte:['AC','AP','AM','PA','RO','RR','TO'],Nordeste:['AL','BA','CE','MA','PB','PE','PI','RN','SE'],'Centro-Oeste':['DF','GO','MT','MS'],Sudeste:['ES','MG','RJ','SP'],Sul:['PR','RS','SC']};
+const UF_NOME={AC:'Acre',AP:'Amapá',AM:'Amazonas',PA:'Pará',RO:'Rondônia',RR:'Roraima',TO:'Tocantins',AL:'Alagoas',BA:'Bahia',CE:'Ceará',MA:'Maranhão',PB:'Paraíba',PE:'Pernambuco',PI:'Piauí',RN:'Rio Grande do Norte',SE:'Sergipe',DF:'Distrito Federal',GO:'Goiás',MT:'Mato Grosso',MS:'Mato Grosso do Sul',ES:'Espírito Santo',MG:'Minas Gerais',RJ:'Rio de Janeiro',SP:'São Paulo',PR:'Paraná',RS:'Rio Grande do Sul',SC:'Santa Catarina'};
+function montaUF(){ let h='<option value="">UF: todas</option>'; for(const reg of Object.keys(REGIOES)){ h+='<optgroup label="'+reg+'"><option value="reg:'+reg+'">Todo o '+reg+'</option>'; for(const uf of REGIOES[reg]) h+='<option value="'+uf+'">'+uf+' — '+UF_NOME[uf]+'</option>'; h+='</optgroup>'; } $('#fUF').innerHTML=h; }
+
+// ===== AUTH ===================================================================
+$('#loginForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  $('#loginMsg').innerHTML='';
+  const { error } = await sb.auth.signInWithPassword({ email:$('#email').value.trim(), password:$('#senha').value });
+  if(error){ $('#loginMsg').innerHTML='<div class="msg erro">'+esc(error.message==='Invalid login credentials'?'E-mail ou senha incorretos.':error.message)+'</div>'; return; }
+  entrar();
+});
+$('#sair').addEventListener('click', async ()=>{ await sb.auth.signOut(); location.reload(); });
+
+async function entrar(){
+  const { data:{ session } } = await sb.auth.getSession();
+  if(!session){ $('#login').style.display='flex'; $('#app').style.display='none'; return; }
+  $('#who').textContent = session.user.email;
+  $('#login').style.display='none'; $('#app').style.display='flex';
+  montaUF();
+  await carregarTudo();
+}
+
+// ===== DADOS ==================================================================
+async function selecTudo(tabela){
+  let all=[], from=0, size=1000;
+  while(true){
+    const { data, error } = await sb.from(tabela).select('*').range(from, from+size-1);
+    if(error) throw error;
+    all=all.concat(data||[]);
+    if(!data || data.length<size) break;
+    from+=size;
+  }
+  return all;
+}
+async function carregarTudo(){
+  $('#status').textContent='carregando…';
+  try{
+    const [st, et, lv] = await Promise.all([
+      sb.from('liv_estagios').select('*').order('ordem'),
+      sb.from('liv_etiquetas').select('*'),
+      selecTudo('leads'),
+    ]);
+    STAGES=(st.data||[]).map(s=>({key:s.key,label:s.label,cor:s.cor}));
+    ETIQ=(et.data||[]).map(e=>({id:e.id,nome:e.nome,cor:e.cor}));
+    LEADS=lv||[];
+    render();
+  }catch(e){ $('#status').textContent='erro: '+e.message; }
+}
+
+// ===== RENDER BOARD ===========================================================
+function filtros(){ return { pessoa:$('#fPessoa').value, problema:$('#fProblema').value, uf:$('#fUF').value, txt:$('#fTxt').value.trim().toLowerCase() }; }
+function passa(l,f){
+  if(f.pessoa && l.tipo_pessoa!==f.pessoa) return false;
+  if(f.problema && l.tipo_problema!==f.problema) return false;
+  if(f.uf){ if(f.uf.indexOf('reg:')===0){ if(!(REGIOES[f.uf.slice(4)]||[]).includes(l.uf||'')) return false; } else if((l.uf||'')!==f.uf) return false; }
+  if(f.txt && !(l.titular||'').toLowerCase().includes(f.txt)) return false;
+  return true;
+}
+const etqMap=()=>{ const m={}; (ETIQ||[]).forEach(e=>m[e.id]=e); return m; };
+const nomeEstagio=k=>{ const s=(STAGES||[]).find(x=>x.key===k); return s?s.label:k; };
+const iniciais=s=>{ const p=String(s||'?').replace(/[0-9.]/g,' ').trim().split(' ').filter(Boolean); return ((p[0]&&p[0][0]||'')+(p[1]&&p[1][0]||'')).toUpperCase()||'?'; };
+const corDe=s=>{ let h=0; s=String(s||''); for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))%360; return 'hsl('+h+',42%,52%)'; };
+const FREE_MAIL=new Set(['gmail.com','hotmail.com','outlook.com','outlook.com.br','yahoo.com','yahoo.com.br','live.com','icloud.com','bol.com.br','uol.com.br','terra.com.br','globo.com','msn.com','ig.com.br','aol.com']);
+function dominioDe(l){ const e=l.enriquecimento; if(!(e&&e.email&&e.email.includes('@'))) return ''; const d=e.email.split('@')[1].trim().toLowerCase(); return FREE_MAIL.has(d)?'':d; }
+function diasRest(iso){ if(!iso) return null; const h=new Date(); h.setHours(0,0,0,0); const d=new Date(iso+'T00:00:00'); return Math.round((d-h)/86400000); }
+function fmtData(s){ try{ const d=new Date(s); return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return s; } }
+function atrasado(l){ return l.data_entrega && new Date(l.data_entrega)<new Date() && l.estagio!=='ganho' && l.estagio!=='perdido'; }
+function chipsMini(l){ const m=etqMap(); const ids=l.etiquetas||[]; if(!ids.length) return ''; return '<div class="chips">'+ids.map(id=>{const e=m[id]; return e?'<span class="chip" style="background:'+e.cor+'">'+esc(e.nome)+'</span>':'';}).join('')+'</div>'; }
+function limiteBadge(l){ if(!l.data_limite) return ''; const dr=diasRest(l.data_limite); const dt=new Date(l.data_limite+'T00:00:00').toLocaleDateString('pt-BR'); const cls='oplim'+(dr<0?' venc':(dr<=10?' urg':'')); return '<div><span class="'+cls+'">⚖ '+(dr<0?('oposição encerrada · '+dt):('oposição até '+dt+' · faltam '+dr+'d'))+'</span></div>'; }
+function dueBadge(l){ if(!l.data_entrega) return ''; const at=atrasado(l); return '<div><span class="due'+(at?' atras':'')+'">'+(at?'⚠ Em atraso · ':'')+fmtData(l.data_entrega)+'</span></div>'; }
+function canaisHTML(l){ const e=l.enriquecimento||{}; const nome=e.nomeFantasia||e.razaoSocial||l.titular||''; const wa=e.telefone?('https://wa.me/55'+String(e.telefone).replace(/[^0-9]/g,'')):''; const dom=dominioDe(l); const email=e.email||''; const ig='https://www.google.com/search?q='+encodeURIComponent('site:instagram.com '+nome); const gg='https://www.google.com/search?q='+encodeURIComponent(nome+' '+(l.uf||'')); const a=(c,h,t)=>'<a class="canal'+c+'" target="_blank" rel="noopener" href="'+h+'">'+t+'</a>'; let b=''; if(wa)b+=a(' wa',wa,'WhatsApp'); if(email)b+=a(' em','mailto:'+email,'E-mail'); b+=a(' ig',ig,'Instagram'); if(dom)b+=a('','https://'+dom,'Site'); b+=a('',gg,'Google'); return '<div class="canais">'+b+'</div>'; }
+function logoBox(l){ const e=l.enriquecimento||{}; const nome=e.nomeFantasia||e.razaoSocial||l.titular||'?'; return '<span class="mono" style="background:'+corDe(nome)+'">'+esc(iniciais(nome))+'</span>'; }
+function cardHTML(l){ const t=l.tipo_problema||'outro';
+  return '<div class="lead" draggable="true" data-id="'+esc(l.id)+'">'
+   +'<div class="cab">'+logoBox(l)+'<div class="nome">'+esc(l.titular||'—')+'</div></div>'
+   +'<div class="tags"><span class="tag '+t+'">'+esc(t)+'</span><span class="tag '+(l.tipo_pessoa==='?'?'q':esc(l.tipo_pessoa))+'">'+esc(l.tipo_pessoa)+'</span></div>'
+   +chipsMini(l)
+   +'<div class="meta">'+esc(l.marca||'(nominativa s/ figura)')+'<br>proc. '+esc(l.numero||'—')+(l.classes?(' · cl. '+esc(l.classes)):'')+(l.uf?(' · '+esc(l.uf)):'')+(l.data_evento?(' · '+esc(l.data_evento)):'')+'<br>'+esc(l.despacho||'')+'</div>'
+   +limiteBadge(l)+dueBadge(l)+canaisHTML(l)+'</div>';
+}
+function render(){
+  const f=filtros(); const vis=LEADS.filter(l=>passa(l,f)); const board=$('#board'); board.innerHTML='';
+  for(const s of STAGES){
+    const doS=vis.filter(l=>l.estagio===s.key); const col=document.createElement('div'); col.className='col'; col.dataset.estagio=s.key;
+    const mostra=doS.slice(0,80);
+    col.innerHTML='<h2 style="color:'+s.cor+'">'+esc(s.label)+'<span class="hr"><span class="ren" data-est="'+s.key+'" title="renomear">✎</span><span class="c">'+doS.length+'</span></span></h2><div class="body">'+mostra.map(cardHTML).join('')+(doS.length>mostra.length?('<div class="status">+ '+(doS.length-mostra.length)+' (filtre)</div>'):'')+'</div>';
+    board.appendChild(col);
+  }
+  ligar();
+  document.querySelectorAll('.ren').forEach(r=> r.onclick=e=>{ e.stopPropagation(); const s=STAGES.find(x=>x.key===r.dataset.est); renomearCol(r.dataset.est, s?s.label:''); });
+  $('#status').textContent=vis.length+' de '+LEADS.length+' leads';
+}
+function ligar(){
+  document.querySelectorAll('.lead').forEach(c=>{
+    c.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',c.dataset.id));
+    c.addEventListener('click',e=>{ if(e.target.closest('a,button,.canais')) return; abrirCard(c.dataset.id); });
+  });
+  document.querySelectorAll('.col').forEach(col=>{
+    col.addEventListener('dragover',e=>e.preventDefault());
+    col.addEventListener('drop',async e=>{ e.preventDefault(); const id=e.dataTransfer.getData('text/plain'); const estagio=col.dataset.estagio; const l=LEADS.find(x=>x.id===id); if(!l||l.estagio===estagio) return; l.estagio=estagio; render(); await moverLead(id,estagio); });
+  });
+}
+function leadDe(id){ return LEADS.find(l=>l.id===id); }
+
+// ===== MUTAÇÕES (Supabase) ====================================================
+async function moverLead(id,estagio){ await sb.from('leads').update({estagio, atualizado_em:new Date().toISOString()}).eq('id',id); await sb.from('interacoes').insert({id:novoId(), lead_id:id, tipo:'mover', estagio, quando:new Date().toISOString()}); }
+async function setData(id,v){ await sb.from('leads').update({data_entrega:v||null, atualizado_em:new Date().toISOString()}).eq('id',id); const l=leadDe(id); if(l) l.data_entrega=v||null; }
+async function toggleEtq(id,etq,on){ const l=leadDe(id); let arr=(l.etiquetas||[]).slice(); if(on){ if(!arr.includes(etq)) arr.push(etq); } else arr=arr.filter(x=>x!==etq); l.etiquetas=arr; await sb.from('leads').update({etiquetas:arr, atualizado_em:new Date().toISOString()}).eq('id',id); }
+async function carregarInteracoes(id){ const { data } = await sb.from('interacoes').select('*').eq('lead_id',id).order('quando'); return data||[]; }
+async function comentar(id,nota){ await sb.from('interacoes').insert({id:novoId(), lead_id:id, tipo:'nota', nota, quando:new Date().toISOString()}); }
+async function editarComent(intId,nota){ await sb.from('interacoes').update({nota, editado_em:new Date().toISOString()}).eq('id',intId); }
+async function removerComent(intId){ await sb.from('interacoes').delete().eq('id',intId); }
+
+// ===== CARD (modal) ===========================================================
+function fecharCard(){ $('#modal').style.display='none'; $('#modalcard').innerHTML=''; }
+async function abrirCard(id){ const l=leadDe(id); if(!l) return; l._int=await carregarInteracoes(id); renderModal(l); $('#modal').style.display='flex'; }
+function renderModal(l){
+  const stages=STAGES.map(s=>'<option value="'+s.key+'"'+(s.key===l.estagio?' selected':'')+'>'+esc(s.label)+'</option>').join('');
+  const picker=(ETIQ||[]).map(e=>'<span class="et'+((l.etiquetas||[]).includes(e.id)?' on':'')+'" style="background:'+e.cor+'" data-et="'+e.id+'">'+esc(e.nome)+'</span>').join('');
+  const dv=l.data_entrega?String(l.data_entrega).slice(0,16):'';
+  const coments=(l._int||[]).slice().reverse().map(it=>{ if(it.tipo==='nota'){ return '<div class="coment"><div class="ctxt">'+esc(it.nota||'')+'</div><div class="q">'+fmtData(it.quando)+(it.editado_em?' · editado':'')+' · <a class="cedit" data-int="'+esc(it.id)+'">editar</a> · <a class="cdel" data-int="'+esc(it.id)+'">excluir</a></div></div>'; } const txt=it.tipo==='mover'?('→ moveu para '+nomeEstagio(it.estagio)):(it.nota||it.tipo); return '<div class="coment"><div class="ctxt">'+esc(txt)+'</div><div class="q">'+fmtData(it.quando)+'</div></div>'; }).join('')||'<div class="q" style="color:var(--muted);font-size:12px">sem registros</div>';
+  $('#modalcard').innerHTML='<div class="mhead"><div><h3>'+esc(l.titular||'—')+'</h3><div class="s">proc. '+esc(l.numero||'—')+(l.uf?(' · '+esc(l.uf)):'')+(l.classes?(' · cl. '+esc(l.classes)):'')+' · '+esc(l.despacho||'')+'</div></div><button class="mx" id="mx">×</button></div>'
+    +'<div class="mbody">'
+    +'<div class="mrow"><label>Etapa</label><select id="mEst">'+stages+'</select><label>Prazo</label><input type="datetime-local" id="mData" value="'+dv+'">'+(atrasado(l)?'<span class="due atras">⚠ Em atraso</span>':'')+'</div>'+limiteBadge(l)
+    +'<div class="sec"><h4>Etiquetas (tipo de lead)</h4><div id="mPick">'+picker+'</div></div>'
+    +'<div class="sec"><h4>Dados &amp; canais</h4>'+canaisHTML(l)+'</div>'
+    +'<div class="sec"><h4>Observações / comentários</h4><textarea id="mCom" placeholder="escreva uma observação..."></textarea><div style="margin-top:6px"><button id="mComBt">Comentar</button></div><div style="margin-top:10px">'+coments+'</div></div>'
+    +'</div>';
+  $('#mx').onclick=fecharCard;
+  $('#mEst').onchange=async e=>{ l.estagio=e.target.value; await moverLead(l.id,l.estagio); l._int=await carregarInteracoes(l.id); render(); renderModal(l); };
+  $('#mData').onchange=async e=>{ await setData(l.id,e.target.value); render(); renderModal(l); };
+  $('#mPick').querySelectorAll('.et').forEach(el=> el.onclick=async ()=>{ await toggleEtq(l.id,el.dataset.et,!el.classList.contains('on')); render(); renderModal(l); });
+  $('#mComBt').onclick=async ()=>{ const t=$('#mCom').value.trim(); if(!t) return; await comentar(l.id,t); l._int=await carregarInteracoes(l.id); renderModal(l); };
+  $('#modalcard').querySelectorAll('.cedit').forEach(a=> a.onclick=()=>{ const it=(l._int||[]).find(x=>x.id===a.dataset.int); if(!it) return; const box=a.closest('.coment'); box.innerHTML='<textarea class="cedt">'+esc(it.nota||'')+'</textarea><div style="margin-top:6px"><button class="csave">Salvar</button> <button class="ghost ccancel">Cancelar</button></div>'; const ta=box.querySelector('.cedt'); ta.focus(); box.querySelector('.csave').onclick=async ()=>{ await editarComent(it.id,ta.value); l._int=await carregarInteracoes(l.id); renderModal(l); }; box.querySelector('.ccancel').onclick=()=>renderModal(l); });
+  $('#modalcard').querySelectorAll('.cdel').forEach(a=> a.onclick=async ()=>{ if(!confirm('Excluir este comentário?')) return; await removerComent(a.dataset.int); l._int=await carregarInteracoes(l.id); renderModal(l); });
+}
+$('#modal').addEventListener('click', e=>{ if(e.target.id==='modal') fecharCard(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') fecharCard(); });
+
+// ===== NOVO CARD / COLUNAS ====================================================
+$('#btNovoCard').addEventListener('click', ()=>{
+  const stages=STAGES.map(s=>'<option value="'+s.key+'">'+esc(s.label)+'</option>').join('');
+  const inp='padding:9px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff';
+  $('#modalcard').innerHTML='<div class="mhead"><div><h3>Novo card</h3><div class="s">cadastro manual</div></div><button class="mx" id="mx">×</button></div><div class="mbody"><div class="sec">'
+    +'<div class="mrow"><label style="width:90px">Nome/Titular</label><input id="nTit" style="flex:1;min-width:200px;'+inp+'"></div>'
+    +'<div class="mrow" style="margin-top:8px"><label style="width:90px">Marca</label><input id="nMarca" style="flex:1;min-width:160px;'+inp+'"></div>'
+    +'<div class="mrow" style="margin-top:8px"><label>UF</label><input id="nUF" maxlength="2" style="width:60px;text-transform:uppercase;'+inp+'"><label>Classe</label><input id="nCls" style="width:90px;'+inp+'"><label>Coluna</label><select id="nEst" style="'+inp+'">'+stages+'</select></div>'
+    +'<div style="margin-top:12px"><button id="nSalvar">Criar card</button></div></div></div>';
+  $('#mx').onclick=fecharCard;
+  $('#nSalvar').onclick=async ()=>{ const titular=$('#nTit').value.trim(); if(!titular){ $('#nTit').focus(); return; } const now=new Date().toISOString(); const lead={ id:'man-'+Date.now(), titular, marca:$('#nMarca').value.trim()||null, uf:$('#nUF').value.trim().toUpperCase()||null, classes:$('#nCls').value.trim()||null, despacho:'Cadastro manual', tipo_problema:'outro', tipo_pessoa:'?', origem:'manual', estagio:$('#nEst').value, etiquetas:[], anexos:[], criado_em:now, atualizado_em:now }; const { error }=await sb.from('leads').insert(lead); if(error){ alert(error.message); return; } fecharCard(); await carregarTudo(); };
+  $('#modal').style.display='flex';
+});
+$('#btNovaCol').addEventListener('click', async ()=>{
+  const nome=prompt('Nome da nova coluna:'); if(!nome||!nome.trim()) return;
+  const cor=(prompt('Cor (hex), ex.: #9a7b3f','#9a7b3f')||'#9a7b3f').trim();
+  const key=nome.trim().toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||('col'+Date.now());
+  const ordem=Math.max(0,...STAGES.map((s,i)=>(i+1)*10))+10;
+  const { error }=await sb.from('liv_estagios').insert({key,label:nome.trim(),cor,ordem}); if(error){ alert(error.message); return; } await carregarTudo();
+});
+async function renomearCol(key,atual){ const nome=prompt('Novo nome da coluna:',atual||''); if(!nome||!nome.trim()) return; const { error }=await sb.from('liv_estagios').update({label:nome.trim()}).eq('key',key); if(error){ alert(error.message); return; } await carregarTudo(); }
+
+['fPessoa','fProblema','fUF','fTxt'].forEach(id=> $('#'+id).addEventListener('input', render));
+
+// ===== TABS ===================================================================
+document.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x===t));
+  const v=t.dataset.tab;
+  ['leads','dashboard','carteira','consulta'].forEach(k=> $('#view-'+k).style.display=(k===v?(k==='leads'?'flex':'block'):'none'));
+  if(v!=='leads' && !$('#view-'+v).innerHTML.trim()){
+    $('#view-'+v).innerHTML='<h3>Em migração</h3><p>Esta aba (Dashboard / Carteira / Consulta) depende do processamento pesado do INPI e está sendo migrada. Por enquanto ela continua disponível no portal local. O <b>Leads</b> (CRM) já roda 100% aqui no Supabase.</p>';
+  }
+});
+
+// ===== START ==================================================================
+if(SUPABASE_URL.indexOf('COLE_AQUI')===0){ $('#loginMsg').innerHTML='<div class="msg erro">Falta configurar a URL e a chave do Supabase no topo do arquivo.</div>'; }
+sb.auth.getSession().then(({data:{session}})=>{ if(session) entrar(); });
+</script>
+</body>
+</html>
