@@ -18,7 +18,12 @@
   #login label{ font-size:12px; color:var(--muted); display:block; margin:8px 0 -2px }
   #login input{ width:100%; padding:11px 13px; border:1px solid var(--line); border-radius:10px; font-size:14px; background:#fff; color:var(--ink); margin-top:6px }
   #login button{ width:100%; padding:12px; border:0; border-radius:10px; background:var(--brass); color:#fff; font-weight:700; font-size:15px; cursor:pointer; margin-top:14px }
-  .msg{ font-size:13px; padding:9px 11px; border-radius:9px; margin-top:12px } .msg.erro{ background:#f4e6e3; color:var(--bad) }
+  .msg{ font-size:13px; padding:9px 11px; border-radius:9px; margin-top:12px } .msg.erro{ background:#f4e6e3; color:var(--bad) } .msg.ok{ background:#e6f2eb; color:var(--ok) }
+  .pwrap{ position:relative; margin-top:6px }
+  #login .pwrap input{ margin-top:0; padding-right:74px }
+  #login .tog{ position:absolute; right:6px; top:50%; transform:translateY(-50%); width:auto; margin:0; padding:6px 8px; background:transparent; color:var(--brass); font-size:12px; font-weight:600; border:0; cursor:pointer }
+  #login .linha{ display:flex; justify-content:flex-end; margin-top:10px } #login .linha a{ color:var(--brass); font-size:12.5px; cursor:pointer; text-decoration:none } #login .linha a:hover{ text-decoration:underline }
+  #login .tit{ font-size:15px; font-weight:700; text-align:center; margin-bottom:2px }
   /* app */
   #app{ display:none; flex-direction:column; height:100%; flex:1; min-height:0 }
   nav{ display:flex; align-items:center; gap:6px; padding:8px 14px; background:var(--card); border-bottom:1px solid var(--line); flex:0 0 auto }
@@ -73,9 +78,20 @@
   <form class="lbox" id="loginForm">
     <div class="logo"><img src="/liv_mark_dark.png" alt="LIV"><span class="cap">Administração</span></div>
     <label>E-mail</label><input type="email" id="email" autocomplete="username" autofocus>
-    <label>Senha</label><input type="password" id="senha" autocomplete="current-password">
+    <label>Senha</label>
+    <div class="pwrap"><input type="password" id="senha" autocomplete="current-password"><button type="button" class="tog" id="togSenha">mostrar</button></div>
     <button type="submit">Entrar</button>
+    <div class="linha"><a id="esqueci">Esqueceu a senha?</a></div>
     <div id="loginMsg"></div>
+  </form>
+
+  <form class="lbox" id="resetForm" style="display:none">
+    <div class="logo"><img src="/liv_mark_dark.png" alt="LIV"><span class="cap">Administração</span></div>
+    <div class="tit">Definir nova senha</div>
+    <label>Nova senha</label>
+    <div class="pwrap"><input type="password" id="novaSenha" autocomplete="new-password"><button type="button" class="tog" id="togNova">mostrar</button></div>
+    <button type="submit">Salvar senha</button>
+    <div id="resetMsg"></div>
   </form>
 </div>
 
@@ -137,6 +153,32 @@ $('#loginForm').addEventListener('submit', async e=>{
   entrar();
 });
 $('#sair').addEventListener('click', async ()=>{ await sb.auth.signOut(); location.reload(); });
+
+// mostrar / ocultar senha
+function tog(btnId, inpId){ $('#'+btnId).onclick=()=>{ const i=$('#'+inpId); const most=i.type==='text'; i.type=most?'password':'text'; $('#'+btnId).textContent=most?'mostrar':'ocultar'; }; }
+tog('togSenha','senha'); tog('togNova','novaSenha');
+
+// esqueceu a senha → envia link de recuperação por e-mail
+$('#esqueci').onclick=async ()=>{
+  const email=$('#email').value.trim();
+  if(!email){ $('#loginMsg').innerHTML='<div class="msg erro">Digite seu e-mail no campo acima e clique de novo.</div>'; $('#email').focus(); return; }
+  const { error }=await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin+'/admin/' });
+  $('#loginMsg').innerHTML = error ? '<div class="msg erro">'+esc(error.message)+'</div>' : '<div class="msg ok">Enviamos um link de recuperação para '+esc(email)+'. Confira seu e-mail (inclusive o spam).</div>';
+};
+
+// ao voltar pelo link do e-mail, o Supabase dispara PASSWORD_RECOVERY
+sb.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY'){ $('#login').style.display='flex'; $('#app').style.display='none'; $('#loginForm').style.display='none'; $('#resetForm').style.display='block'; $('#novaSenha').focus(); } });
+
+// salvar a nova senha
+$('#resetForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const nova=$('#novaSenha').value;
+  if(nova.length<6){ $('#resetMsg').innerHTML='<div class="msg erro">A senha precisa ter ao menos 6 caracteres.</div>'; return; }
+  const { error }=await sb.auth.updateUser({ password: nova });
+  if(error){ $('#resetMsg').innerHTML='<div class="msg erro">'+esc(error.message)+'</div>'; return; }
+  $('#resetMsg').innerHTML='<div class="msg ok">Senha alterada! Entrando…</div>';
+  setTimeout(()=>{ $('#resetForm').style.display='none'; $('#loginForm').style.display='block'; entrar(); }, 1200);
+});
 
 async function entrar(){
   const { data:{ session } } = await sb.auth.getSession();
@@ -300,7 +342,7 @@ document.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{
 
 // ===== START ==================================================================
 if(SUPABASE_URL.indexOf('COLE_AQUI')===0){ $('#loginMsg').innerHTML='<div class="msg erro">Falta configurar a URL e a chave do Supabase no topo do arquivo.</div>'; }
-sb.auth.getSession().then(({data:{session}})=>{ if(session) entrar(); });
+if(!location.hash.includes('type=recovery')){ sb.auth.getSession().then(({data:{session}})=>{ if(session) entrar(); }); }
 </script>
 </body>
 </html>
