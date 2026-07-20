@@ -70,6 +70,23 @@
   .cedit{ cursor:pointer; color:var(--brass) } .cdel{ cursor:pointer; color:var(--bad) }
   textarea{ width:100%; border:1px solid var(--line); border-radius:9px; padding:9px; font-family:inherit; font-size:13px; min-height:54px; background:#fff; color:var(--ink) }
   .painel{ padding:26px; color:var(--muted); font-size:14px; line-height:1.7 } .painel h3{ color:var(--ink) }
+  #view-dashboard, #view-carteira{ overflow-y:auto }
+  .dbar{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:14px 26px 4px }
+  .dwrap{ padding:6px 26px 40px }
+  .panel{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin:12px 0 }
+  .panel h4{ font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--brass); margin:0 0 12px }
+  .stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px }
+  .stat{ border:1px solid var(--line); border-radius:10px; padding:10px 12px; background:#fff } .stat b{ display:block; font-size:22px } .stat span{ font-size:12px; color:var(--muted) }
+  .item{ border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin:8px 0; background:#fff } .item .top{ display:flex; justify-content:space-between; gap:10px; align-items:baseline } .item .m{ color:var(--muted); font-size:12.5px; margin-top:3px }
+  .pill{ font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap }
+  .pill.bom{ background:#e6f2eb; color:var(--ok) } .pill.ruim{ background:#f4e6e3; color:var(--bad) } .pill.alerta{ background:#f6efdd; color:var(--warn) } .pill.chance{ background:#e4eef5; color:var(--info) } .pill.neutro{ background:#eee9df; color:var(--muted) }
+  .destaque{ border-color:var(--brass); box-shadow:0 0 0 2px rgba(154,123,63,.12) } .lead-l{ border-left:4px solid var(--bad) }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:14px } @media(max-width:760px){ .grid2{ grid-template-columns:1fr } }
+  .count{ font-size:12px; color:var(--muted); font-weight:600 } .more{ font-size:12px; color:var(--brass); margin-top:6px }
+  .cgrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:12px }
+  .proc{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px 15px } .proc .n{ font-weight:700; font-size:15px } .proc .m{ font-size:12.5px; color:var(--muted); margin-top:6px; line-height:1.55 } .proc b{ color:var(--ink) }
+  .areah{ font-size:13px; font-weight:700; color:var(--brass); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--line); padding-bottom:5px; margin:18px 0 10px }
+  details.cod{ margin:6px 26px 30px } details.cod summary{ cursor:pointer; font-weight:700; color:var(--brass) } table.cod{ width:100%; border-collapse:collapse; font-size:12.5px; margin-top:10px } table.cod td,table.cod th{ text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top } table.cod th{ color:var(--muted) }
 </style>
 </head>
 <body>
@@ -330,14 +347,77 @@ async function renomearCol(key,atual){ const nome=prompt('Novo nome da coluna:',
 
 ['fPessoa','fProblema','fUF','fTxt'].forEach(id=> $('#'+id).addEventListener('input', render));
 
+// ===== DASHBOARD + CARTEIRA (lêem snapshots gravados no Supabase) =============
+const pillCls=t=>['bom','ruim','alerta','chance','neutro'].includes(t)?t:'neutro';
+const fmtN=n=>Number(n||0).toLocaleString('pt-BR');
+async function snap(chave){ const { data }=await sb.from('liv_snapshots').select('dados').eq('chave',chave).maybeSingle(); return data?data.dados:null; }
+
+let DASH_LOADED=false;
+function itemDash(p, opts){ opts=opts||{}; return '<div class="item'+(opts.lead?' lead-l':'')+'"><div class="top"><span style="font-weight:700;font-size:15px">'+esc(p.marca||'— (nominativa)')+'</span><span class="pill '+pillCls(p.tom)+'">'+esc(p.despacho||'?')+'</span></div><div class="m">Processo '+esc(p.numero)+(p.classes?(' · cl. '+esc(p.classes)):'')+' · <b>'+esc(p.titular||'—')+'</b>'+(p.uf?(' / '+esc(p.uf)):'')+(p.semProcurador?' · <i>o próprio</i>':'')+'</div></div>'; }
+function blocoDash(titulo, dados, opts){ opts=opts||{}; if(!dados) return ''; const lista=(dados.amostra||[]).map(p=>itemDash(p,opts)).join('')||'<div class="count">'+(opts.vazio||'nenhum')+'</div>'; const more=dados.total>(dados.amostra||[]).length?'<div class="more">+ '+fmtN(dados.total-dados.amostra.length)+' não exibidos</div>':''; return '<div class="panel'+(opts.destaque?' destaque':'')+'"><h4>'+esc(titulo)+' <span class="count">· '+fmtN(dados.total)+'</span></h4>'+lista+more+'</div>'; }
+async function abreRevista(numero){
+  $('#dStatus').textContent='carregando RPI '+numero+'…';
+  const a=await snap('dashboard:'+numero); if(!a){ $('#dStatus').textContent='sem dados dessa revista'; return; }
+  const s=a.stats, st=(vv,l)=>'<div class="stat"><b>'+fmtN(vv)+'</b><span>'+l+'</span></div>';
+  let h='<div class="panel"><h4>Panorama da edição</h4><div class="stats">'+st(s.concedidos,'Concessões')+st(s.deferidos,'Deferimentos')+st(s.publicadosParaOposicao,'Public. p/ oposição')+st(s.indeferidos,'Indeferidos')+st(s.oposicoes,'Oposições')+st(s.exigencias,'Exigências')+st(s.semProcurador,'O próprio')+st(s.comProcurador,'Com procurador')+'</div></div>';
+  h+=blocoDash('Processos de "'+esc(a.procuradorAlvo)+'"', a.camila, {destaque:true, vazio:'Nenhum processo deste procurador nesta edição.'});
+  h+=blocoDash('★ Leads quentes — "o próprio" que travou', a.leadsQuentes, {destaque:true, lead:true});
+  h+='<div class="grid2">'+blocoDash('Indeferidos', a.indeferidos)+blocoDash('Oposições no processo', a.oposicoes)+'</div>';
+  h+=blocoDash('"O próprio" (sem procurador)', a.oproprio);
+  $('#dWrap').innerHTML=h;
+  $('#dStatus').innerHTML='RPI <b>'+esc(a.revista.numero)+'</b> · '+esc(a.revista.dataBR)+' · '+fmtN(s.total)+' processos';
+}
+async function renderDashboard(){
+  const v=$('#view-dashboard'); v.className='';
+  v.innerHTML='<div class="dbar"><span class="status">Revista:</span><select id="dRev"></select><span class="status" id="dStatus"></span></div><div class="dwrap" id="dWrap"></div><details class="cod"><summary>Códigos e abreviações de despachos</summary><div id="dCod">carregando…</div></details>';
+  const rv=await snap('dashboard:revistas'); const revistas=(rv&&rv.revistas)||[];
+  $('#dRev').innerHTML=revistas.map(r=>'<option value="'+esc(r.numero)+'">RPI '+esc(r.numero)+' · '+esc(r.dataBR)+'</option>').join('');
+  $('#dRev').onchange=()=>abreRevista($('#dRev').value);
+  snap('dashboard:codigos').then(c=>{ const linhas=((c&&c.codigos)||[]).map(x=>'<tr><td><code>'+esc(x.codigo)+'</code></td><td><span class="pill '+pillCls(x.tom)+'">'+esc(x.categoria)+'</span></td><td>'+esc(x.nome)+'</td></tr>').join(''); $('#dCod').innerHTML='<table class="cod"><thead><tr><th>Código</th><th>Categoria</th><th>Significado</th></tr></thead><tbody>'+linhas+'</tbody></table>'; });
+  if(revistas[0]) abreRevista(revistas[0].numero);
+}
+
+let CART=null;
+const INPI='https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_num_processo.jsp';
+function procHTML(p){
+  const cls=(p.classes||[]).map(c=>'cl. '+esc(c.codigo)+(c.status?(' ('+esc(c.status)+')'):'')).join(' · ');
+  const esp=(p.classes||[]).map(c=>c.especificacao).filter(Boolean).join(' ');
+  const desp=(p.despachos||[]).map(d=>'<div style="display:flex;gap:8px;align-items:center;padding:2px 0"><span style="color:var(--muted);font-size:11px;white-space:nowrap">RPI '+esc(d.revista)+' · '+esc(d.data||'')+'</span><span class="pill '+pillCls(d.tom)+'">'+esc(d.nome||d.codigo)+'</span></div>').join('');
+  const dts=[]; if(p.datas){ if(p.datas.deposito)dts.push('depósito '+esc(p.datas.deposito)); if(p.datas.concessao)dts.push('concessão '+esc(p.datas.concessao)); if(p.datas.vigencia)dts.push('vigência até '+esc(p.datas.vigencia)); }
+  const alvo=(p.marca||p.titular||''), ig='https://www.google.com/search?q='+encodeURIComponent('site:instagram.com '+alvo), gg='https://www.google.com/search?q='+encodeURIComponent(alvo+' '+(p.uf||''));
+  return '<div class="proc"><div class="top"><span class="n">'+esc(p.marca||'(nominativa s/ figura)')+'</span><span class="pill chance">'+esc((p.areas||[])[0]||'')+'</span></div><div style="font-size:11px;color:var(--muted);margin-top:2px">'+esc(p.apresentacao||'')+(p.natureza?(' · '+esc(p.natureza)):'')+'</div><div class="m">Processo <b>'+esc(p.numero)+'</b><br><b>'+esc(p.titular||'—')+'</b>'+(p.uf?(' / '+esc(p.uf)):'')+'<br>'+esc(cls||'—')+(dts.length?('<br>'+dts.join(' · ')):'')+'</div>'+(esp?('<details style="margin-top:8px;font-size:12px"><summary style="cursor:pointer;color:var(--brass)">especificação</summary><div style="font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.5">'+esc(esp)+'</div></details>'):'')+'<div style="margin-top:9px">'+desp+'</div><div class="canais" style="margin-top:10px"><a class="canal" target="_blank" rel="noopener" href="'+INPI+'">Ver no INPI ↗</a><a class="canal ig" target="_blank" rel="noopener" href="'+ig+'">Instagram</a><a class="canal" target="_blank" rel="noopener" href="'+gg+'">Google</a></div></div>';
+}
+function pintaCarteira(){
+  const fa=$('#cArea').value, fr=$('#cRev').value, ft=$('#cTxt').value.trim().toLowerCase();
+  const vis=(CART.processos||[]).filter(p=>{
+    if(fa && !(p.areas||[]).includes(fa)) return false;
+    if(fr && !(p.revistas||[]).map(String).includes(fr)) return false;
+    if(ft){ const h=((p.marca||'')+' '+(p.titular||'')+' '+(p.numero||'')).toLowerCase(); if(!h.includes(ft)) return false; }
+    return true;
+  });
+  const grupos={}; for(const p of vis){ const areas=(p.areas&&p.areas.length)?p.areas:['(sem classe)']; for(const a of areas)(grupos[a]=grupos[a]||[]).push(p); }
+  const chaves=Object.keys(grupos).sort();
+  $('#cWrap').innerHTML=chaves.length? chaves.map(a=>'<div class="areah">'+esc(a)+' · '+grupos[a].length+'</div><div class="cgrid">'+grupos[a].map(procHTML).join('')+'</div>').join('') : '<div class="status">nenhum processo com esses filtros.</div>';
+  $('#cStatus').innerHTML='<b>'+vis.length+'</b> de '+(CART.processos||[]).length+' processos';
+}
+async function renderCarteira(){
+  const v=$('#view-carteira'); v.className='';
+  v.innerHTML='<div class="dbar"><b style="font-size:15px">Carteira · Camila de Liz</b><span style="width:10px"></span><select id="cArea"><option value="">Área: todas</option></select><select id="cRev"><option value="">Período: todos</option></select><input id="cTxt" placeholder="buscar marca/titular…" style="min-width:160px"><span class="status" id="cStatus"></span></div><div class="dwrap" id="cWrap">carregando…</div>';
+  CART=await snap('carteira:camila'); if(!CART){ $('#cWrap').innerHTML='<div class="status">sem dados</div>'; return; }
+  $('#cArea').innerHTML='<option value="">Área: todas</option>'+(CART.areas||[]).map(a=>'<option>'+esc(a)+'</option>').join('');
+  $('#cRev').innerHTML='<option value="">Período: todos</option>'+(CART.revistasVarridas||[]).map(r=>'<option value="'+esc(r)+'">RPI '+esc(r)+'</option>').join('');
+  ['cArea','cRev','cTxt'].forEach(id=> $('#'+id).addEventListener('input', pintaCarteira));
+  pintaCarteira();
+}
+
 // ===== TABS ===================================================================
 document.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x===t));
   const v=t.dataset.tab;
   ['leads','dashboard','carteira','consulta'].forEach(k=> $('#view-'+k).style.display=(k===v?(k==='leads'?'flex':'block'):'none'));
-  if(v!=='leads' && !$('#view-'+v).innerHTML.trim()){
-    $('#view-'+v).innerHTML='<h3>Em migração</h3><p>Esta aba (Dashboard / Carteira / Consulta) depende do processamento pesado do INPI e está sendo migrada. Por enquanto ela continua disponível no portal local. O <b>Leads</b> (CRM) já roda 100% aqui no Supabase.</p>';
-  }
+  if(v==='dashboard' && !DASH_LOADED){ DASH_LOADED=true; renderDashboard(); }
+  if(v==='carteira' && !CART){ renderCarteira(); }
+  if(v==='consulta' && !$('#view-consulta').innerHTML.trim()){ $('#view-consulta').innerHTML='<h3>Consulta de Marca — em breve</h3><p>A busca ao vivo no INPI vira uma Edge Function do Supabase (próximo passo). Por enquanto, disponível no portal local.</p>'; }
 });
 
 // ===== START ==================================================================
