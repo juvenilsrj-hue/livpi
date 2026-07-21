@@ -82,6 +82,8 @@
   .cedit{ cursor:pointer; color:var(--brass) } .cdel{ cursor:pointer; color:var(--bad) }
   textarea{ width:100%; border:1px solid var(--line); border-radius:9px; padding:9px; font-family:inherit; font-size:13px; min-height:54px; background:#fff; color:var(--ink) }
   .chip.alerta{ background:#f7efdc; color:var(--warn) }
+  .sco{ font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:999px; margin-left:auto }
+  .sco.quente{ background:#f8e8e5; color:var(--bad) } .sco.morno{ background:#f7efdc; color:var(--warn) } .sco.frio{ background:#eceef1; color:var(--muted) }
   .motivobox{ background:var(--gelo); border:1px solid var(--line); border-radius:9px; padding:10px 12px; font-size:12.5px; line-height:1.55; color:var(--ink); max-height:190px; overflow-y:auto; white-space:pre-wrap }
   button.canal{ cursor:pointer } .canal.wa{ color:#1f7a4d } .canal.em{ color:var(--info) }
   .painel{ padding:26px; color:var(--muted); font-size:14px; line-height:1.7 } .painel h3{ color:var(--ink) }
@@ -168,6 +170,7 @@
     <div class="bar">
       <button id="btNovoCard">+ Novo card</button>
       <button class="ghost" id="btNovaCol">+ Coluna</button>
+      <button class="ghost" id="btEnriq" title="enriquece via BrasilAPI os leads PJ/MEI filtrados">⚡ Enriquecer filtrados</button>
       <span style="width:6px"></span>
       <select id="fPessoa"><option value="">Pessoa: todas</option><option value="PJ">PJ</option><option value="PF">PF</option><option value="?">A classificar</option></select>
       <select id="fProblema"><option value="">Problema: todos</option><option value="indeferido">Indeferido</option><option value="oposicao">Oposição</option><option value="exigencia">Exigência</option></select>
@@ -175,6 +178,7 @@
       <select id="fEtq"><option value="">Etiqueta: todas</option></select>
       <select id="fRev"><option value="">Publicação: todas</option></select>
       <select id="fCanal"><option value="">Canal: todos</option><option value="qualquer">Com contato (e-mail/WhatsApp)</option><option value="email">Com e-mail</option><option value="whatsapp">Com WhatsApp</option><option value="instagram">Com Instagram</option><option value="google">Com Google</option></select>
+      <select id="fSort"><option value="score">Ordenar: prioridade</option><option value="recente">Ordenar: mais recente</option><option value="prazo">Ordenar: prazo</option></select>
       <span class="status">Data:</span>
       <input type="date" id="fDe" title="publicação de">
       <span class="status">até</span>
@@ -298,6 +302,25 @@ function canaisDoLead(l){ const e=l.enriquecimento||{}; return {
   email: !!(e.email && String(e.email).includes('@')),
   whatsapp: !!(e.telefone && String(e.telefone).replace(/\D/g,'').length>=10),
   instagram: true, google: true }; }
+// CNPJ p/ enriquecer: completo (PJ) ou reconstruído da raiz (MEI, matriz 0001 + 2 DVs)
+function cnpjDeRaiz(raiz8){ const base=raiz8+'0001'; const dv=(nums,pesos)=>{ let s=0; for(let i=0;i<pesos.length;i++) s+=(+nums[i])*pesos[i]; const r=s%11; return r<2?0:11-r; }; const d1=dv(base,[5,4,3,2,9,8,7,6,5,4,3,2]); const d2=dv(base+d1,[6,5,4,3,2,9,8,7,6,5,4,3,2]); return base+String(d1)+String(d2); }
+function cnpjDoLead(l){ const d=String(l.documento||'').replace(/\D/g,''); if(l.doc_tipo==='CNPJ'&&d.length===14) return d; const raiz=String(l.cnpj_raiz||'').replace(/\D/g,''); if(raiz.length>=8) return cnpjDeRaiz(raiz.slice(0,8)); return null; }
+function jaEnriquecido(l){ const e=l.enriquecimento; return !!(e && (e.telefone||e.email||e.cnpj)); }
+// SCORE de prioridade: alcance (contato) + urgência (prazo) + tipo + fit
+function scoreLead(l){
+  let s=0; const c=canaisDoLead(l);
+  if(c.whatsapp) s+=3; if(c.email) s+=2;
+  if(!c.whatsapp && !c.email && cnpjDoLead(l)) s+=1;                 // enriquecível
+  if(l.tipo_problema==='oposicao'||l.tipo_problema==='exigencia') s+=2;
+  else if(l.tipo_problema==='indeferido') s+=1;
+  const dr=l.data_limite?diasRest(l.data_limite):null;
+  if(dr!=null){ if(dr>=0&&dr<=15) s+=3; else if(dr>=0&&dr<=30) s+=2; else if(dr<0) s-=1; }
+  if(l.tipo_pessoa==='PJ') s+=1;
+  if(l.marca) s+=1;
+  return s;
+}
+function scoreBucket(s){ return s>=7?{k:'quente',e:'🔥'}:s>=4?{k:'morno',e:'🟠'}:{k:'frio',e:'⚪'}; }
+function scoreBadge(l){ const s=scoreLead(l); const b=scoreBucket(s); return '<span class="sco '+b.k+'" title="prioridade (alcance + prazo + tipo)">'+b.e+' '+s+'</span>'; }
 function passa(l,f){
   if(f.pessoa && l.tipo_pessoa!==f.pessoa) return false;
   if(f.problema && l.tipo_problema!==f.problema) return false;
@@ -400,15 +423,23 @@ function abordagemHTML(l){
 function cardHTML(l){ const t=l.tipo_problema||'outro';
   return '<div class="lead" draggable="true" data-id="'+esc(l.id)+'">'
    +'<div class="cab">'+logoBox(l)+'<div class="nome">'+esc(l.titular||'—')+'</div></div>'
-   +'<div class="tags"><span class="tag '+t+'">'+esc(t)+'</span><span class="tag '+(l.tipo_pessoa==='?'?'q':esc(l.tipo_pessoa))+'">'+esc(l.tipo_pessoa)+'</span></div>'
+   +'<div class="tags"><span class="tag '+t+'">'+esc(t)+'</span><span class="tag '+(l.tipo_pessoa==='?'?'q':esc(l.tipo_pessoa))+'">'+esc(l.tipo_pessoa)+'</span>'+scoreBadge(l)+'</div>'
    +chipsMini(l)
    +'<div class="meta">'+esc(l.marca||'(nominativa s/ figura)')+'<br>proc. '+esc(l.numero||'—')+(l.classes?(' · cl. '+esc(l.classes)):'')+(l.uf?(' · '+esc(l.uf)):'')+(l.data_evento?(' · '+esc(l.data_evento)):'')+'<br>'+esc(l.despacho||'')+'</div>'
    +limiteBadge(l)+dueBadge(l)+canaisHTML(l)+'</div>';
 }
+function ordenaLeads(arr){
+  const modo=($('#fSort')&&$('#fSort').value)||'score';
+  return arr.slice().sort((a,b)=>{
+    if(modo==='recente') return String(isoData(b.data_publicacao)||'').localeCompare(String(isoData(a.data_publicacao)||''));
+    if(modo==='prazo'){ return String(a.data_limite||'9999-12-31').localeCompare(String(b.data_limite||'9999-12-31')); }
+    return scoreLead(b)-scoreLead(a);
+  });
+}
 function render(){
   const f=filtros(); const vis=LEADS.filter(l=>passa(l,f)); const board=$('#board'); board.innerHTML='';
   for(const s of STAGES){
-    const doS=vis.filter(l=>l.estagio===s.key); const col=document.createElement('div'); col.className='col'; col.dataset.estagio=s.key;
+    const doS=ordenaLeads(vis.filter(l=>l.estagio===s.key)); const col=document.createElement('div'); col.className='col'; col.dataset.estagio=s.key;
     const mostra=doS.slice(0,80);
     col.innerHTML='<h2 style="color:'+s.cor+'">'+esc(s.label)+'<span class="hr"><span class="ren" data-est="'+s.key+'" title="renomear">✎</span><span class="c">'+doS.length+'</span></span></h2><div class="body">'+mostra.map(cardHTML).join('')+(doS.length>mostra.length?('<div class="status">+ '+(doS.length-mostra.length)+' (filtre)</div>'):'')+'</div>';
     board.appendChild(col);
@@ -514,6 +545,41 @@ async function renomearCol(key,atual){ const nome=prompt('Novo nome da coluna:',
 
 ['fPessoa','fProblema','fUF','fEtq','fRev','fCanal','fDe','fAte','fTxt'].forEach(id=> $('#'+id).addEventListener('input', render));
 $('#fLimpar').addEventListener('click', ()=>{ ['fPessoa','fProblema','fUF','fEtq','fRev','fCanal','fDe','fAte','fTxt'].forEach(id=> $('#'+id).value=''); render(); });
+$('#fSort').addEventListener('change', render);
+
+// ===== ENRIQUECIMENTO EM LOTE (BrasilAPI, PJ/MEI) =============================
+function mapEnriq(d, cnpj){
+  const fone=[d.ddd_telefone_1,d.ddd_telefone_2].map(x=>String(x||'').replace(/\D/g,'')).filter(x=>x.length>=10)[0]||null;
+  return { cnpj:String(d.cnpj||cnpj).replace(/\D/g,''), razaoSocial:d.razao_social||null, nomeFantasia:d.nome_fantasia||null,
+    telefone:fone, email:(d.email||'').trim()||null, cnae:d.cnae_fiscal_descricao||null,
+    situacao:d.descricao_situacao_cadastral||null, abertura:d.data_inicio_atividade||null,
+    endereco:[d.logradouro,d.numero,d.bairro,d.municipio,d.uf].filter(Boolean).join(', ')||null,
+    socios:(d.qsa||[]).map(s=>s.nome_socio).filter(Boolean), fonte:'brasilapi', atualizadoEm:new Date().toISOString() };
+}
+async function enriquecerLote(){
+  const f=filtros(); const vis=LEADS.filter(l=>passa(l,f));
+  const alvos=vis.filter(l=>!jaEnriquecido(l) && cnpjDoLead(l));
+  if(!alvos.length){ alert('Nenhum lead PJ/MEI com CNPJ e ainda sem enriquecimento no filtro atual.\nDica: filtre por uma publicação e/ou por Pessoa: PJ.'); return; }
+  const mins=Math.max(1,Math.ceil(alvos.length*1.25/60));
+  if(!confirm('Enriquecer '+alvos.length+' leads (PJ/MEI) pela BrasilAPI?\nLeva ~'+mins+' min. Mantenha esta aba aberta; pode acompanhar no rodapé.')) return;
+  const bt=$('#btEnriq'); bt.disabled=true; const st=$('#status'); let ok=0, semDados=0, erro=0;
+  for(let i=0;i<alvos.length;i++){
+    const l=alvos[i]; const cnpj=cnpjDoLead(l);
+    st.textContent='enriquecendo '+(i+1)+'/'+alvos.length+' · '+ok+' com dados, '+semDados+' sem, '+erro+' erro';
+    try{
+      const r=await fetch('https://brasilapi.com.br/api/cnpj/v1/'+cnpj);
+      if(r.status===429){ await new Promise(x=>setTimeout(x,5000)); i--; continue; }
+      if(!r.ok){ semDados++; }
+      else{ const d=await r.json(); const enr=mapEnriq(d,cnpj); const patch={ enriquecimento:enr, tipo_pessoa:'PJ', atualizado_em:new Date().toISOString() };
+        await sb.from('leads').update(patch).eq('id',l.id); Object.assign(l,patch); ok++; }
+    }catch(e){ erro++; }
+    await new Promise(x=>setTimeout(x,1250));
+    if((i+1)%15===0) render();
+  }
+  bt.disabled=false; render();
+  st.textContent='Enriquecimento concluído: '+ok+' com dados, '+semDados+' sem dados, '+erro+' erro.';
+}
+$('#btEnriq').addEventListener('click', enriquecerLote);
 
 // ===== DASHBOARD + CARTEIRA (lêem snapshots gravados no Supabase) =============
 const pillCls=t=>['bom','ruim','alerta','chance','neutro'].includes(t)?t:'neutro';
