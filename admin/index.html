@@ -353,13 +353,22 @@ function txtAbordagem(l){
   return ola+'Acompanhamos '+alvo+' no INPI e identificamos um ponto que merece atenção. Podemos te explicar sem compromisso. Quer conversar?';
 }
 function motivoHTML(l){
-  if(!l.motivo && !(l.conflitos||[]).length) return '';
-  const conf=(l.conflitos||[]).map(c=>'<span class="chip alerta">⚠ '+esc(c.marca)+' · proc. '+esc(c.numero)+'</span>').join(' ');
-  return '<div class="sec"><h4>Motivo da recusa (INPI)</h4>'
-    +(l.base?'<span class="pill alerta" style="margin-bottom:7px;display:inline-block">'+esc(l.base)+' da LPI</span>':'')
-    +(conf?('<div style="margin:2px 0 7px">'+conf+'</div>'):'')
-    +(l.motivo?('<div class="motivobox">'+esc(l.motivo)+'</div>'):'')
-    +'</div>';
+  const t=l.tipo_problema||'outro', conf=(l.conflitos||[]);
+  if(!l.motivo && !conf.length) return '';
+  const titulo = t==='indeferido' ? 'Motivo da recusa (INPI)' : t==='exigencia' ? 'O que o INPI está exigindo' : t==='oposicao' ? 'Oposição de terceiro' : 'Detalhe do INPI';
+  let corpo='';
+  if(t==='oposicao'){
+    const m=String(l.motivo||'').match(/(\d{6,})\s+de\s+(\d{2}\/\d{2}\/\d{4})/);
+    corpo = m
+      ? '<div class="motivobox">Oposição protocolada sob nº <b>'+esc(m[1])+'</b> em '+esc(m[2])+'. Os fundamentos constam na petição do opoente e não são publicados na RPI.</div>'
+      : (l.motivo ? '<div class="motivobox">'+esc(l.motivo)+'</div>' : '<div class="q" style="font-size:12px">Oposição apresentada por terceiro.</div>');
+  } else {
+    const chips=conf.map(c=>'<span class="chip alerta">⚠ '+esc(c.marca)+' · proc. '+esc(c.numero)+'</span>').join(' ');
+    corpo = (l.base?'<span class="pill alerta" style="margin-bottom:7px;display:inline-block">'+esc(l.base)+' da LPI</span>':'')
+      +(chips?('<div style="margin:2px 0 7px">'+chips+'</div>'):'')
+      +(l.motivo?('<div class="motivobox">'+esc(l.motivo)+'</div>'):'');
+  }
+  return '<div class="sec"><h4>'+titulo+'</h4>'+corpo+'</div>';
 }
 function abordagemHTML(l){
   return '<div class="sec"><h4>Conteúdo de abordagem <span class="q" style="font-weight:400">· revise antes de enviar</span></h4>'
