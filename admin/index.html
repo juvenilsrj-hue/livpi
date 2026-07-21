@@ -70,14 +70,19 @@
   .canais{ display:flex; gap:5px; flex-wrap:wrap; margin-top:7px } .canal{ font-size:10.5px; font-weight:600; text-decoration:none; color:var(--brass); border:1px solid var(--line); padding:3px 7px; border-radius:7px; background:#fff }
   .canal.wa{ color:var(--ok); border-color:#cfe6d8 } .canal.ig{ color:#b03a6e; border-color:#eccfdc } .canal.em{ color:var(--info); border-color:#cfe0ec }
   .modalbg{ position:fixed; inset:0; background:rgba(34,32,28,.45); display:none; align-items:flex-start; justify-content:center; padding:28px 14px; overflow-y:auto; z-index:50 }
-  .modalcard{ background:var(--bg); width:640px; max-width:100%; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.28) }
+  .modalcard{ background:var(--bg); width:640px; max-width:100%; max-height:90vh; display:flex; flex-direction:column; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.28) }
   .mhead{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:15px 18px; border-bottom:1px solid var(--line); background:var(--card); border-radius:14px 14px 0 0 }
   .mhead h3{ margin:0; font-size:17px } .mhead .s{ font-size:12px; color:var(--muted); margin-top:3px }
   .mx{ border:0; background:transparent; font-size:22px; cursor:pointer; color:var(--muted) }
-  .mbody{ padding:16px 18px; display:flex; flex-direction:column; gap:15px }
-  .sec h4{ margin:0 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--brass) }
+  .mhead{ flex:0 0 auto }
+  .mbody{ padding:16px 18px; display:flex; flex-direction:column; gap:16px; font-size:13px; line-height:1.5; flex:1 1 auto; min-height:0; overflow-y:auto }
+  .sec h4{ margin:0 0 9px; font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--brass); font-weight:700 }
   .mrow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center } .mrow label{ font-size:12px; color:var(--muted) }
-  .et{ font-size:11px; font-weight:700; color:#fff; padding:4px 9px; border-radius:7px; cursor:pointer; border:2px solid transparent; opacity:.45 } .et.on{ opacity:1; border-color:rgba(0,0,0,.3) }
+  #mPick{ display:flex; flex-wrap:wrap; gap:6px }
+  .et{ display:inline-flex; align-items:center; line-height:1.15; font-size:11px; font-weight:700; color:#fff; padding:5px 10px; border-radius:999px; cursor:pointer; border:2px solid transparent; opacity:.42; white-space:nowrap; transition:opacity .1s } .et:hover{ opacity:.7 } .et.on{ opacity:1; border-color:rgba(0,0,0,.28) }
+  .mfoot{ flex:0 0 auto; display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 18px; border-top:1px solid var(--line); background:var(--card); border-radius:0 0 14px 14px }
+  .mfoot .autoinfo{ font-size:11px; color:var(--muted) }
+  button.danger{ background:#fff; color:var(--bad); border:1px solid #ecc7c0 } button.danger:hover{ background:#fbeeeb }
   .coment{ background:var(--card); border:1px solid var(--line); border-radius:9px; padding:8px 10px; font-size:12.5px; margin-bottom:6px } .coment .ctxt{ white-space:pre-wrap } .coment .q{ color:var(--muted); font-size:11px; margin-top:3px }
   .cedit{ cursor:pointer; color:var(--brass) } .cdel{ cursor:pointer; color:var(--bad) }
   textarea{ width:100%; border:1px solid var(--line); border-radius:9px; padding:9px; font-family:inherit; font-size:13px; min-height:54px; background:#fff; color:var(--ink) }
@@ -179,6 +184,7 @@
       <select id="fRev"><option value="">Publicação: todas</option></select>
       <select id="fCanal"><option value="">Canal: todos</option><option value="qualquer">Com contato (e-mail/WhatsApp)</option><option value="email">Com e-mail</option><option value="whatsapp">Com WhatsApp</option><option value="instagram">Com Instagram</option><option value="google">Com Google</option></select>
       <select id="fSort"><option value="score">Ordenar: prioridade</option><option value="recente">Ordenar: mais recente</option><option value="prazo">Ordenar: prazo</option></select>
+      <select id="fMostrar"><option value="ativos">Situação: ativos</option><option value="desc">Descartados</option><option value="todos">Todos</option></select>
       <span class="status">Data:</span>
       <input type="date" id="fDe" title="publicação de">
       <span class="status">até</span>
@@ -322,6 +328,8 @@ function scoreLead(l){
 function scoreBucket(s){ return s>=7?{k:'quente',e:'🔥'}:s>=4?{k:'morno',e:'🟠'}:{k:'frio',e:'⚪'}; }
 function scoreBadge(l){ const s=scoreLead(l); const b=scoreBucket(s); return '<span class="sco '+b.k+'" title="prioridade (alcance + prazo + tipo)">'+b.e+' '+s+'</span>'; }
 function passa(l,f){
+  const mostra=($('#fMostrar')&&$('#fMostrar').value)||'ativos';
+  if(mostra==='desc'){ if(!l.descartado) return false; } else if(mostra!=='todos'){ if(l.descartado) return false; }
   if(f.pessoa && l.tipo_pessoa!==f.pessoa) return false;
   if(f.problema && l.tipo_problema!==f.problema) return false;
   if(f.uf){ if(f.uf.indexOf('reg:')===0){ if(!(REGIOES[f.uf.slice(4)]||[]).includes(l.uf||'')) return false; } else if((l.uf||'')!==f.uf) return false; }
@@ -468,6 +476,18 @@ async function carregarInteracoes(id){ const { data } = await sb.from('interacoe
 async function comentar(id,nota){ await sb.from('interacoes').insert({id:novoId(), lead_id:id, tipo:'nota', nota, quando:new Date().toISOString()}); }
 async function editarComent(intId,nota){ await sb.from('interacoes').update({nota, editado_em:new Date().toISOString()}).eq('id',intId); }
 async function removerComent(intId){ await sb.from('interacoes').delete().eq('id',intId); }
+// DESCARTAR = soft delete: sai do quadro mas fica no banco (não volta na reimportação de terça)
+async function excluirLead(l){
+  if(!confirm('Descartar este lead?\n\nEle sai do quadro, mas continua no banco (por isso NÃO volta em futuras importações). Dá pra restaurar depois em "Situação: descartados".')) return;
+  await sb.from('leads').update({ descartado:true, atualizado_em:new Date().toISOString() }).eq('id',l.id);
+  l.descartado=true; const i=LEADS.findIndex(x=>x.id===l.id); if(i>=0) LEADS[i].descartado=true;
+  fecharCard(); render();
+}
+async function restaurarLead(l){
+  await sb.from('leads').update({ descartado:false, atualizado_em:new Date().toISOString() }).eq('id',l.id);
+  l.descartado=false; const i=LEADS.findIndex(x=>x.id===l.id); if(i>=0) LEADS[i].descartado=false;
+  fecharCard(); render();
+}
 
 // ===== CARD (modal) ===========================================================
 function fecharCard(){ $('#modal').style.display='none'; $('#modalcard').innerHTML=''; }
@@ -486,8 +506,12 @@ function renderModal(l){
     +detalheBtnHTML(l)
     +abordagemHTML(l)
     +'<div class="sec"><h4>Observações / comentários</h4><textarea id="mCom" placeholder="escreva uma observação..."></textarea><div style="margin-top:6px"><button id="mComBt">Comentar</button></div><div style="margin-top:10px">'+coments+'</div></div>'
-    +'</div>';
+    +'</div>'
+    +'<div class="mfoot">'+(l.descartado?'<button class="ghost" id="mRestore">↩ Restaurar lead</button>':'<button class="danger" id="mDel">Descartar lead</button>')+'<span class="autoinfo">✓ Alterações salvas automaticamente</span><button class="ghost" id="mClose">Fechar</button></div>';
   $('#mx').onclick=fecharCard;
+  $('#mClose').onclick=fecharCard;
+  if($('#mDel')) $('#mDel').onclick=()=>excluirLead(l);
+  if($('#mRestore')) $('#mRestore').onclick=()=>restaurarLead(l);
   // conteúdo de abordagem: copiar / regerar / enviar por WhatsApp ou e-mail
   const okMsg=(t)=>{ const o=$('#mAbOk'); if(o){ o.textContent=t; setTimeout(()=>{ if(o)o.textContent=''; },2500); } };
   $('#mAbCopy').onclick=()=>{ navigator.clipboard.writeText($('#mAbord').value).then(()=>okMsg('copiado!')); };
@@ -546,6 +570,7 @@ async function renomearCol(key,atual){ const nome=prompt('Novo nome da coluna:',
 ['fPessoa','fProblema','fUF','fEtq','fRev','fCanal','fDe','fAte','fTxt'].forEach(id=> $('#'+id).addEventListener('input', render));
 $('#fLimpar').addEventListener('click', ()=>{ ['fPessoa','fProblema','fUF','fEtq','fRev','fCanal','fDe','fAte','fTxt'].forEach(id=> $('#'+id).value=''); render(); });
 $('#fSort').addEventListener('change', render);
+$('#fMostrar').addEventListener('change', render);
 
 // ===== ENRIQUECIMENTO EM LOTE (BrasilAPI, PJ/MEI) =============================
 function mapEnriq(d, cnpj){
