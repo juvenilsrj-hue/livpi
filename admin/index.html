@@ -174,6 +174,7 @@
       <select id="fUF" style="min-width:150px"></select>
       <select id="fEtq"><option value="">Etiqueta: todas</option></select>
       <select id="fRev"><option value="">Publicação: todas</option></select>
+      <select id="fCanal"><option value="">Canal: todos</option><option value="qualquer">Com contato (e-mail/WhatsApp)</option><option value="email">Com e-mail</option><option value="whatsapp">Com WhatsApp</option><option value="instagram">Com Instagram</option><option value="google">Com Google</option></select>
       <span class="status">Data:</span>
       <input type="date" id="fDe" title="publicação de">
       <span class="status">até</span>
@@ -290,15 +291,20 @@ async function carregarTudo(){
 }
 
 // ===== RENDER BOARD ===========================================================
-function filtros(){ return { pessoa:$('#fPessoa').value, problema:$('#fProblema').value, uf:$('#fUF').value, etq:$('#fEtq').value, rev:$('#fRev').value, de:$('#fDe').value, ate:$('#fAte').value, txt:$('#fTxt').value.trim().toLowerCase() }; }
+function filtros(){ return { pessoa:$('#fPessoa').value, problema:$('#fProblema').value, uf:$('#fUF').value, etq:$('#fEtq').value, rev:$('#fRev').value, canal:$('#fCanal').value, de:$('#fDe').value, ate:$('#fAte').value, txt:$('#fTxt').value.trim().toLowerCase() }; }
 function isoData(s){ if(!s) return null; s=String(s); const br=s.match(/^(\d{2})\/(\d{2})\/(\d{4})/); if(br) return br[3]+'-'+br[2]+'-'+br[1]; return s.slice(0,10); }
 function dataDoLead(l){ return isoData(l.data_publicacao) || isoData(l.criado_em); }
+function canaisDoLead(l){ const e=l.enriquecimento||{}; return {
+  email: !!(e.email && String(e.email).includes('@')),
+  whatsapp: !!(e.telefone && String(e.telefone).replace(/\D/g,'').length>=10),
+  instagram: true, google: true }; }
 function passa(l,f){
   if(f.pessoa && l.tipo_pessoa!==f.pessoa) return false;
   if(f.problema && l.tipo_problema!==f.problema) return false;
   if(f.uf){ if(f.uf.indexOf('reg:')===0){ if(!(REGIOES[f.uf.slice(4)]||[]).includes(l.uf||'')) return false; } else if((l.uf||'')!==f.uf) return false; }
   if(f.etq && !(l.etiquetas||[]).includes(f.etq)) return false;
   if(f.rev && String(l.revista||'')!==f.rev) return false;
+  if(f.canal){ const c=canaisDoLead(l); if(f.canal==='qualquer'){ if(!(c.email||c.whatsapp)) return false; } else if(!c[f.canal]) return false; }
   if(f.de||f.ate){ const d=dataDoLead(l); if(!d) return false; if(f.de&&d<f.de) return false; if(f.ate&&d>f.ate) return false; }
   if(f.txt && !(l.titular||'').toLowerCase().includes(f.txt)) return false;
   return true;
@@ -506,8 +512,8 @@ $('#btNovaCol').addEventListener('click', async ()=>{
 });
 async function renomearCol(key,atual){ const nome=prompt('Novo nome da coluna:',atual||''); if(!nome||!nome.trim()) return; const { error }=await sb.from('liv_estagios').update({label:nome.trim()}).eq('key',key); if(error){ alert(error.message); return; } await carregarTudo(); }
 
-['fPessoa','fProblema','fUF','fEtq','fRev','fDe','fAte','fTxt'].forEach(id=> $('#'+id).addEventListener('input', render));
-$('#fLimpar').addEventListener('click', ()=>{ ['fPessoa','fProblema','fUF','fEtq','fRev','fDe','fAte','fTxt'].forEach(id=> $('#'+id).value=''); render(); });
+['fPessoa','fProblema','fUF','fEtq','fRev','fCanal','fDe','fAte','fTxt'].forEach(id=> $('#'+id).addEventListener('input', render));
+$('#fLimpar').addEventListener('click', ()=>{ ['fPessoa','fProblema','fUF','fEtq','fRev','fCanal','fDe','fAte','fTxt'].forEach(id=> $('#'+id).value=''); render(); });
 
 // ===== DASHBOARD + CARTEIRA (lêem snapshots gravados no Supabase) =============
 const pillCls=t=>['bom','ruim','alerta','chance','neutro'].includes(t)?t:'neutro';
