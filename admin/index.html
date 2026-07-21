@@ -437,7 +437,7 @@ function cardHTML(l){ const t=l.tipo_problema||'outro';
    +'<div class="tags"><span class="tag '+t+'">'+esc(t)+'</span><span class="tag '+(l.tipo_pessoa==='?'?'q':esc(l.tipo_pessoa))+'">'+esc(l.tipo_pessoa)+'</span>'+scoreBadge(l)+'</div>'
    +chipsMini(l)
    +'<div class="meta">'+esc(l.marca||'(nominativa s/ figura)')+'<br>proc. '+esc(l.numero||'—')+(l.classes?(' · cl. '+esc(l.classes)):'')+(l.uf?(' · '+esc(l.uf)):'')+(l.data_evento?(' · '+esc(l.data_evento)):'')+'<br>'+esc(l.despacho||'')+'</div>'
-   +limiteBadge(l)+dueBadge(l)+canaisHTML(l)+'</div>';
+   +limiteBadge(l)+dueBadge(l)+'</div>';
 }
 function ordenaLeads(arr){
   const modo=($('#fSort')&&$('#fSort').value)||'score';
