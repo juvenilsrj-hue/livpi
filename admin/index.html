@@ -328,27 +328,29 @@ function logoBox(l){ const e=l.enriquecimento||{}; const nome=e.nomeFantasia||e.
 // ---- MOTIVO DA RECUSA + CONTEÚDO DE ABORDAGEM -------------------------------
 function saudacao(l){ const e=l.enriquecimento||{}; const raw=String(e.nomeFantasia||l.titular||'').trim().replace(/^\d[\d.\/-]*\s+/,''); if(!raw) return 'Olá!'; const w=raw.split(/\s+/)[0]; if(w.length<2) return 'Olá!'; return 'Olá, '+w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()+'!'; }
 function txtAbordagem(l){
-  const marca=l.marca||'sua marca', proc=l.numero||'', t=l.tipo_problema||'outro';
+  const proc=l.numero||'', t=l.tipo_problema||'outro';
+  const temMarca=l.marca && String(l.marca).trim();
+  const alvo=temMarca?('a marca '+l.marca+' (processo '+proc+')'):('o seu pedido de marca (processo '+proc+')');
   const conf=(l.conflitos||[])[0]; const base=l.base?(' com base no '+l.base+' da Lei da Propriedade Industrial'):'';
   const prazo=l.data_limite?new Date(l.data_limite+'T00:00:00').toLocaleDateString('pt-BR'):null;
   const ola=saudacao(l)+' ';
   if(t==='indeferido'){
-    let m=ola+'Encontramos a publicação do INPI informando que o pedido de registro da marca '+marca+' (processo '+proc+') foi indeferido';
+    let m=ola+'Encontramos no INPI que '+alvo+' teve o registro indeferido';
     if(conf) m+=', por ter sido considerado semelhante à marca '+conf.marca+' (processo '+conf.numero+')'+base;
     else if(l.base) m+=base;
     m+='. Essa decisão admite recurso, e existem caminhos para reverter ou reposicionar a sua marca com segurança. Podemos analisar o seu caso sem compromisso e te mostrar as opções. Quer que a gente prepare um panorama?';
     return m;
   }
   if(t==='oposicao'){
-    let m=ola+'Vimos que uma terceira parte apresentou oposição ao registro da marca '+marca+' (processo '+proc+')';
-    if(prazo) m+='. Existe um prazo para se manifestar (até '+prazo+'), e perder esse prazo pode custar o registro';
+    let m=ola+'Vimos no INPI que '+alvo+' recebeu uma oposição de terceiro';
+    if(prazo) m+='. Existe prazo para se manifestar (até '+prazo+'), e perder esse prazo pode custar o registro';
     m+='. Podemos cuidar da manifestação e defender a sua marca. Quer conversar sobre isso?';
     return m;
   }
   if(t==='exigencia'){
-    return ola+'O INPI publicou uma exigência no pedido da marca '+marca+' (processo '+proc+'). É preciso responder dentro do prazo, senão o pedido pode ser arquivado. Podemos analisar a exigência e responder por você. Quer que a gente veja o que o INPI está pedindo?';
+    return ola+'O INPI publicou uma exigência em '+alvo+'. É preciso responder dentro do prazo, senão o pedido pode ser arquivado. Podemos analisar a exigência e responder por você. Quer que a gente veja o que o INPI está pedindo?';
   }
-  return ola+'Acompanhamos o andamento da marca '+marca+' (processo '+proc+') no INPI e identificamos um ponto que merece atenção. Podemos te explicar sem compromisso. Quer conversar?';
+  return ola+'Acompanhamos '+alvo+' no INPI e identificamos um ponto que merece atenção. Podemos te explicar sem compromisso. Quer conversar?';
 }
 function motivoHTML(l){
   if(!l.motivo && !(l.conflitos||[]).length) return '';
