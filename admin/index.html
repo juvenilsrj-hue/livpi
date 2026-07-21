@@ -372,33 +372,32 @@ function primeiroNome(l){ const e=l.enriquecimento||{}; const raw=String(e.nomeF
 function txtAbordagem(l){
   const proc=l.numero||'', t=l.tipo_problema||'outro';
   const temMarca=l.marca && String(l.marca).trim();
+  const marcaTxt=temMarca?(' '+l.marca):'';
   const nome=primeiroNome(l);
+  const ola=nome?('Olá, '+nome+'! Tudo bem?'):'Olá! Tudo bem?';
   const conf=(l.conflitos||[])[0];
+  const prazo=l.data_limite?new Date(l.data_limite+'T00:00:00').toLocaleDateString('pt-BR'):null;
+  const intro='Meu nome é '+REMETENTE+' e faço parte da LIV Propriedade Intelectual. Trabalhamos com registro de marcas e acompanhamento de processos junto ao INPI.';
+  const fecho='A LIV é especializada nesse tipo de '+(t==='oposicao'?'defesa':'análise')+' e pode te ajudar '+(t==='oposicao'?'a construir a':'na construção de uma')+' estratégia adequada para o seu caso. Se você nos autorizar, podemos preparar um panorama inicial do processo e explicar, de maneira simples, quais caminhos podem ser considerados.';
   if(t==='indeferido'){
-    const ola=nome?('Olá, '+nome+'! Tudo bem?'):'Olá! Tudo bem?';
-    let ach='Ao acompanharmos algumas movimentações no INPI, identificamos que o pedido de registro da sua marca'+(temMarca?(' '+l.marca):'')+', processo nº '+proc+', recebeu uma decisão de indeferimento';
-    if(conf) ach+=' por possível semelhança com a marca '+conf.marca;
-    else if(l.base) ach+=' com base no '+l.base+' da Lei da Propriedade Industrial';
-    ach+='.';
-    return [
-      ola,
-      'Meu nome é '+REMETENTE+', da LIV Propriedade Intelectual.',
-      ach,
-      'Esse tipo de decisão ainda pode ser analisado sob uma perspectiva técnica e estratégica, tanto para verificar a possibilidade de recurso quanto para avaliar outros caminhos seguros para a proteção da marca.',
-      'Na LIV, realizamos essa análise para apresentar com clareza os possíveis cenários, riscos e alternativas do processo.',
-      'Podemos preparar um panorama inicial para você compreender melhor a decisão e avaliar os próximos passos?'
-    ].join('\n\n');
+    let ind='Verificamos que o pedido de registro da sua marca'+marcaTxt+', processo nº '+proc+', sofreu um indeferimento';
+    if(conf) ind+=' por possível semelhança com a marca '+conf.marca;
+    else if(l.base) ind+=' com base no '+l.base+' da Lei da Propriedade Industrial';
+    ind+='.';
+    return [ola, intro, ind,
+      'Para contestar essa decisão, é necessário apresentar um recurso fundamentado na Lei da Propriedade Industrial, observando os argumentos utilizados pelo INPI e as particularidades do seu processo.',
+      fecho].join('\n\n');
   }
-  // oposição / exigência / outro: formato provisório (serão ajustados na sequência)
+  if(t==='oposicao'){
+    const prazoTxt=prazo?(' O prazo para apresentar essa defesa é até '+prazo+'.'):'';
+    return [ola, intro,
+      'Verificamos que o pedido de registro da sua marca'+marcaTxt+', processo nº '+proc+', recebeu uma oposição de terceiro ao registro.',
+      'Essa é uma situação que exige atenção: se a oposição não for respondida com uma manifestação fundamentada na Lei da Propriedade Industrial, o pedido pode acabar sendo indeferido e a marca, perdida.'+prazoTxt,
+      fecho].join('\n\n');
+  }
+  // exigência / outro: formato provisório (serão ajustados na sequência)
   const olaOld=(nome?('Olá, '+nome+'!'):'Olá!')+' ';
   const alvo=temMarca?('a marca '+l.marca+' (processo '+proc+')'):('o seu pedido de marca (processo '+proc+')');
-  const prazo=l.data_limite?new Date(l.data_limite+'T00:00:00').toLocaleDateString('pt-BR'):null;
-  if(t==='oposicao'){
-    let m=olaOld+'Vimos no INPI que '+alvo+' recebeu uma oposição de terceiro';
-    if(prazo) m+='. Existe prazo para se manifestar (até '+prazo+'), e perder esse prazo pode custar o registro';
-    m+='. Podemos cuidar da manifestação e defender a sua marca. Quer conversar sobre isso?';
-    return m;
-  }
   if(t==='exigencia'){
     return olaOld+'O INPI publicou uma exigência em '+alvo+'. É preciso responder dentro do prazo, senão o pedido pode ser arquivado. Podemos analisar a exigência e responder por você. Quer que a gente veja o que o INPI está pedindo?';
   }
