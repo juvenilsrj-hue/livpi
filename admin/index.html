@@ -410,6 +410,37 @@ async function renderCarteira(){
   pintaCarteira();
 }
 
+// ===== CONSULTA (Edge Function -> INPI ao vivo) ===============================
+let CONS=null, CONS_INIT=false;
+function pillSit(s){ s=(s||'').toLowerCase(); if(/em vigor/.test(s)) return 'bom'; if(/exame|aguarda|sobrestad|oposi|public|recurso|exig/.test(s)) return 'alerta'; if(/extint|arquiv|indefer|nulidad|cancel|cadu/.test(s)) return 'ruim'; return 'neutro'; }
+function renderConsulta(){
+  const v=$('#view-consulta'); v.className='';
+  v.innerHTML='<div class="dbar"><input id="qMarca" placeholder="Ex.: NIKE, AÇAÍ, sua marca…" style="min-width:220px"><input id="qClasse" placeholder="classe (opc.)" style="width:110px"><select id="qModo"><option value="exata">Exata</option><option value="radical">Radical</option><option value="ambas">Exata + Radical</option></select><button id="qBt">Pesquisar</button><span class="status" id="qStatus"></span></div><div class="dwrap" id="qWrap"><div class="status">Busca ao vivo na base do INPI (pePI). Digite uma marca.</div></div>';
+  $('#qBt').onclick=buscarMarca;
+  $('#qMarca').addEventListener('keydown',e=>{ if(e.key==='Enter') buscarMarca(); });
+  $('#qMarca').focus();
+}
+async function buscarMarca(){
+  const marca=$('#qMarca').value.trim(); if(!marca) return;
+  $('#qStatus').textContent='consultando o INPI…'; $('#qWrap').innerHTML='';
+  const { data, error }=await sb.functions.invoke('consulta', { body:{ action:'buscar', marca, classe:$('#qClasse').value.trim(), modo:$('#qModo').value } });
+  if(error||!data||data.erro){ $('#qStatus').textContent='erro: '+((data&&data.erro)||(error&&error.message)||'falha'); return; }
+  CONS=data;
+  $('#qStatus').innerHTML='<b>'+fmtN(data.total)+'</b> resultado(s)';
+  $('#qWrap').innerHTML=(data.resultados||[]).map((r,i)=>'<div class="item cres" data-i="'+i+'" style="cursor:pointer"><div class="top"><span style="font-weight:700;font-size:15px">'+esc(r.marca||'—')+'</span><span class="pill '+pillSit(r.situacao)+'">'+esc(r.situacao||'?')+'</span></div><div class="m">Processo '+esc(r.numero)+' · '+esc(r.apresentacao||'?')+' · classe '+esc(r.classe||'?')+' · '+esc(r.titular||'')+'</div><div class="cdet" style="display:none"></div></div>').join('')||'<div class="status">Nenhum registro/pedido para esse nome.</div>';
+  $('#qWrap').querySelectorAll('.cres').forEach(el=> el.addEventListener('click',e=>{ if(e.target.closest('.cdet')) return; verDetalheMarca(el, CONS.resultados[+el.dataset.i]); }));
+}
+async function verDetalheMarca(el, r){
+  const det=el.querySelector('.cdet');
+  if(det.style.display!=='none'){ det.style.display='none'; return; }
+  det.style.display='block'; det.innerHTML='<div class="status" style="margin-top:8px">carregando detalhe…</div>';
+  const { data, error }=await sb.functions.invoke('consulta', { body:{ action:'detalhe', codPedido:r.codPedido, sub:r.sub, cookie:CONS.cookie, cookie2:CONS.cookie2 } });
+  if(error||!data||data.erro){ det.innerHTML='<div class="status" style="color:var(--bad);margin-top:8px">'+esc((data&&data.erro)||(error&&error.message)||'falha')+'</div>'; return; }
+  const cls=(data.classes||[]).map(c=>c.classe+(c.subclasse?(' : '+c.subclasse):'')+(c.especificacao?(' — '+c.especificacao):'')).join('<br>');
+  const row=(k,val)=>val?'<div style="display:flex;gap:8px;padding:2px 0"><span style="color:var(--muted);flex:0 0 150px">'+k+'</span><span>'+esc(val)+'</span></div>':'';
+  det.innerHTML='<div style="margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:13px">'+row('Titular',data.titular)+row('Procurador',data.procurador)+row('Natureza',data.natureza)+(cls?('<div style="display:flex;gap:8px;padding:2px 0"><span style="color:var(--muted);flex:0 0 150px">Classe / especificação</span><span>'+cls+'</span></div>'):'')+row('Depósito',data.dataDeposito)+row('Concessão',data.dataConcessao)+row('Vigência até',data.dataVigencia)+'</div>';
+}
+
 // ===== TABS ===================================================================
 document.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x===t));
@@ -417,7 +448,7 @@ document.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{
   ['leads','dashboard','carteira','consulta'].forEach(k=> $('#view-'+k).style.display=(k===v?(k==='leads'?'flex':'block'):'none'));
   if(v==='dashboard' && !DASH_LOADED){ DASH_LOADED=true; renderDashboard(); }
   if(v==='carteira' && !CART){ renderCarteira(); }
-  if(v==='consulta' && !$('#view-consulta').innerHTML.trim()){ $('#view-consulta').innerHTML='<h3>Consulta de Marca — em breve</h3><p>A busca ao vivo no INPI vira uma Edge Function do Supabase (próximo passo). Por enquanto, disponível no portal local.</p>'; }
+  if(v==='consulta' && !CONS_INIT){ CONS_INIT=true; renderConsulta(); }
 });
 
 // ===== START ==================================================================
