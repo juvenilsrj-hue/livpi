@@ -81,6 +81,9 @@
   .coment{ background:var(--card); border:1px solid var(--line); border-radius:9px; padding:8px 10px; font-size:12.5px; margin-bottom:6px } .coment .ctxt{ white-space:pre-wrap } .coment .q{ color:var(--muted); font-size:11px; margin-top:3px }
   .cedit{ cursor:pointer; color:var(--brass) } .cdel{ cursor:pointer; color:var(--bad) }
   textarea{ width:100%; border:1px solid var(--line); border-radius:9px; padding:9px; font-family:inherit; font-size:13px; min-height:54px; background:#fff; color:var(--ink) }
+  .chip.alerta{ background:#f7efdc; color:var(--warn) }
+  .motivobox{ background:var(--gelo); border:1px solid var(--line); border-radius:9px; padding:10px 12px; font-size:12.5px; line-height:1.55; color:var(--ink); max-height:190px; overflow-y:auto; white-space:pre-wrap }
+  button.canal{ cursor:pointer } .canal.wa{ color:#1f7a4d } .canal.em{ color:var(--info) }
   .painel{ padding:26px; color:var(--muted); font-size:14px; line-height:1.7 } .painel h3{ color:var(--ink) }
   #view-dashboard, #view-carteira{ overflow-y:auto }
   .dbar{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:14px 26px 4px }
@@ -321,6 +324,46 @@ function limiteBadge(l){ if(!l.data_limite) return ''; const dr=diasRest(l.data_
 function dueBadge(l){ if(!l.data_entrega) return ''; const at=atrasado(l); return '<div><span class="due'+(at?' atras':'')+'">'+(at?'⚠ Em atraso · ':'')+fmtData(l.data_entrega)+'</span></div>'; }
 function canaisHTML(l){ const e=l.enriquecimento||{}; const nome=e.nomeFantasia||e.razaoSocial||l.titular||''; const wa=e.telefone?('https://wa.me/55'+String(e.telefone).replace(/[^0-9]/g,'')):''; const dom=dominioDe(l); const email=e.email||''; const ig='https://www.google.com/search?q='+encodeURIComponent('site:instagram.com '+nome); const gg='https://www.google.com/search?q='+encodeURIComponent(nome+' '+(l.uf||'')); const a=(c,h,t)=>'<a class="canal'+c+'" target="_blank" rel="noopener" href="'+h+'">'+t+'</a>'; let b=''; if(wa)b+=a(' wa',wa,'WhatsApp'); if(email)b+=a(' em','mailto:'+email,'E-mail'); b+=a(' ig',ig,'Instagram'); if(dom)b+=a('','https://'+dom,'Site'); b+=a('',gg,'Google'); return '<div class="canais">'+b+'</div>'; }
 function logoBox(l){ const e=l.enriquecimento||{}; const nome=e.nomeFantasia||e.razaoSocial||l.titular||'?'; return '<span class="mono" style="background:'+corDe(nome)+'">'+esc(iniciais(nome))+'</span>'; }
+
+// ---- MOTIVO DA RECUSA + CONTEÚDO DE ABORDAGEM -------------------------------
+function saudacao(l){ const e=l.enriquecimento||{}; const raw=String(e.nomeFantasia||l.titular||'').trim().replace(/^\d[\d.\/-]*\s+/,''); if(!raw) return 'Olá!'; const w=raw.split(/\s+/)[0]; if(w.length<2) return 'Olá!'; return 'Olá, '+w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()+'!'; }
+function txtAbordagem(l){
+  const marca=l.marca||'sua marca', proc=l.numero||'', t=l.tipo_problema||'outro';
+  const conf=(l.conflitos||[])[0]; const base=l.base?(' com base no '+l.base+' da Lei da Propriedade Industrial'):'';
+  const prazo=l.data_limite?new Date(l.data_limite+'T00:00:00').toLocaleDateString('pt-BR'):null;
+  const ola=saudacao(l)+' ';
+  if(t==='indeferido'){
+    let m=ola+'Encontramos a publicação do INPI informando que o pedido de registro da marca '+marca+' (processo '+proc+') foi indeferido';
+    if(conf) m+=', por ter sido considerado semelhante à marca '+conf.marca+' (processo '+conf.numero+')'+base;
+    else if(l.base) m+=base;
+    m+='. Essa decisão admite recurso, e existem caminhos para reverter ou reposicionar a sua marca com segurança. Podemos analisar o seu caso sem compromisso e te mostrar as opções. Quer que a gente prepare um panorama?';
+    return m;
+  }
+  if(t==='oposicao'){
+    let m=ola+'Vimos que uma terceira parte apresentou oposição ao registro da marca '+marca+' (processo '+proc+')';
+    if(prazo) m+='. Existe um prazo para se manifestar (até '+prazo+'), e perder esse prazo pode custar o registro';
+    m+='. Podemos cuidar da manifestação e defender a sua marca. Quer conversar sobre isso?';
+    return m;
+  }
+  if(t==='exigencia'){
+    return ola+'O INPI publicou uma exigência no pedido da marca '+marca+' (processo '+proc+'). É preciso responder dentro do prazo, senão o pedido pode ser arquivado. Podemos analisar a exigência e responder por você. Quer que a gente veja o que o INPI está pedindo?';
+  }
+  return ola+'Acompanhamos o andamento da marca '+marca+' (processo '+proc+') no INPI e identificamos um ponto que merece atenção. Podemos te explicar sem compromisso. Quer conversar?';
+}
+function motivoHTML(l){
+  if(!l.motivo && !(l.conflitos||[]).length) return '';
+  const conf=(l.conflitos||[]).map(c=>'<span class="chip alerta">⚠ '+esc(c.marca)+' · proc. '+esc(c.numero)+'</span>').join(' ');
+  return '<div class="sec"><h4>Motivo da recusa (INPI)</h4>'
+    +(l.base?'<span class="pill alerta" style="margin-bottom:7px;display:inline-block">'+esc(l.base)+' da LPI</span>':'')
+    +(conf?('<div style="margin:2px 0 7px">'+conf+'</div>'):'')
+    +(l.motivo?('<div class="motivobox">'+esc(l.motivo)+'</div>'):'')
+    +'</div>';
+}
+function abordagemHTML(l){
+  return '<div class="sec"><h4>Conteúdo de abordagem <span class="q" style="font-weight:400">· revise antes de enviar</span></h4>'
+    +'<textarea id="mAbord" style="min-height:150px;line-height:1.55">'+esc(txtAbordagem(l))+'</textarea>'
+    +'<div class="mrow" style="margin-top:8px"><button id="mAbCopy">Copiar</button><button class="ghost" id="mAbReset">Regerar</button><span id="mAbWa"></span><span id="mAbMail"></span><span class="q" id="mAbOk" style="color:var(--ok)"></span></div></div>';
+}
 function cardHTML(l){ const t=l.tipo_problema||'outro';
   return '<div class="lead" draggable="true" data-id="'+esc(l.id)+'">'
    +'<div class="cab">'+logoBox(l)+'<div class="nome">'+esc(l.titular||'—')+'</div></div>'
@@ -375,9 +418,19 @@ function renderModal(l){
     +'<div class="mrow"><label>Etapa</label><select id="mEst">'+stages+'</select><label>Prazo</label><input type="datetime-local" id="mData" value="'+dv+'">'+(atrasado(l)?'<span class="due atras">⚠ Em atraso</span>':'')+'</div>'+limiteBadge(l)
     +'<div class="sec"><h4>Etiquetas (tipo de lead)</h4><div id="mPick">'+picker+'</div></div>'
     +'<div class="sec"><h4>Dados &amp; canais</h4>'+canaisHTML(l)+'</div>'
+    +motivoHTML(l)
+    +abordagemHTML(l)
     +'<div class="sec"><h4>Observações / comentários</h4><textarea id="mCom" placeholder="escreva uma observação..."></textarea><div style="margin-top:6px"><button id="mComBt">Comentar</button></div><div style="margin-top:10px">'+coments+'</div></div>'
     +'</div>';
   $('#mx').onclick=fecharCard;
+  // conteúdo de abordagem: copiar / regerar / enviar por WhatsApp ou e-mail
+  const okMsg=(t)=>{ const o=$('#mAbOk'); if(o){ o.textContent=t; setTimeout(()=>{ if(o)o.textContent=''; },2500); } };
+  $('#mAbCopy').onclick=()=>{ navigator.clipboard.writeText($('#mAbord').value).then(()=>okMsg('copiado!')); };
+  $('#mAbReset').onclick=()=>{ $('#mAbord').value=txtAbordagem(l); okMsg('regerado'); };
+  (function(){ const e=l.enriquecimento||{}; const fone=e.telefone?String(e.telefone).replace(/[^0-9]/g,''):''; const email=e.email||'';
+    if(fone){ const b=document.createElement('button'); b.className='canal wa'; b.textContent='Enviar no WhatsApp'; b.onclick=()=>window.open('https://wa.me/55'+fone+'?text='+encodeURIComponent($('#mAbord').value),'_blank','noopener'); $('#mAbWa').replaceWith(b); }
+    if(email){ const b=document.createElement('button'); b.className='canal em'; b.textContent='Enviar por e-mail'; b.onclick=()=>window.open('mailto:'+email+'?subject='+encodeURIComponent('Sobre a sua marca '+(l.marca||'')+' no INPI')+'&body='+encodeURIComponent($('#mAbord').value),'_blank','noopener'); $('#mAbMail').replaceWith(b); }
+  })();
   $('#mEst').onchange=async e=>{ l.estagio=e.target.value; await moverLead(l.id,l.estagio); l._int=await carregarInteracoes(l.id); render(); renderModal(l); };
   $('#mData').onchange=async e=>{ await setData(l.id,e.target.value); render(); renderModal(l); };
   $('#mPick').querySelectorAll('.et').forEach(el=> el.onclick=async ()=>{ await toggleEtq(l.id,el.dataset.et,!el.classList.contains('on')); render(); renderModal(l); });
