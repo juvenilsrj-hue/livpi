@@ -383,7 +383,7 @@ async function snap(chave){ const { data }=await sb.from('liv_snapshots').select
 
 let DASH_LOADED=false, DASH_ALL={}, DASH_REVS=[], CFGV=null;
 const fmtBRL=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
-const VAL_PADRAO={indeferido:2500, oposicao:2500, exigencia:900, outro:1500, conversao:5};
+const VAL_PADRAO={indeferido:800, oposicao:800, exigencia:800, outro:800, conversao:5};
 const TIPO_LABEL={indeferido:'Recurso contra indeferimento', oposicao:'Defesa em oposição', exigencia:'Cumprimento de exigência', outro:'Outros serviços (registro etc.)'};
 function hbar(label,val,max,cls){ const pct=max>0?Math.max(1,Math.round(val/max*100)):0; return '<div class="hbar"><span class="hl">'+esc(label)+'</span><span class="ht"><span class="hf'+(cls?(' '+cls):'')+'" style="width:'+pct+'%"></span></span><span class="hv">'+fmtN(val)+'</span></div>'; }
 async function carregarCfg(){ try{ const { data }=await sb.from('liv_config').select('valor').eq('chave','valores').maybeSingle(); CFGV=Object.assign({},VAL_PADRAO,(data&&data.valor)||{}); }catch(e){ CFGV=Object.assign({},VAL_PADRAO); } }
