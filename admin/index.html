@@ -408,20 +408,44 @@ function txtAbordagem(l){
   return olaOld+'Acompanhamos '+alvo+' no INPI e identificamos um ponto que merece atenção. Podemos te explicar sem compromisso. Quer conversar?';
 }
 function servLabel(c){ return c==='332'?'Oposição':c==='394'?'Recurso':c==='389'?'Pedido de registro':('serviço '+(c||'?')); }
-function detalheBtnHTML(l){ if(!l.numero) return ''; return '<div class="sec"><h4>Detalhe no INPI (ao vivo)</h4><button id="mDet">🔎 Buscar detalhe no INPI</button><div id="mDetOut" style="margin-top:8px"></div></div>'; }
+function detalheBtnHTML(l){ if(!l.numero) return ''; return '<div class="sec"><h4>Situação no INPI (ao vivo) <button class="ghost" id="mDet" style="font-size:11px;padding:3px 9px;margin-left:6px">Atualizar</button></h4><div id="mDetOut"><span class="q">consultando o INPI…</span></div></div>'; }
 function detalheINPIHTML(d){
-  const pet=(d.peticoes||[]);
+  const pet=(d.peticoes||[]); const desp=(d.despachos||[]);
   const opos=pet.find(p=>p.servico==='332');
-  const linhas=pet.length?pet.map(p=>'<div class="mrow" style="gap:8px;margin-top:4px"><span class="pill '+(p.servico==='332'?'ruim':'neutro')+'">'+esc(servLabel(p.servico))+'</span><span class="q">protocolo '+esc(p.protocolo)+' · '+esc(p.data||'')+(p.cliente?(' · <b>'+esc(p.cliente)+'</b>'):'')+'</span></div>').join(''):'<span class="q">sem petições listadas</span>';
+  const alertaRe=/indefer|oposi|exig|arquiv|nulidade|caducidade|extin/i;
+  const tl=desp.length?desp.map(x=>{ const al=alertaRe.test(x.nome||'');
+    return '<div style="padding:6px 0;border-top:1px solid var(--line)"><div style="display:flex;gap:8px;align-items:baseline"><span class="q" style="flex:0 0 118px">RPI '+esc(x.revista||'—')+' · '+esc(x.data||'')+'</span><b style="font-size:12px'+(al?';color:var(--bad)':'')+'">'+esc(x.nome||'')+'</b></div>'+(x.complemento?('<div class="q" style="margin:4px 0 0 118px;line-height:1.5">'+esc(x.complemento)+'</div>'):'')+'</div>';
+  }).join(''):'<span class="q">sem despachos listados</span>';
+  const petLinhas=pet.length?pet.map(p=>'<div class="mrow" style="gap:8px;margin-top:4px"><span class="pill '+(p.servico==='332'?'ruim':'neutro')+'">'+esc(servLabel(p.servico))+'</span><span class="q">protocolo '+esc(p.protocolo)+' · '+esc(p.data||'')+(p.cliente?(' · <b>'+esc(p.cliente)+'</b>'):'')+'</span></div>').join(''):'<span class="q">sem petições listadas</span>';
   let nota='';
   if(opos) nota = opos.cliente ? ('<div style="margin-top:7px">Opoente: <b>'+esc(opos.cliente)+'</b></div>') : '<div class="q" style="margin-top:7px">Opoente ainda não é público, aparece quando a oposição é decidida.</div>';
-  return '<div class="motivobox">'
+  return '<div class="motivobox" style="max-height:360px">'
     +'<div><b>Situação atual:</b> '+esc(d.situacao||'—')+'</div>'
     +(d.marca?('<div><b>Marca:</b> '+esc(d.marca)+'</div>'):'')
-    +(d.apresentacao?('<div><b>Apresentação:</b> '+esc(d.apresentacao)+'</div>'):'')
+    +(d.apresentacao?('<div><b>Apresentação:</b> '+esc(d.apresentacao)+(d.natureza?(' · '+esc(d.natureza)):'')+'</div>'):'')
     +(d.procurador?('<div><b>Procurador:</b> '+esc(d.procurador)+'</div>'):'')
-    +'<div style="margin-top:7px"><b>Petições:</b></div>'+linhas+nota
+    +'<div style="margin-top:10px;font-weight:700">Andamento do processo (INPI)</div>'+tl
+    +'<div style="margin-top:10px;font-weight:700">Petições</div>'+petLinhas+nota
     +'</div>';
+}
+let DET_TOKEN=0;
+async function carregarDetalheINPI(l, force){
+  const out=$('#mDetOut'); if(!out) return;
+  if(l._det && !force){ out.innerHTML=detalheINPIHTML(l._det); return; }
+  const tok=++DET_TOKEN;                       // invalida consultas de cards anteriores
+  out.innerHTML='<span class="q">consultando o INPI…</span>';
+  const bt=$('#mDet'); if(bt) bt.disabled=true;
+  try{
+    const { data, error }=await sb.functions.invoke('consulta',{ body:{ action:'porNumero', numero:l.numero } });
+    if(error) throw error;
+    if(data && data.erro) throw new Error(data.erro);
+    l._det=data;
+    if(tok!==DET_TOKEN) return;                // outro card foi aberto: descarta
+    let pre='';
+    if(data.marca && !l.marca){ try{ await sb.from('leads').update({ marca:data.marca }).eq('id',l.id); l.marca=data.marca; const i=(LEADS||[]).findIndex(x=>x.id===l.id); if(i>=0) LEADS[i].marca=data.marca; const ta=$('#mAbord'); if(ta) ta.value=txtAbordagem(l); pre='<div class="msg ok" style="margin-bottom:8px">✓ Nome da marca preenchido no lead: '+esc(data.marca)+'</div>'; render(); }catch(e){} }
+    const o2=$('#mDetOut'); if(o2) o2.innerHTML=pre+detalheINPIHTML(data);
+  }catch(e){ if(tok===DET_TOKEN){ const o2=$('#mDetOut'); if(o2) o2.innerHTML='<span class="msg erro">Não consegui consultar o INPI agora. <a class="cedit" id="mDetRetry">tentar de novo</a></span>'; const rt=$('#mDetRetry'); if(rt) rt.onclick=()=>carregarDetalheINPI(l, true); } }
+  const bt2=$('#mDet'); if(bt2) bt2.disabled=false;
 }
 function motivoHTML(l){
   const t=l.tipo_problema||'outro', conf=(l.conflitos||[]);
@@ -534,21 +558,10 @@ function renderModal(l){
   const okMsg=(t)=>{ const o=$('#mAbOk'); if(o){ o.textContent=t; setTimeout(()=>{ if(o)o.textContent=''; },2500); } };
   $('#mAbCopy').onclick=()=>{ navigator.clipboard.writeText($('#mAbord').value).then(()=>okMsg('copiado!')); };
   $('#mAbReset').onclick=()=>{ $('#mAbord').value=txtAbordagem(l); okMsg('regerado'); };
-  // detalhe ao vivo no INPI (situação, marca, petições, opoente se público)
+  // detalhe ao vivo no INPI: carrega AUTOMÁTICO ao abrir; botão só re-consulta
   const btDet=$('#mDet');
-  if(btDet) btDet.onclick=async ()=>{
-    const out=$('#mDetOut'); out.innerHTML='<span class="q">buscando no INPI…</span>'; btDet.disabled=true;
-    try{
-      const { data, error }=await sb.functions.invoke('consulta',{ body:{ action:'porNumero', numero:l.numero } });
-      if(error) throw error;
-      if(data && data.erro) throw new Error(data.erro);
-      let pre='';
-      if(data.marca && !l.marca){ try{ await sb.from('leads').update({ marca:data.marca }).eq('id',l.id); l.marca=data.marca; const i=(LEADS||[]).findIndex(x=>x.id===l.id); if(i>=0) LEADS[i].marca=data.marca; $('#mAbord').value=txtAbordagem(l); pre='<div class="msg ok" style="margin-bottom:8px">✓ Nome da marca preenchido no lead: '+esc(data.marca)+'</div>'; }catch(e){} }
-      out.innerHTML=pre+detalheINPIHTML(data);
-      render();
-    }catch(e){ out.innerHTML='<span class="msg erro">'+esc(e.message||'falha na consulta')+'</span>'; }
-    btDet.disabled=false;
-  };
+  if(btDet) btDet.onclick=()=>carregarDetalheINPI(l, true);
+  if(l.numero) carregarDetalheINPI(l, false);
   (function(){ const e=l.enriquecimento||{}; const fone=e.telefone?String(e.telefone).replace(/[^0-9]/g,''):''; const email=e.email||'';
     if(fone){ const b=document.createElement('button'); b.className='canal wa'; b.textContent='Enviar no WhatsApp'; b.onclick=()=>window.open('https://wa.me/55'+fone+'?text='+encodeURIComponent($('#mAbord').value),'_blank','noopener'); $('#mAbWa').replaceWith(b); }
     if(email){ const b=document.createElement('button'); b.className='canal em'; b.textContent='Enviar por e-mail'; b.onclick=()=>window.open('mailto:'+email+'?subject='+encodeURIComponent('Sobre a sua marca '+(l.marca||'')+' no INPI')+'&body='+encodeURIComponent($('#mAbord').value),'_blank','noopener'); $('#mAbMail').replaceWith(b); }
