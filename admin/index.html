@@ -369,6 +369,8 @@ function logoBox(l){ const e=l.enriquecimento||{}; const nome=e.nomeFantasia||e.
 function saudacao(l){ const e=l.enriquecimento||{}; const raw=String(e.nomeFantasia||l.titular||'').trim().replace(/^\d[\d.\/-]*\s+/,''); if(!raw) return 'Olá!'; const w=raw.split(/\s+/)[0]; if(w.length<2) return 'Olá!'; return 'Olá, '+w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()+'!'; }
 const REMETENTE='Juvenill Ribêiro';
 function primeiroNome(l){ const e=l.enriquecimento||{}; const raw=String(e.nomeFantasia||l.titular||'').trim().replace(/^\d[\d.\/-]*\s+/,''); if(!raw) return ''; const w=raw.split(/\s+/)[0]; if(w.length<2) return ''; return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase(); }
+const MESES_LIV=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+function dataExtenso(iso){ if(!iso) return null; const p=String(iso).slice(0,10).split('-'); if(p.length<3) return null; return (+p[2])+' de '+(MESES_LIV[(+p[1])-1]||'')+' de '+p[0]; }
 function txtAbordagem(l){
   const proc=l.numero||'', t=l.tipo_problema||'outro';
   const temMarca=l.marca && String(l.marca).trim();
@@ -376,9 +378,8 @@ function txtAbordagem(l){
   const nome=primeiroNome(l);
   const ola=nome?('Olá, '+nome+'! Tudo bem?'):'Olá! Tudo bem?';
   const conf=(l.conflitos||[])[0];
-  const prazo=l.data_limite?new Date(l.data_limite+'T00:00:00').toLocaleDateString('pt-BR'):null;
+  const prazo=dataExtenso(l.data_limite);
   const intro='Meu nome é '+REMETENTE+' e faço parte da LIV Propriedade Intelectual. Trabalhamos com registro de marcas e acompanhamento de processos junto ao INPI.';
-  const fecho='A LIV é especializada nesse tipo de '+(t==='oposicao'?'defesa':'análise')+' e pode te ajudar '+(t==='oposicao'?'a construir a':'na construção de uma')+' estratégia adequada para o seu caso. Se você nos autorizar, podemos preparar um panorama inicial do processo e explicar, de maneira simples, quais caminhos podem ser considerados.';
   if(t==='indeferido'){
     let ind='Verificamos que o pedido de registro da sua marca'+marcaTxt+', processo nº '+proc+', sofreu um indeferimento';
     if(conf) ind+=' por possível semelhança com a marca '+conf.marca;
@@ -386,14 +387,17 @@ function txtAbordagem(l){
     ind+='.';
     return [ola, intro, ind,
       'Para contestar essa decisão, é necessário apresentar um recurso fundamentado na Lei da Propriedade Industrial, observando os argumentos utilizados pelo INPI e as particularidades do seu processo.',
-      fecho].join('\n\n');
+      'A LIV é especializada nesse tipo de análise e pode te ajudar na construção de uma estratégia adequada para o seu caso. Se você nos autorizar, podemos preparar um panorama inicial do processo e explicar, de maneira simples, quais caminhos podem ser considerados.'
+    ].join('\n\n');
   }
   if(t==='oposicao'){
-    const prazoTxt=prazo?(' O prazo para apresentar essa defesa é até '+prazo+'.'):'';
     return [ola, intro,
-      'Verificamos que o pedido de registro da sua marca'+marcaTxt+', processo nº '+proc+', recebeu uma oposição de terceiro ao registro.',
-      'Essa é uma situação que exige atenção: se a oposição não for respondida com uma manifestação fundamentada na Lei da Propriedade Industrial, o pedido pode acabar sendo indeferido e a marca, perdida.'+prazoTxt,
-      fecho].join('\n\n');
+      'Verificamos que o pedido de registro da sua marca'+marcaTxt+', processo nº '+proc+', recebeu uma oposição apresentada por terceiro.',
+      'Essa movimentação exige atenção, pois é importante apresentar uma manifestação com argumentos fundamentados na Lei da Propriedade Industrial. A ausência de uma defesa bem construída pode enfraquecer o pedido e aumentar o risco de indeferimento.',
+      (prazo?('O prazo para apresentar essa manifestação é até '+prazo+'.'):null),
+      'Somos especializados nesse tipo de defesa e podemos ajudar você a compreender os argumentos apresentados pela outra parte e definir a estratégia mais adequada para o processo.',
+      'Se você nos autorizar, podemos preparar um panorama inicial e explicar, de maneira simples, quais caminhos podem ser considerados para a proteção da sua marca.'
+    ].filter(Boolean).join('\n\n');
   }
   // exigência / outro: formato provisório (serão ajustados na sequência)
   const olaOld=(nome?('Olá, '+nome+'!'):'Olá!')+' ';
