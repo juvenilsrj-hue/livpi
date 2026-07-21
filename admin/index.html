@@ -170,6 +170,7 @@
       <select id="fProblema"><option value="">Problema: todos</option><option value="indeferido">Indeferido</option><option value="oposicao">Oposição</option><option value="exigencia">Exigência</option></select>
       <select id="fUF" style="min-width:150px"></select>
       <select id="fEtq"><option value="">Etiqueta: todas</option></select>
+      <select id="fRev"><option value="">Publicação: todas</option></select>
       <span class="status">Data:</span>
       <input type="date" id="fDe" title="publicação de">
       <span class="status">até</span>
@@ -280,21 +281,31 @@ async function carregarTudo(){
     ETIQ=(et.data||[]).map(e=>({id:e.id,nome:e.nome,cor:e.cor}));
     LEADS=lv||[];
     $('#fEtq').innerHTML='<option value="">Etiqueta: todas</option>'+ETIQ.map(e=>'<option value="'+esc(e.id)+'">'+esc(e.nome)+'</option>').join('');
+    montaPublicacoes();
     render();
   }catch(e){ $('#status').textContent='erro: '+e.message; }
 }
 
 // ===== RENDER BOARD ===========================================================
-function filtros(){ return { pessoa:$('#fPessoa').value, problema:$('#fProblema').value, uf:$('#fUF').value, etq:$('#fEtq').value, de:$('#fDe').value, ate:$('#fAte').value, txt:$('#fTxt').value.trim().toLowerCase() }; }
-function dataDoLead(l){ if(l.data_publicacao) return l.data_publicacao.slice(0,10); if(l.criado_em) return String(l.criado_em).slice(0,10); return null; }
+function filtros(){ return { pessoa:$('#fPessoa').value, problema:$('#fProblema').value, uf:$('#fUF').value, etq:$('#fEtq').value, rev:$('#fRev').value, de:$('#fDe').value, ate:$('#fAte').value, txt:$('#fTxt').value.trim().toLowerCase() }; }
+function isoData(s){ if(!s) return null; s=String(s); const br=s.match(/^(\d{2})\/(\d{2})\/(\d{4})/); if(br) return br[3]+'-'+br[2]+'-'+br[1]; return s.slice(0,10); }
+function dataDoLead(l){ return isoData(l.data_publicacao) || isoData(l.criado_em); }
 function passa(l,f){
   if(f.pessoa && l.tipo_pessoa!==f.pessoa) return false;
   if(f.problema && l.tipo_problema!==f.problema) return false;
   if(f.uf){ if(f.uf.indexOf('reg:')===0){ if(!(REGIOES[f.uf.slice(4)]||[]).includes(l.uf||'')) return false; } else if((l.uf||'')!==f.uf) return false; }
   if(f.etq && !(l.etiquetas||[]).includes(f.etq)) return false;
+  if(f.rev && String(l.revista||'')!==f.rev) return false;
   if(f.de||f.ate){ const d=dataDoLead(l); if(!d) return false; if(f.de&&d<f.de) return false; if(f.ate&&d>f.ate) return false; }
   if(f.txt && !(l.titular||'').toLowerCase().includes(f.txt)) return false;
   return true;
+}
+function montaPublicacoes(){
+  const revs={};
+  for(const l of (LEADS||[])){ if(!l.revista) continue; const r=String(l.revista); if(!(r in revs)) revs[r]=isoData(l.data_publicacao)||''; }
+  const lista=Object.keys(revs).sort((a,b)=>(revs[b]||'').localeCompare(revs[a]||'')||b.localeCompare(a));
+  const brDe=iso=> iso?iso.slice(8,10)+'/'+iso.slice(5,7)+'/'+iso.slice(0,4):'';
+  $('#fRev').innerHTML='<option value="">Publicação: todas</option>'+lista.map(r=>'<option value="'+esc(r)+'">RPI '+esc(r)+(revs[r]?(' · '+brDe(revs[r])):'')+'</option>').join('');
 }
 const etqMap=()=>{ const m={}; (ETIQ||[]).forEach(e=>m[e.id]=e); return m; };
 const nomeEstagio=k=>{ const s=(STAGES||[]).find(x=>x.key===k); return s?s.label:k; };
@@ -399,8 +410,8 @@ $('#btNovaCol').addEventListener('click', async ()=>{
 });
 async function renomearCol(key,atual){ const nome=prompt('Novo nome da coluna:',atual||''); if(!nome||!nome.trim()) return; const { error }=await sb.from('liv_estagios').update({label:nome.trim()}).eq('key',key); if(error){ alert(error.message); return; } await carregarTudo(); }
 
-['fPessoa','fProblema','fUF','fEtq','fDe','fAte','fTxt'].forEach(id=> $('#'+id).addEventListener('input', render));
-$('#fLimpar').addEventListener('click', ()=>{ ['fPessoa','fProblema','fUF','fEtq','fDe','fAte','fTxt'].forEach(id=> $('#'+id).value=''); render(); });
+['fPessoa','fProblema','fUF','fEtq','fRev','fDe','fAte','fTxt'].forEach(id=> $('#'+id).addEventListener('input', render));
+$('#fLimpar').addEventListener('click', ()=>{ ['fPessoa','fProblema','fUF','fEtq','fRev','fDe','fAte','fTxt'].forEach(id=> $('#'+id).value=''); render(); });
 
 // ===== DASHBOARD + CARTEIRA (lêem snapshots gravados no Supabase) =============
 const pillCls=t=>['bom','ruim','alerta','chance','neutro'].includes(t)?t:'neutro';
