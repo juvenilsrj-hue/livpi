@@ -93,6 +93,7 @@
   .sco{ font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; line-height:1.5; white-space:nowrap; margin-left:auto }
   .sco.quente{ background:#f8e8e5; color:var(--bad) } .sco.morno{ background:#f7efdc; color:var(--warn) } .sco.frio{ background:#eceef1; color:var(--muted) }
   .motivobox{ background:var(--gelo); border:1px solid var(--line); border-radius:9px; padding:10px 12px; font-size:12.5px; line-height:1.55; color:var(--ink); max-height:190px; overflow-y:auto; white-space:pre-wrap }
+  .resumo{ background:#f3ead7; border:1px solid #e6d9b8; border-radius:9px; padding:10px 12px; font-size:12.5px; line-height:1.6; color:var(--ink) }
   button.canal{ cursor:pointer } .canal.wa{ color:#1f7a4d } .canal.em{ color:var(--info) }
   .painel{ padding:26px; color:var(--muted); font-size:14px; line-height:1.7 } .painel h3{ color:var(--ink) }
   #view-dashboard, #view-carteira{ overflow-y:auto }
@@ -457,8 +458,65 @@ async function carregarDetalheINPI(l, force){
     let pre='';
     if(data.marca && !l.marca){ try{ await sb.from('leads').update({ marca:data.marca }).eq('id',l.id); l.marca=data.marca; const i=(LEADS||[]).findIndex(x=>x.id===l.id); if(i>=0) LEADS[i].marca=data.marca; const ta=$('#mAbord'); if(ta) ta.value=txtAbordagem(l); pre='<div class="msg ok" style="margin-bottom:8px">✓ Nome da marca preenchido no lead: '+esc(data.marca)+'</div>'; render(); }catch(e){} }
     const o2=$('#mDetOut'); if(o2) o2.innerHTML=pre+detalheINPIHTML(data);
+    const rz=$('#mResumo'); if(rz) rz.innerHTML=resumoInner(l);   // oposição: agora com o opoente
   }catch(e){ if(tok===DET_TOKEN){ const o2=$('#mDetOut'); if(o2) o2.innerHTML='<span class="msg erro">Não consegui consultar o INPI agora. <a class="cedit" id="mDetRetry">tentar de novo</a></span>'; const rt=$('#mDetRetry'); if(rt) rt.onclick=()=>carregarDetalheINPI(l, true); } }
   const bt2=$('#mDet'); if(bt2) bt2.disabled=false;
+}
+// RESUMO (leitura rápida do que houve) a partir da base legal + conflito + opoente
+const ART_LPI={
+  'XIX':'a marca foi considerada parecida com uma já registrada por terceiro (risco de confundir o consumidor)',
+  'VI':'o nome foi considerado genérico, comum ou descritivo, sem força distintiva suficiente',
+  'XXIII':'a marca imita outra que o requerente deveria conhecer',
+  'V':'reproduz nome ou título de empresa de terceiro',
+  'XV':'usa nome civil, assinatura ou imagem de terceiro sem autorização',
+  'XVII':'usa obra protegida por direito autoral sem autorização',
+  'X':'o sinal induz falsa indicação de origem ou qualidade',
+  'XXI':'é a forma comum ou necessária do produto',
+};
+function incisoDe(base){ const m=String(base||'').match(/,\s*([IVXLCDM]+)/); return m?m[1]:''; }
+function resumoInner(l){
+  const t=l.tipo_problema||'outro';
+  if(t==='indeferido'){
+    const conf=(l.conflitos||[])[0]; const inc=incisoDe(l.base);
+    const causa=ART_LPI[inc]||(conf?'a marca foi considerada parecida com uma marca de terceiro':'houve um motivo material ou formal apontado pelo INPI');
+    let s='O INPI negou o registro porque '+causa+'.';
+    if(conf) s+=' Marca apontada como conflitante: <b>'+esc(conf.marca)+'</b> (processo '+esc(conf.numero)+').';
+    if(l.base) s+=' Base legal: <b>'+esc(l.base)+'</b> da LPI.';
+    s+=' Ação possível: <b>recurso</b> dentro do prazo, ou reposicionar a marca.';
+    return s;
+  }
+  if(t==='oposicao'){
+    const det=l._det, pet=(det&&det.peticoes)||[]; const opos=pet.find(p=>p.servico==='332');
+    let s='';
+    if(opos&&opos.cliente) s+='Quem se opôs: <b>'+esc(opos.cliente)+'</b>. ';
+    s+='Um terceiro apresentou oposição contra o registro. Os fundamentos ficam na petição do opoente (não publicados na RPI); em geral, alega-se semelhança com uma marca do próprio opoente.';
+    s+=' Ação possível: apresentar <b>manifestação</b> no prazo, senão aumenta o risco de indeferimento.';
+    return s;
+  }
+  if(t==='exigencia'){
+    return 'O INPI fez uma <b>exigência</b> que precisa ser cumprida dentro do prazo, senão o pedido é arquivado. O detalhe do que ele pede está no texto acima.';
+  }
+  return '';
+}
+function resumoHTML(l){ const inner=resumoInner(l); if(!inner) return ''; return '<div class="sec"><h4>✦ Resumo (o que houve)</h4><div id="mResumo" class="resumo">'+inner+'</div></div>'; }
+// CORRELAÇÃO de contato: buscas prontas por nome + marca (Google/LinkedIn/CNPJ) + colar CNPJ p/ enriquecer
+function correlacaoHTML(l){
+  const nome=String(l.titular||'').replace(/^\d[\d.\/-]*\s+/,'').trim();
+  const marca=l.marca && String(l.marca).trim() || '';
+  if(!nome && !marca) return '';
+  const g=s=>'https://www.google.com/search?q='+encodeURIComponent(s);
+  const li='https://www.linkedin.com/search/results/all/?keywords='+encodeURIComponent((nome+' '+marca).trim());
+  const links=[
+    ['CNPJ / telefone', g('"'+nome+'" '+(marca?('"'+marca+'" '):'')+'CNPJ telefone contato')],
+    ['LinkedIn', li],
+    ['Google', g((nome+' '+marca).trim())],
+    ['Instagram', g('site:instagram.com '+(marca||nome))],
+  ];
+  const inp='padding:8px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff';
+  return '<div class="sec"><h4>Buscar contato (correlação)</h4>'
+    +'<div class="canais">'+links.map(x=>'<a class="canal" target="_blank" rel="noopener" href="'+x[1]+'">'+esc(x[0])+'</a>').join('')+'</div>'
+    +'<div class="mrow" style="margin-top:8px"><input id="mCnpjBusca" placeholder="CNPJ encontrado (só números)" style="flex:1;min-width:150px;'+inp+'"><button class="ghost" id="mCnpjEnriq">Enriquecer</button></div>'
+    +'<div class="q" id="mCnpjMsg" style="margin-top:4px">Busque pelo nome + marca; se achar o CNPJ, cole aqui pra puxar telefone/e-mail automaticamente.</div></div>';
 }
 function motivoHTML(l){
   const t=l.tipo_problema||'outro', conf=(l.conflitos||[]);
@@ -557,7 +615,9 @@ function renderModal(l){
     +'<div class="mrow"><label>Etapa</label><select id="mEst">'+stages+'</select><label>Prazo</label><input type="datetime-local" id="mData" value="'+dv+'">'+(atrasado(l)?'<span class="due atras">⚠ Em atraso</span>':'')+'</div>'+limiteBadge(l)
     +'<div class="sec"><h4>Etiquetas (tipo de lead)</h4><div id="mPick">'+picker+'</div></div>'
     +'<div class="sec"><h4>Dados &amp; canais</h4>'+canaisHTML(l)+'</div>'
+    +correlacaoHTML(l)
     +motivoHTML(l)
+    +resumoHTML(l)
     +detalheBtnHTML(l)
     +abordagemHTML(l)
     +'<div class="sec"><h4>Observações / comentários</h4><textarea id="mCom" placeholder="escreva uma observação..."></textarea><div style="margin-top:6px"><button id="mComBt">Comentar</button></div><div style="margin-top:10px">'+coments+'</div></div>'
@@ -575,6 +635,20 @@ function renderModal(l){
   const btDet=$('#mDet');
   if(btDet) btDet.onclick=()=>carregarDetalheINPI(l, true);
   if(l.numero) carregarDetalheINPI(l, false);
+  // correlação: colar um CNPJ encontrado → enriquece pela BrasilAPI
+  const btCnpj=$('#mCnpjEnriq');
+  if(btCnpj) btCnpj.onclick=async ()=>{
+    const cnpj=String($('#mCnpjBusca').value||'').replace(/\D/g,''); const msg=$('#mCnpjMsg');
+    if(cnpj.length!==14){ msg.textContent='Informe um CNPJ com 14 dígitos (só números).'; return; }
+    msg.textContent='consultando a BrasilAPI…'; btCnpj.disabled=true;
+    try{
+      const r=await fetch('https://brasilapi.com.br/api/cnpj/v1/'+cnpj);
+      if(!r.ok) throw new Error('CNPJ não encontrado');
+      const d=await r.json(); const patch={ enriquecimento:mapEnriq(d,cnpj), tipo_pessoa:'PJ', atualizado_em:new Date().toISOString() };
+      await sb.from('leads').update(patch).eq('id',l.id); Object.assign(l,patch);
+      render(); renderModal(l);
+    }catch(e){ msg.textContent='Erro: '+(e.message||'falha'); btCnpj.disabled=false; }
+  };
   (function(){ const e=l.enriquecimento||{}; const fone=e.telefone?String(e.telefone).replace(/[^0-9]/g,''):''; const email=e.email||'';
     if(fone){ const b=document.createElement('button'); b.className='canal wa'; b.textContent='Enviar no WhatsApp'; b.onclick=()=>window.open('https://wa.me/55'+fone+'?text='+encodeURIComponent($('#mAbord').value),'_blank','noopener'); $('#mAbWa').replaceWith(b); }
     if(email){ const b=document.createElement('button'); b.className='canal em'; b.textContent='Enviar por e-mail'; b.onclick=()=>window.open('mailto:'+email+'?subject='+encodeURIComponent('Sobre a sua marca '+(l.marca||'')+' no INPI')+'&body='+encodeURIComponent($('#mAbord').value),'_blank','noopener'); $('#mAbMail').replaceWith(b); }
