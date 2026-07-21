@@ -368,7 +368,20 @@ function logoBox(l){ const e=l.enriquecimento||{}; const nome=e.nomeFantasia||e.
 // ---- MOTIVO DA RECUSA + CONTEÚDO DE ABORDAGEM -------------------------------
 function saudacao(l){ const e=l.enriquecimento||{}; const raw=String(e.nomeFantasia||l.titular||'').trim().replace(/^\d[\d.\/-]*\s+/,''); if(!raw) return 'Olá!'; const w=raw.split(/\s+/)[0]; if(w.length<2) return 'Olá!'; return 'Olá, '+w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()+'!'; }
 const REMETENTE='Juvenill Ribêiro';
-function primeiroNome(l){ const e=l.enriquecimento||{}; const raw=String(e.nomeFantasia||l.titular||'').trim().replace(/^\d[\d.\/-]*\s+/,''); if(!raw) return ''; const w=raw.split(/\s+/)[0]; if(w.length<2) return ''; return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase(); }
+// nome da PESSOA p/ a saudação: nunca o nome fantasia da empresa.
+// usa o titular (na marca costuma ser a pessoa/MEI); se o titular for empresa, cai pro 1º sócio.
+function primeiroNome(l){
+  const e=l.enriquecimento||{};
+  const limpa=s=>String(s||'').trim().replace(/^\d[\d.\/-]*\s+/,'');
+  const ehEmpresa=s=>/\b(LTDA|EIRELI|EPP|MEI|S\/A|S\.?A\.?|SOCIEDADE|ASSOCIA|INSTITUTO|COM[ÉE]RCIO|IND[ÚU]STRIA|SERVI[ÇC]OS?|SOLU[ÇC][ÕO]ES|CONSULTORIA|ENGENHARIA|CONSTRUTORA|INCORPORADORA|EMPREEND|PRODU[ÇC][ÕO]ES|COMERCIAL|LOG[ÍI]STICA|TRANSPORTES?|TECNOLOGIA|MARKETING|ACESS[ÓO]RIOS)\b/i.test(s)||/\bME$/i.test(s);
+  const tit=limpa(l.titular);
+  const socio=(Array.isArray(e.socios)&&e.socios[0])?limpa(e.socios[0]):'';
+  const pessoa=(tit && !ehEmpresa(tit)) ? tit : (socio || tit);
+  if(!pessoa) return '';
+  const w=pessoa.split(/\s+/)[0];
+  if(w.length<2) return '';
+  return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase();
+}
 const MESES_LIV=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 function dataExtenso(iso){ if(!iso) return null; const p=String(iso).slice(0,10).split('-'); if(p.length<3) return null; return (+p[2])+' de '+(MESES_LIV[(+p[1])-1]||'')+' de '+p[0]; }
 function txtAbordagem(l){
