@@ -27,7 +27,14 @@
   /* app — layout LegisHub (barra lateral + conteúdo) */
   #app{ display:none; flex-direction:row; height:100%; flex:1; min-height:0 }
   .side{ flex:0 0 212px; background:var(--card); border-right:1px solid var(--line); display:flex; flex-direction:column; overflow-y:auto; padding:12px 0 8px }
-  .ws{ font-weight:700; font-size:14px; color:var(--brass); padding:4px 16px 8px; white-space:nowrap }
+  .ws{ font-weight:700; font-size:14px; color:var(--brass); padding:4px 12px 8px 16px; white-space:nowrap; display:flex; align-items:center; justify-content:space-between; gap:6px }
+  .sidetog{ border:0; background:transparent; color:var(--muted); cursor:pointer; font-size:15px; line-height:1; padding:2px 6px; border-radius:6px } .sidetog:hover{ background:var(--soft); color:var(--brass) }
+  .side.mini{ flex-basis:56px }
+  .side.mini .ws{ justify-content:center; padding:4px 0 8px } .side.mini .wslbl{ display:none }
+  .side.mini .grp{ font-size:0; padding:9px 0 2px } .side.mini .grp::after{ content:""; display:block; height:1px; background:var(--line); margin:0 12px }
+  .side.mini .tab{ font-size:0; justify-content:center; padding:9px 0; border-left-width:0; gap:0 }
+  .side.mini .tab .ic{ font-size:15px; width:auto; opacity:1 } .side.mini .tab .badge{ display:none }
+  .side.mini .sidefoot{ justify-content:center; padding:10px 4px 2px } .side.mini .sidefoot .who{ display:none } .side.mini .sidefoot .sair{ font-size:0; padding:6px 8px } .side.mini .sidefoot .sair::before{ content:"⎋"; font-size:14px }
   .grp{ font-size:10px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); padding:13px 16px 5px; font-weight:700 }
   .tab{ display:flex; align-items:center; gap:9px; text-align:left; text-decoration:none; color:var(--ink); padding:8px 16px; cursor:pointer; border:0; border-left:3px solid transparent; background:transparent; font:inherit; font-size:13px; font-weight:600; white-space:nowrap; width:100% }
   .tab .ic{ font-size:13px; width:18px; text-align:center; opacity:.85; flex:0 0 auto }
@@ -72,6 +79,11 @@
   .due{ display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:#eceef1; color:var(--muted) } .due.atras{ background:#f8e8e5; color:var(--bad) }
   .canais{ display:flex; gap:5px; flex-wrap:wrap } .canal{ font-size:10px; font-weight:600; text-decoration:none; color:var(--brass); border:1px solid var(--line); padding:3px 8px; border-radius:7px; background:#fff }
   .canal.wa{ color:var(--ok); border-color:#cfe6d8 } .canal.ig{ color:#b03a6e; border-color:#eccfdc } .canal.em{ color:var(--info); border-color:#cfe0ec }
+  .nab{ display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:#f8e8e5; color:var(--bad) }
+  .abok{ display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:#e6f2eb; color:var(--ok) }
+  .verd{ font-size:12.5px; font-weight:700; padding:8px 11px; border-radius:9px; margin-bottom:8px }
+  .verd.no{ background:#f8e8e5; color:var(--bad) } .verd.yes{ background:#e6f2eb; color:var(--ok) }
+  .fon{ border-color:var(--brass)!important; background:#f3ead7!important; color:var(--brass)!important; font-weight:700 }
   .modalbg{ position:fixed; inset:0; background:rgba(34,32,28,.45); display:none; align-items:flex-start; justify-content:center; padding:28px 14px; overflow-y:auto; z-index:50 }
   .modalcard{ background:var(--bg); width:640px; max-width:100%; max-height:90vh; display:flex; flex-direction:column; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.28) }
   .mhead{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:15px 18px; border-bottom:1px solid var(--line); background:var(--card); border-radius:14px 14px 0 0 }
@@ -81,8 +93,9 @@
   .mbody{ padding:16px 18px; display:flex; flex-direction:column; gap:16px; font-size:13px; line-height:1.5; flex:1 1 auto; min-height:0; overflow-y:auto }
   .sec h4{ margin:0 0 9px; font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--brass); font-weight:700 }
   .mrow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center } .mrow label{ font-size:12px; color:var(--muted) }
-  #mPick{ display:flex; flex-wrap:wrap; gap:6px }
-  .et{ display:inline-flex; align-items:center; line-height:1.15; font-size:11px; font-weight:700; color:#fff; padding:5px 10px; border-radius:999px; cursor:pointer; border:2px solid transparent; opacity:.42; white-space:nowrap; transition:opacity .1s } .et:hover{ opacity:.7 } .et.on{ opacity:1; border-color:rgba(0,0,0,.28) }
+  #mPick{ display:flex; flex-wrap:wrap; gap:5px }
+  .et{ display:inline-flex; align-items:center; line-height:1.1; font-size:9.5px; font-weight:700; color:#fff; padding:3px 8px; border-radius:999px; cursor:pointer; border:1.5px solid transparent; opacity:.4; white-space:nowrap; transition:opacity .1s } .et:hover{ opacity:.72 } .et.on{ opacity:1; border-color:rgba(0,0,0,.25) }
+  .mbody > .sec{ border-top:1px solid var(--line); padding-top:14px }
   .mfoot{ flex:0 0 auto; display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 18px; border-top:1px solid var(--line); background:var(--card); border-radius:0 0 14px 14px }
   .mfoot .autoinfo{ font-size:11px; color:var(--muted) }
   button.danger{ background:#fff; color:var(--bad); border:1px solid #ecc7c0 } button.danger:hover{ background:#fbeeeb }
@@ -154,7 +167,7 @@
 
 <div id="app">
   <aside class="side">
-    <div class="ws">LIV · Administração</div>
+    <div class="ws"><span class="wslbl">LIV · Administração</span><button class="sidetog" id="sideTog" title="recolher / expandir menu">‹</button></div>
     <div class="grp">Atendimento</div>
     <button class="tab on" data-tab="leads"><span class="ic">🗂️</span>Leads / CRM</button>
     <div class="grp">Gestão processual</div>
@@ -179,16 +192,18 @@
     <div class="bar">
       <button id="btNovoCard">+ Novo card</button>
       <button class="ghost" id="btNovaCol">+ Coluna</button>
-      <button class="ghost" id="btEnriq" title="enriquece via BrasilAPI os leads PJ/MEI filtrados">⚡ Enriquecer filtrados</button>
+      <button class="ghost" id="btEnriq" title="enriquece via BrasilAPI os leads PJ/MEI filtrados">⚡ Enriquecer</button>
+      <button class="ghost" id="btVerif" title="consulta o INPI dos leads filtrados e marca quem NÃO abordar (tem procurador / já contestou)">🔎 Verificar INPI</button>
       <span style="width:6px"></span>
-      <select id="fPessoa"><option value="">Pessoa: todas</option><option value="PJ">PJ</option><option value="PF">PF</option><option value="?">A classificar</option></select>
-      <select id="fProblema"><option value="">Problema: todos</option><option value="indeferido">Indeferido</option><option value="oposicao">Oposição</option><option value="exigencia">Exigência</option></select>
+      <select id="fPessoa"><option value="">Pessoa: todas</option><option value="PJ">Pessoa: PJ</option><option value="PF">Pessoa: PF</option><option value="?">Pessoa: a classificar</option></select>
+      <select id="fProblema"><option value="">Problema: todos</option><option value="indeferido">Problema: Indeferido</option><option value="oposicao">Problema: Oposição</option><option value="exigencia">Problema: Exigência</option></select>
+      <select id="fAbord"><option value="">Abordagem: todos</option><option value="ok">✔ só abordáveis</option><option value="nao">⛔ não abordar</option><option value="naover">? não verificados</option></select>
       <select id="fUF" style="min-width:150px"></select>
       <select id="fEtq"><option value="">Etiqueta: todas</option></select>
       <select id="fRev"><option value="">Publicação: todas</option></select>
-      <select id="fCanal"><option value="">Canal: todos</option><option value="qualquer">Com contato (e-mail/WhatsApp)</option><option value="email">Com e-mail</option><option value="whatsapp">Com WhatsApp</option><option value="instagram">Com Instagram</option><option value="google">Com Google</option></select>
+      <select id="fCanal"><option value="">Canal: todos</option><option value="qualquer">Canal: com contato (e-mail/WhatsApp)</option><option value="email">Canal: com e-mail</option><option value="whatsapp">Canal: com WhatsApp</option><option value="instagram">Canal: com Instagram</option><option value="google">Canal: com Google</option></select>
       <select id="fSort"><option value="score">Ordenar: prioridade</option><option value="recente">Ordenar: mais recente</option><option value="prazo">Ordenar: prazo</option></select>
-      <select id="fMostrar"><option value="ativos">Situação: ativos</option><option value="desc">Descartados</option><option value="todos">Todos</option></select>
+      <select id="fMostrar"><option value="ativos">Situação: ativos</option><option value="desc">Situação: descartados</option><option value="todos">Situação: todos</option></select>
       <span class="status">Data:</span>
       <input type="date" id="fDe" title="publicação de">
       <span class="status">até</span>
@@ -240,6 +255,10 @@ $('#loginForm').addEventListener('submit', async e=>{
   entrar();
 });
 $('#sair').addEventListener('click', async ()=>{ await sb.auth.signOut(); location.reload(); });
+// recolher/expandir a sidebar (estado salvo)
+function aplicaSide(){ const mini=localStorage.getItem('liv_side_mini')==='1'; const s=document.querySelector('.side'); if(s) s.classList.toggle('mini',mini); const b=$('#sideTog'); if(b) b.textContent=mini?'☰':'‹'; }
+if($('#sideTog')) $('#sideTog').addEventListener('click', ()=>{ localStorage.setItem('liv_side_mini', localStorage.getItem('liv_side_mini')==='1'?'0':'1'); aplicaSide(); });
+try{ aplicaSide(); }catch(e){}
 
 // mostrar / ocultar senha
 function tog(btnId, inpId){ $('#'+btnId).onclick=()=>{ const i=$('#'+inpId); const most=i.type==='text'; i.type=most?'password':'text'; $('#'+btnId).textContent=most?'mostrar':'ocultar'; }; }
@@ -299,14 +318,16 @@ async function carregarTudo(){
     STAGES=(st.data||[]).map(s=>({key:s.key,label:s.label,cor:s.cor}));
     ETIQ=(et.data||[]).map(e=>({id:e.id,nome:e.nome,cor:e.cor}));
     LEADS=lv||[];
-    $('#fEtq').innerHTML='<option value="">Etiqueta: todas</option>'+ETIQ.map(e=>'<option value="'+esc(e.id)+'">'+esc(e.nome)+'</option>').join('');
+    $('#fEtq').innerHTML='<option value="">Etiqueta: todas</option>'+ETIQ.map(e=>'<option value="'+esc(e.id)+'">Etiqueta: '+esc(e.nome)+'</option>').join('');
     montaPublicacoes();
     render();
   }catch(e){ $('#status').textContent='erro: '+e.message; }
 }
 
 // ===== RENDER BOARD ===========================================================
-function filtros(){ return { pessoa:$('#fPessoa').value, problema:$('#fProblema').value, uf:$('#fUF').value, etq:$('#fEtq').value, rev:$('#fRev').value, canal:$('#fCanal').value, de:$('#fDe').value, ate:$('#fAte').value, txt:$('#fTxt').value.trim().toLowerCase() }; }
+function filtros(){ return { pessoa:$('#fPessoa').value, problema:$('#fProblema').value, abord:$('#fAbord').value, uf:$('#fUF').value, etq:$('#fEtq').value, rev:$('#fRev').value, canal:$('#fCanal').value, de:$('#fDe').value, ate:$('#fAte').value, txt:$('#fTxt').value.trim().toLowerCase() }; }
+// destaca visualmente os filtros que estão ativos (valor != padrão)
+function marcarAtivos(){ ['fPessoa','fProblema','fAbord','fUF','fEtq','fRev','fCanal','fMostrar','fDe','fAte','fTxt'].forEach(id=>{ const el=$('#'+id); if(!el) return; const def=(id==='fMostrar')?'ativos':''; el.classList.toggle('fon', (el.value||'')!==def && el.value!==''); }); }
 function isoData(s){ if(!s) return null; s=String(s); const br=s.match(/^(\d{2})\/(\d{2})\/(\d{4})/); if(br) return br[3]+'-'+br[2]+'-'+br[1]; return s.slice(0,10); }
 function dataDoLead(l){ return isoData(l.data_publicacao) || isoData(l.criado_em); }
 function canaisDoLead(l){ const e=l.enriquecimento||{}; return {
@@ -332,11 +353,38 @@ function scoreLead(l){
 }
 function scoreBucket(s){ return s>=7?{k:'quente',e:'🔥'}:s>=4?{k:'morno',e:'🟠'}:{k:'frio',e:'⚪'}; }
 function scoreBadge(l){ const s=scoreLead(l); const b=scoreBucket(s); return '<span class="sco '+b.k+'" title="prioridade (alcance + prazo + tipo)">'+b.e+' '+s+'</span>'; }
+// FLAGS DE ABORDAGEM (do detalhe INPI): tem procurador OU o titular já se manifestou = NÃO abordar
+const normNome=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+function flagsAbordagem(l, d){
+  const proc=String(d.procurador||d.representante||'').trim()||null;
+  const tit=normNome(l.titular);
+  const agiu=(d.peticoes||[]).some(p=>{
+    if(!p.cliente || p.servico==='389' || p.servico==='332') return false; // 389=pedido, 332=oposição do opoente
+    const c=normNome(p.cliente); if(!c||!tit) return false;
+    return c===tit || c.includes(tit.slice(0,18)) || tit.includes(c.slice(0,18));
+  });
+  return { proc, agiu };
+}
+function abordagemBadge(l){
+  if(!l.inpi_checado) return '';
+  if(l.inpi_procurador || l.inpi_agiu){ const r=l.inpi_procurador?('tem procurador: '+l.inpi_procurador):'titular já se manifestou'; return '<span class="nab" title="'+esc(r)+'">⛔ não abordar</span>'; }
+  return '<span class="abok" title="sem procurador e sem manifestação do titular">✔ abordável</span>';
+}
+function verdictHTML(l){
+  if(!l.inpi_checado) return '';
+  const nab=l.inpi_procurador||l.inpi_agiu;
+  const r=l.inpi_procurador?('tem procurador ('+esc(l.inpi_procurador)+')'):(l.inpi_agiu?'o titular já se manifestou no processo':'');
+  return '<div class="verd '+(nab?'no':'yes')+'">'+(nab?('⛔ Não abordar: '+r):'✔ Abordável — sem procurador e sem manifestação do titular')+'</div>';
+}
 function passa(l,f){
   const mostra=($('#fMostrar')&&$('#fMostrar').value)||'ativos';
   if(mostra==='desc'){ if(!l.descartado) return false; } else if(mostra!=='todos'){ if(l.descartado) return false; }
   if(f.pessoa && l.tipo_pessoa!==f.pessoa) return false;
   if(f.problema && l.tipo_problema!==f.problema) return false;
+  if(f.abord){ const checado=!!l.inpi_checado, nab=!!(l.inpi_procurador||l.inpi_agiu);
+    if(f.abord==='ok'){ if(!checado||nab) return false; }
+    else if(f.abord==='nao'){ if(!checado||!nab) return false; }
+    else if(f.abord==='naover'){ if(checado) return false; } }
   if(f.uf){ if(f.uf.indexOf('reg:')===0){ if(!(REGIOES[f.uf.slice(4)]||[]).includes(l.uf||'')) return false; } else if((l.uf||'')!==f.uf) return false; }
   if(f.etq && !(l.etiquetas||[]).includes(f.etq)) return false;
   if(f.rev && String(l.revista||'')!==f.rev) return false;
@@ -489,8 +537,12 @@ async function carregarDetalheINPI(l, force){
     if(tok!==DET_TOKEN) return;                // outro card foi aberto: descarta
     let pre='';
     if(data.marca && !l.marca){ try{ await sb.from('leads').update({ marca:data.marca }).eq('id',l.id); l.marca=data.marca; const i=(LEADS||[]).findIndex(x=>x.id===l.id); if(i>=0) LEADS[i].marca=data.marca; const ta=$('#mAbord'); if(ta) ta.value=txtAbordagem(l); pre='<div class="msg ok" style="margin-bottom:8px">✓ Nome da marca preenchido no lead: '+esc(data.marca)+'</div>'; render(); }catch(e){} }
-    const o2=$('#mDetOut'); if(o2) o2.innerHTML=pre+detalheINPIHTML(data);
+    // flags de abordagem (tem procurador / titular já contestou) -> grava no lead
+    try{ const fl=flagsAbordagem(l,data); const pf={ inpi_procurador:fl.proc, inpi_agiu:fl.agiu, inpi_checado:new Date().toISOString() };
+      await sb.from('leads').update(pf).eq('id',l.id); Object.assign(l,pf); const j=(LEADS||[]).findIndex(x=>x.id===l.id); if(j>=0) Object.assign(LEADS[j],pf); }catch(e){}
+    const o2=$('#mDetOut'); if(o2) o2.innerHTML=pre+verdictHTML(l)+detalheINPIHTML(data);
     const rz=$('#mResumo'); if(rz) rz.innerHTML=resumoInner(l);   // oposição: agora com o opoente
+    render();
   }catch(e){ if(tok===DET_TOKEN){ const o2=$('#mDetOut'); if(o2) o2.innerHTML='<span class="msg erro">Não consegui consultar o INPI agora. <a class="cedit" id="mDetRetry">tentar de novo</a></span>'; const rt=$('#mDetRetry'); if(rt) rt.onclick=()=>carregarDetalheINPI(l, true); } }
   const bt2=$('#mDet'); if(bt2) bt2.disabled=false;
 }
@@ -577,6 +629,7 @@ function cardHTML(l){ const t=l.tipo_problema||'outro';
   return '<div class="lead" draggable="true" data-id="'+esc(l.id)+'">'
    +'<div class="cab">'+logoBox(l)+'<div class="nome">'+esc(l.titular||'—')+'</div></div>'
    +'<div class="tags"><span class="tag '+t+'">'+esc(t)+'</span><span class="tag '+(l.tipo_pessoa==='?'?'q':esc(l.tipo_pessoa))+'">'+esc(l.tipo_pessoa)+'</span>'+scoreBadge(l)+'</div>'
+   +abordagemBadge(l)
    +chipsMini(l)
    +'<div class="meta">'+esc(l.marca||'(nominativa s/ figura)')+'<br>proc. '+esc(l.numero||'—')+(l.classes?(' · cl. '+esc(l.classes)):'')+(l.uf?(' · '+esc(l.uf)):'')+(l.data_evento?(' · '+esc(l.data_evento)):'')+'<br>'+esc(l.despacho||'')+'</div>'
    +limiteBadge(l)+dueBadge(l)+'</div>';
@@ -600,6 +653,7 @@ function render(){
   ligar();
   document.querySelectorAll('.ren').forEach(r=> r.onclick=e=>{ e.stopPropagation(); const s=STAGES.find(x=>x.key===r.dataset.est); renomearCol(r.dataset.est, s?s.label:''); });
   $('#status').textContent=vis.length+' de '+LEADS.length+' leads';
+  marcarAtivos();
 }
 function ligar(){
   document.querySelectorAll('.lead').forEach(c=>{
@@ -719,8 +773,8 @@ $('#btNovaCol').addEventListener('click', async ()=>{
 });
 async function renomearCol(key,atual){ const nome=prompt('Novo nome da coluna:',atual||''); if(!nome||!nome.trim()) return; const { error }=await sb.from('liv_estagios').update({label:nome.trim()}).eq('key',key); if(error){ alert(error.message); return; } await carregarTudo(); }
 
-['fPessoa','fProblema','fUF','fEtq','fRev','fCanal','fDe','fAte','fTxt'].forEach(id=> $('#'+id).addEventListener('input', render));
-$('#fLimpar').addEventListener('click', ()=>{ ['fPessoa','fProblema','fUF','fEtq','fRev','fCanal','fDe','fAte','fTxt'].forEach(id=> $('#'+id).value=''); render(); });
+['fPessoa','fProblema','fAbord','fUF','fEtq','fRev','fCanal','fDe','fAte','fTxt'].forEach(id=> $('#'+id).addEventListener('input', render));
+$('#fLimpar').addEventListener('click', ()=>{ ['fPessoa','fProblema','fAbord','fUF','fEtq','fRev','fCanal','fDe','fAte','fTxt'].forEach(id=> $('#'+id).value=''); render(); });
 $('#fSort').addEventListener('change', render);
 $('#fMostrar').addEventListener('change', render);
 
@@ -757,6 +811,31 @@ async function enriquecerLote(){
   st.textContent='Enriquecimento concluído: '+ok+' com dados, '+semDados+' sem dados, '+erro+' erro.';
 }
 $('#btEnriq').addEventListener('click', enriquecerLote);
+
+// ===== VERIFICAÇÃO EM LOTE NO INPI (procurador / titular já contestou) =========
+async function verificarLote(){
+  const f=filtros(); const vis=LEADS.filter(l=>passa(l,f));
+  const alvos=vis.filter(l=>l.numero && !l.inpi_checado);
+  if(!alvos.length){ alert('Nenhum lead filtrado pendente de verificação (já checados ou sem número). Dica: filtre uma publicação.'); return; }
+  const mins=Math.max(1,Math.ceil(alvos.length*3/60));
+  if(!confirm('Consultar o INPI de '+alvos.length+' leads filtrados?\nÉ lento (~3s cada, ~'+mins+' min). Marca quem NÃO abordar (tem procurador / já contestou) e preenche a marca. Mantenha esta aba aberta.')) return;
+  const bt=$('#btVerif'); bt.disabled=true; const st=$('#status'); let ok=0, nab=0, err=0;
+  for(let i=0;i<alvos.length;i++){
+    const l=alvos[i];
+    st.textContent='verificando INPI '+(i+1)+'/'+alvos.length+' · '+nab+' não-abordar · '+err+' erro';
+    try{
+      const { data, error }=await sb.functions.invoke('consulta',{ body:{ action:'porNumero', numero:l.numero } });
+      if(error||!data||data.erro) throw new Error((data&&data.erro)||'falha');
+      const fl=flagsAbordagem(l,data); const pf={ inpi_procurador:fl.proc, inpi_agiu:fl.agiu, inpi_checado:new Date().toISOString() };
+      if(data.marca && !l.marca) pf.marca=data.marca;
+      await sb.from('leads').update(pf).eq('id',l.id); Object.assign(l,pf); ok++; if(fl.proc||fl.agiu) nab++;
+    }catch(e){ err++; await new Promise(x=>setTimeout(x,800)); }
+    if((i+1)%8===0) render();
+  }
+  bt.disabled=false; render();
+  st.textContent='Verificação concluída: '+ok+' checados · '+nab+' NÃO abordar · '+err+' erro.';
+}
+$('#btVerif').addEventListener('click', verificarLote);
 
 // ===== DASHBOARD + CARTEIRA (lêem snapshots gravados no Supabase) =============
 const pillCls=t=>['bom','ruim','alerta','chance','neutro'].includes(t)?t:'neutro';
