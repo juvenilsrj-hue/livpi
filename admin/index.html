@@ -96,6 +96,7 @@
   #mPick{ display:flex; flex-wrap:wrap; gap:5px }
   .et{ display:inline-flex; align-items:center; line-height:1.1; font-size:9.5px; font-weight:700; color:#fff; padding:3px 8px; border-radius:999px; cursor:pointer; border:1.5px solid transparent; opacity:.4; white-space:nowrap; transition:opacity .1s } .et:hover{ opacity:.72 } .et.on{ opacity:1; border-color:rgba(0,0,0,.25) }
   .mbody > .sec{ border-top:1px solid var(--line); padding-top:14px }
+  .secd summary{ font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--brass); font-weight:700; cursor:pointer; list-style:none; outline:none } .secd summary::-webkit-details-marker{ display:none } .secd summary::before{ content:"▸ " } .secd[open] summary::before{ content:"▾ " }
   .mfoot{ flex:0 0 auto; display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 18px; border-top:1px solid var(--line); background:var(--card); border-radius:0 0 14px 14px }
   .mfoot .autoinfo{ font-size:11px; color:var(--muted) }
   button.danger{ background:#fff; color:var(--bad); border:1px solid #ecc7c0 } button.danger:hover{ background:#fbeeeb }
@@ -107,6 +108,8 @@
   .sco.quente{ background:#f8e8e5; color:var(--bad) } .sco.morno{ background:#f7efdc; color:var(--warn) } .sco.frio{ background:#eceef1; color:var(--muted) }
   .motivobox{ background:var(--gelo); border:1px solid var(--line); border-radius:9px; padding:10px 12px; font-size:12.5px; line-height:1.55; color:var(--ink); max-height:190px; overflow-y:auto; white-space:pre-wrap }
   .resumo{ background:#f3ead7; border:1px solid #e6d9b8; border-radius:9px; padding:10px 12px; font-size:12.5px; line-height:1.6; color:var(--ink) }
+  .anxbt{ display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--brass); border:1px solid var(--line); padding:5px 10px; border-radius:8px; cursor:pointer; background:#fff } .anxbt:hover{ background:var(--soft) }
+  .anx{ display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--brass); text-decoration:none; cursor:pointer; border:1px solid var(--line); padding:3px 8px; border-radius:7px; background:#fff } .anx:hover{ background:var(--soft) }
   button.canal{ cursor:pointer } .canal.wa{ color:#1f7a4d } .canal.em{ color:var(--info) }
   .painel{ padding:26px; color:var(--muted); font-size:14px; line-height:1.7 } .painel h3{ color:var(--ink) }
   #view-dashboard, #view-carteira{ overflow-y:auto }
@@ -597,10 +600,10 @@ function correlacaoHTML(l){
     ['Instagram', g('site:instagram.com '+(marca||nome))],
   ];
   const inp='padding:8px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff';
-  return '<div class="sec"><h4>Buscar contato (correlação)</h4>'
+  return '<details class="sec secd"><summary>Buscar contato (correlação)</summary><div style="margin-top:9px">'
     +'<div class="canais">'+links.map(x=>'<a class="canal" target="_blank" rel="noopener" href="'+x[1]+'">'+esc(x[0])+'</a>').join('')+'</div>'
     +'<div class="mrow" style="margin-top:8px"><input id="mCnpjBusca" placeholder="CNPJ encontrado (só números)" style="flex:1;min-width:150px;'+inp+'"><button class="ghost" id="mCnpjEnriq">Enriquecer</button></div>'
-    +'<div class="q" id="mCnpjMsg" style="margin-top:4px">Busque pelo nome + marca; se achar o CNPJ, cole aqui pra puxar telefone/e-mail automaticamente.</div></div>';
+    +'<div class="q" id="mCnpjMsg" style="margin-top:4px">Busque pelo nome + marca; se achar o CNPJ, cole aqui pra puxar telefone/e-mail automaticamente.</div></div></details>';
 }
 function motivoHTML(l){
   const t=l.tipo_problema||'outro', conf=(l.conflitos||[]);
@@ -673,6 +676,19 @@ async function setData(id,v){ await sb.from('leads').update({data_entrega:v||nul
 async function toggleEtq(id,etq,on){ const l=leadDe(id); let arr=(l.etiquetas||[]).slice(); if(on){ if(!arr.includes(etq)) arr.push(etq); } else arr=arr.filter(x=>x!==etq); l.etiquetas=arr; await sb.from('leads').update({etiquetas:arr, atualizado_em:new Date().toISOString()}).eq('id',id); }
 async function carregarInteracoes(id){ const { data } = await sb.from('interacoes').select('*').eq('lead_id',id).order('quando'); return data||[]; }
 async function comentar(id,nota){ await sb.from('interacoes').insert({id:novoId(), lead_id:id, tipo:'nota', nota, quando:new Date().toISOString()}); }
+function iconeAnexo(a){ const t=(a&&a.tipo)||''; if(t.indexOf('image')===0) return '🖼️'; if(t.indexOf('pdf')>=0) return '📄'; return '📎'; }
+async function comentarComAnexo(leadId, nota, file){
+  let anexo=null;
+  if(file){
+    const safe=String(file.name||'anexo').replace(/[^\w.\-]+/g,'_');
+    const path=leadId+'/'+novoId()+'-'+safe;
+    const { error }=await sb.storage.from('anexos').upload(path, file, { contentType:file.type||undefined, upsert:false });
+    if(error) throw error;
+    anexo={ path, nome:(file.name||safe), tipo:file.type||'', tamanho:file.size||0 };
+  }
+  await sb.from('interacoes').insert({ id:novoId(), lead_id:leadId, tipo:'nota', nota:nota||null, anexo, quando:new Date().toISOString() });
+}
+async function abrirAnexo(path){ try{ const { data }=await sb.storage.from('anexos').createSignedUrl(path, 3600); if(data&&data.signedUrl) window.open(data.signedUrl,'_blank','noopener'); }catch(e){ alert('Não consegui abrir o anexo.'); } }
 async function editarComent(intId,nota){ await sb.from('interacoes').update({nota, editado_em:new Date().toISOString()}).eq('id',intId); }
 async function removerComent(intId){ await sb.from('interacoes').delete().eq('id',intId); }
 // DESCARTAR = soft delete: sai do quadro mas fica no banco (não volta na reimportação de terça)
@@ -695,7 +711,7 @@ function renderModal(l){
   const stages=STAGES.map(s=>'<option value="'+s.key+'"'+(s.key===l.estagio?' selected':'')+'>'+esc(s.label)+'</option>').join('');
   const picker=(ETIQ||[]).map(e=>'<span class="et'+((l.etiquetas||[]).includes(e.id)?' on':'')+'" style="background:'+e.cor+'" data-et="'+e.id+'">'+esc(e.nome)+'</span>').join('');
   const dv=l.data_entrega?String(l.data_entrega).slice(0,16):'';
-  const coments=(l._int||[]).slice().reverse().map(it=>{ if(it.tipo==='nota'){ return '<div class="coment"><div class="ctxt">'+esc(it.nota||'')+'</div><div class="q">'+fmtData(it.quando)+(it.editado_em?' · editado':'')+' · <a class="cedit" data-int="'+esc(it.id)+'">editar</a> · <a class="cdel" data-int="'+esc(it.id)+'">excluir</a></div></div>'; } const txt=it.tipo==='mover'?('→ moveu para '+nomeEstagio(it.estagio)):(it.nota||it.tipo); return '<div class="coment"><div class="ctxt">'+esc(txt)+'</div><div class="q">'+fmtData(it.quando)+'</div></div>'; }).join('')||'<div class="q" style="color:var(--muted);font-size:12px">sem registros</div>';
+  const coments=(l._int||[]).slice().reverse().map(it=>{ if(it.tipo==='nota'){ return '<div class="coment">'+(it.nota?'<div class="ctxt">'+esc(it.nota)+'</div>':'')+(it.anexo?'<div style="margin-top:5px"><a class="anx" data-path="'+esc(it.anexo.path)+'">'+iconeAnexo(it.anexo)+' '+esc(it.anexo.nome)+'</a></div>':'')+'<div class="q">'+fmtData(it.quando)+(it.editado_em?' · editado':'')+' · <a class="cedit" data-int="'+esc(it.id)+'">editar</a> · <a class="cdel" data-int="'+esc(it.id)+'">excluir</a></div></div>'; } const txt=it.tipo==='mover'?('→ moveu para '+nomeEstagio(it.estagio)):(it.nota||it.tipo); return '<div class="coment"><div class="ctxt">'+esc(txt)+'</div><div class="q">'+fmtData(it.quando)+'</div></div>'; }).join('')||'<div class="q" style="color:var(--muted);font-size:12px">sem registros</div>';
   $('#modalcard').innerHTML='<div class="mhead"><div><h3>'+esc(l.titular||'—')+'</h3><div class="s">proc. '+esc(l.numero||'—')+(l.uf?(' · '+esc(l.uf)):'')+(l.classes?(' · cl. '+esc(l.classes)):'')+' · '+esc(l.despacho||'')+'</div></div><button class="mx" id="mx">×</button></div>'
     +'<div class="mbody">'
     +'<div class="mrow"><label>Etapa</label><select id="mEst">'+stages+'</select><label>Prazo</label><input type="datetime-local" id="mData" value="'+dv+'">'+(atrasado(l)?'<span class="due atras">⚠ Em atraso</span>':'')+'</div>'+limiteBadge(l)
@@ -707,7 +723,11 @@ function renderModal(l){
     +detalheBtnHTML(l)
     +abordagemHTML(l)
     +propostaHTML(l)
-    +'<div class="sec"><h4>Observações / comentários</h4><textarea id="mCom" placeholder="escreva uma observação..."></textarea><div style="margin-top:6px"><button id="mComBt">Comentar</button></div><div style="margin-top:10px">'+coments+'</div></div>'
+    +'<div class="sec"><h4>Observações / comentários</h4><textarea id="mCom" placeholder="escreva uma observação... (pode colar um print aqui)"></textarea>'
+    +'<div class="mrow" style="margin-top:6px; justify-content:space-between">'
+    +'<div class="mrow" style="gap:6px"><label class="anxbt">📎 Anexar<input type="file" id="mFile" style="display:none" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.csv,.txt"></label><span class="q" id="mFileName"></span></div>'
+    +'<button id="mComBt">Comentar</button></div>'
+    +'<div style="margin-top:10px">'+coments+'</div></div>'
     +'</div>'
     +'<div class="mfoot">'+(l.descartado?'<button class="ghost" id="mRestore">↩ Restaurar lead</button>':'<button class="danger" id="mDel">Descartar lead</button>')+'<span class="autoinfo">✓ Alterações salvas automaticamente</span><button class="ghost" id="mClose">Fechar</button></div>';
   $('#mx').onclick=fecharCard;
@@ -744,7 +764,12 @@ function renderModal(l){
   $('#mEst').onchange=async e=>{ l.estagio=e.target.value; await moverLead(l.id,l.estagio); l._int=await carregarInteracoes(l.id); render(); renderModal(l); };
   $('#mData').onchange=async e=>{ await setData(l.id,e.target.value); render(); renderModal(l); };
   $('#mPick').querySelectorAll('.et').forEach(el=> el.onclick=async ()=>{ await toggleEtq(l.id,el.dataset.et,!el.classList.contains('on')); render(); renderModal(l); });
-  $('#mComBt').onclick=async ()=>{ const t=$('#mCom').value.trim(); if(!t) return; await comentar(l.id,t); l._int=await carregarInteracoes(l.id); renderModal(l); };
+  let comFile=null;
+  const setFile=(f)=>{ comFile=f; const n=$('#mFileName'); if(n) n.textContent=f?(iconeAnexo({tipo:f.type})+' '+f.name):''; };
+  if($('#mFile')) $('#mFile').onchange=e=>setFile((e.target.files&&e.target.files[0])||null);
+  if($('#mCom')) $('#mCom').addEventListener('paste', e=>{ const items=(e.clipboardData&&e.clipboardData.items)||[]; for(const it of items){ if(it.type&&it.type.indexOf('image')===0){ const f=it.getAsFile(); if(f) setFile(new File([f],'print-'+Date.now()+'.png',{type:f.type||'image/png'})); } } });
+  $('#mComBt').onclick=async ()=>{ const t=$('#mCom').value.trim(); if(!t && !comFile) return; const bt=$('#mComBt'); bt.disabled=true; bt.textContent='salvando…'; try{ await comentarComAnexo(l.id,t,comFile); comFile=null; l._int=await carregarInteracoes(l.id); renderModal(l); }catch(e){ alert('Erro ao salvar: '+(e.message||e)); bt.disabled=false; bt.textContent='Comentar'; } };
+  $('#modalcard').querySelectorAll('.anx').forEach(a=> a.onclick=()=>abrirAnexo(a.dataset.path));
   $('#modalcard').querySelectorAll('.cedit').forEach(a=> a.onclick=()=>{ const it=(l._int||[]).find(x=>x.id===a.dataset.int); if(!it) return; const box=a.closest('.coment'); box.innerHTML='<textarea class="cedt">'+esc(it.nota||'')+'</textarea><div style="margin-top:6px"><button class="csave">Salvar</button> <button class="ghost ccancel">Cancelar</button></div>'; const ta=box.querySelector('.cedt'); ta.focus(); box.querySelector('.csave').onclick=async ()=>{ await editarComent(it.id,ta.value); l._int=await carregarInteracoes(l.id); renderModal(l); }; box.querySelector('.ccancel').onclick=()=>renderModal(l); });
   $('#modalcard').querySelectorAll('.cdel').forEach(a=> a.onclick=async ()=>{ if(!confirm('Excluir este comentário?')) return; await removerComent(a.dataset.int); l._int=await carregarInteracoes(l.id); renderModal(l); });
 }
