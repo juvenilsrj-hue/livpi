@@ -47,6 +47,7 @@
   .main > div{ flex:1; min-height:0 }
   #view-dashboard,#view-carteira,#view-consulta,#view-processos,#view-movimentacoes,#view-tarefas,#view-pessoas,#view-financeiro,#view-automacao{ overflow-y:auto }
   .bar{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:12px 20px 10px }
+  .maisf{ display:none; gap:8px; flex-wrap:wrap; align-items:center; padding:2px 20px 12px; border-bottom:1px solid var(--line); background:var(--gelo) } .maisf.open{ display:flex }
   /* grid de processos */
   table.grid{ width:100%; border-collapse:collapse; font-size:12.5px }
   table.grid th{ text-align:left; color:var(--muted); font-weight:600; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; padding:8px 10px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--bg) }
@@ -198,12 +199,18 @@
       <button class="ghost" id="btEnriq" title="enriquece via BrasilAPI os leads PJ/MEI filtrados">⚡ Enriquecer</button>
       <button class="ghost" id="btVerif" title="consulta o INPI dos leads filtrados e marca quem NÃO abordar (tem procurador / já contestou)">🔎 Verificar INPI</button>
       <span style="width:6px"></span>
-      <select id="fPessoa"><option value="">Pessoa: todas</option><option value="PJ">Pessoa: PJ</option><option value="PF">Pessoa: PF</option><option value="?">Pessoa: a classificar</option></select>
       <select id="fProblema"><option value="">Problema: todos</option><option value="indeferido">Problema: Indeferido</option><option value="oposicao">Problema: Oposição</option><option value="exigencia">Problema: Exigência</option></select>
       <select id="fAbord"><option value="">Abordagem: todos</option><option value="ok">✔ só abordáveis</option><option value="nao">⛔ não abordar</option><option value="naover">? não verificados</option></select>
+      <select id="fRev"><option value="">Publicação: todas</option></select>
+      <input id="fTxt" placeholder="buscar titular…" style="min-width:150px">
+      <button class="ghost" id="btMais" title="mais filtros">⚙ Mais filtros</button>
+      <button class="ghost" id="fLimpar" title="limpar filtros">Limpar</button>
+      <span class="status" id="status"></span>
+    </div>
+    <div class="maisf" id="maisFiltros">
+      <select id="fPessoa"><option value="">Pessoa: todas</option><option value="PJ">Pessoa: PJ</option><option value="PF">Pessoa: PF</option><option value="?">Pessoa: a classificar</option></select>
       <select id="fUF" style="min-width:150px"></select>
       <select id="fEtq"><option value="">Etiqueta: todas</option></select>
-      <select id="fRev"><option value="">Publicação: todas</option></select>
       <select id="fCanal"><option value="">Canal: todos</option><option value="qualquer">Canal: com contato (e-mail/WhatsApp)</option><option value="email">Canal: com e-mail</option><option value="whatsapp">Canal: com WhatsApp</option><option value="instagram">Canal: com Instagram</option><option value="google">Canal: com Google</option></select>
       <select id="fSort"><option value="score">Ordenar: prioridade</option><option value="recente">Ordenar: mais recente</option><option value="prazo">Ordenar: prazo</option></select>
       <select id="fMostrar"><option value="ativos">Situação: ativos</option><option value="desc">Situação: descartados</option><option value="todos">Situação: todos</option></select>
@@ -211,9 +218,6 @@
       <input type="date" id="fDe" title="publicação de">
       <span class="status">até</span>
       <input type="date" id="fAte" title="publicação até">
-      <input id="fTxt" placeholder="buscar titular…" style="min-width:140px">
-      <button class="ghost" id="fLimpar" title="limpar filtros">Limpar</button>
-      <span class="status" id="status"></span>
     </div>
     <div class="board" id="board"></div>
   </div>
@@ -329,8 +333,14 @@ async function carregarTudo(){
 
 // ===== RENDER BOARD ===========================================================
 function filtros(){ return { pessoa:$('#fPessoa').value, problema:$('#fProblema').value, abord:$('#fAbord').value, uf:$('#fUF').value, etq:$('#fEtq').value, rev:$('#fRev').value, canal:$('#fCanal').value, de:$('#fDe').value, ate:$('#fAte').value, txt:$('#fTxt').value.trim().toLowerCase() }; }
-// destaca visualmente os filtros que estão ativos (valor != padrão)
-function marcarAtivos(){ ['fPessoa','fProblema','fAbord','fUF','fEtq','fRev','fCanal','fMostrar','fDe','fAte','fTxt'].forEach(id=>{ const el=$('#'+id); if(!el) return; const def=(id==='fMostrar')?'ativos':''; el.classList.toggle('fon', (el.value||'')!==def && el.value!==''); }); }
+// destaca os filtros ativos (valor != padrão) e indica no botão "Mais filtros" se há algum escondido ativo
+function marcarAtivos(){
+  const defs={ fMostrar:'ativos' };
+  const ativo=id=>{ const el=$('#'+id); if(!el) return false; const def=defs[id]||''; return (el.value||'')!==def && el.value!==''; };
+  ['fPessoa','fProblema','fAbord','fUF','fEtq','fRev','fCanal','fMostrar','fDe','fAte','fTxt'].forEach(id=>{ const el=$('#'+id); if(el) el.classList.toggle('fon', ativo(id)); });
+  const n=['fPessoa','fUF','fEtq','fCanal','fMostrar','fDe','fAte'].filter(ativo).length;
+  const bm=$('#btMais'); if(bm){ bm.classList.toggle('fon', n>0); bm.textContent='⚙ Mais filtros'+(n?(' ('+n+')'):''); }
+}
 function isoData(s){ if(!s) return null; s=String(s); const br=s.match(/^(\d{2})\/(\d{2})\/(\d{4})/); if(br) return br[3]+'-'+br[2]+'-'+br[1]; return s.slice(0,10); }
 function dataDoLead(l){ return isoData(l.data_publicacao) || isoData(l.criado_em); }
 function canaisDoLead(l){ const e=l.enriquecimento||{}; return {
@@ -802,6 +812,7 @@ async function renomearCol(key,atual){ const nome=prompt('Novo nome da coluna:',
 $('#fLimpar').addEventListener('click', ()=>{ ['fPessoa','fProblema','fAbord','fUF','fEtq','fRev','fCanal','fDe','fAte','fTxt'].forEach(id=> $('#'+id).value=''); render(); });
 $('#fSort').addEventListener('change', render);
 $('#fMostrar').addEventListener('change', render);
+$('#btMais').addEventListener('click', ()=>{ $('#maisFiltros').classList.toggle('open'); });
 
 // ===== ENRIQUECIMENTO EM LOTE (BrasilAPI, PJ/MEI) =============================
 function mapEnriq(d, cnpj){
