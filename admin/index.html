@@ -371,10 +371,15 @@ const normNome=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
 function flagsAbordagem(l, d){
   const proc=String(d.procurador||d.representante||'').trim()||null;
   const tit=normNome(l.titular);
+  const probISO=isoData(l.data_publicacao)||isoData(l.data_evento)||null; // data do problema (indef/oposição)
   const agiu=(d.peticoes||[]).some(p=>{
     if(!p.cliente || p.servico==='389' || p.servico==='332') return false; // 389=pedido, 332=oposição do opoente
     const c=normNome(p.cliente); if(!c||!tit) return false;
-    return c===tit || c.includes(tit.slice(0,18)) || tit.includes(c.slice(0,18));
+    const ehTitular = c===tit || c.includes(tit.slice(0,18)) || tit.includes(c.slice(0,18));
+    if(!ehTitular) return false;
+    const pi=isoData(p.data);                    // só conta manifestação DEPOIS do problema
+    if(probISO && pi && pi < probISO) return false;
+    return true;
   });
   return { proc, agiu };
 }
