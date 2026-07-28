@@ -109,6 +109,13 @@
   .sco.quente{ background:#f8e8e5; color:var(--bad) } .sco.morno{ background:#f7efdc; color:var(--warn) } .sco.frio{ background:#eceef1; color:var(--muted) }
   .motivobox{ background:var(--gelo); border:1px solid var(--line); border-radius:9px; padding:10px 12px; font-size:12.5px; line-height:1.55; color:var(--ink); max-height:190px; overflow-y:auto; white-space:pre-wrap }
   .resumo{ background:#f3ead7; border:1px solid #e6d9b8; border-radius:9px; padding:10px 12px; font-size:12.5px; line-height:1.6; color:var(--ink) }
+  .ihead{ display:flex; gap:12px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 12px }
+  .ilogo{ width:64px; height:64px; object-fit:contain; border:1px solid var(--line); border-radius:8px; background:#fff; flex:0 0 auto }
+  .imarca{ font-weight:800; font-size:15px; line-height:1.2; color:var(--ink) }
+  .iblk{ border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-top:10px; background:var(--card) }
+  .iblk .ih{ background:var(--gelo); padding:6px 12px; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; font-weight:700; color:var(--muted); border-bottom:1px solid var(--line) }
+  .iblk .ib{ padding:9px 12px; font-size:12.5px }
+  .opoente{ background:#f7efdc; border:1px solid #e6d9b8; border-radius:8px; padding:7px 10px; font-size:12.5px }
   .detcard{ max-width:840px }
   .detcab{ display:flex; gap:14px; align-items:center; padding:14px 16px; background:var(--card); border:1px solid var(--line); border-radius:12px }
   .detlogo{ width:92px; height:92px; object-fit:contain; border:1px solid var(--line); border-radius:8px; background:#fff; flex:0 0 auto }
@@ -535,35 +542,34 @@ function detalheINPIHTML(d){
   const pet=(d.peticoes||[]); const desp=(d.despachos||[]);
   const opos=pet.find(p=>p.servico==='332');
   const alertaRe=/indefer|oposi|exig|arquiv|nulidade|caducidade|extin/i;
-  const tl=desp.length?desp.map(x=>{ const al=alertaRe.test(x.nome||'');
-    return '<div style="padding:6px 0;border-top:1px solid var(--line)"><div style="display:flex;gap:8px;align-items:baseline"><span class="q" style="flex:0 0 118px">RPI '+esc(x.revista||'—')+' · '+esc(x.data||'')+'</span><b style="font-size:12px'+(al?';color:var(--bad)':'')+'">'+esc(x.nome||'')+'</b></div>'+(x.complemento?('<div class="q" style="margin:4px 0 0 118px;line-height:1.5">'+esc(x.complemento)+'</div>'):'')+'</div>';
-  }).join(''):'<span class="q">sem despachos listados</span>';
-  const petLinhas=pet.length?pet.map(p=>'<div class="mrow" style="gap:8px;margin-top:4px"><span class="pill '+(p.servico==='332'?'ruim':'neutro')+'">'+esc(servLabel(p.servico))+'</span><span class="q">protocolo '+esc(p.protocolo)+' · '+esc(p.data||'')+(p.cliente?(' · <b>'+esc(p.cliente)+'</b>'):'')+'</span></div>').join(''):'<span class="q">sem petições listadas</span>';
+  const rDesp=desp.map(x=>{ const al=alertaRe.test(x.nome||'');
+    return '<tr><td style="white-space:nowrap">RPI '+esc(x.revista||'—')+'<br><span class="q">'+esc(x.data||'')+'</span></td><td><b'+(al?' style="color:var(--bad)"':'')+'>'+esc(x.nome||'')+'</b>'+(x.complemento?('<div class="q" style="margin-top:3px;line-height:1.5">'+esc(x.complemento)+'</div>'):'')+'</td></tr>';
+  }).join('');
+  const rPet=pet.map(p=>'<tr><td style="white-space:nowrap"><span class="pill '+(p.servico==='332'?'ruim':'neutro')+'">'+esc(servLabel(p.servico))+'</span></td><td style="white-space:nowrap">'+esc(p.protocolo)+'<br><span class="q">'+esc(p.data||'')+'</span></td><td>'+esc(p.cliente||'—')+'</td></tr>').join('');
   let nota='';
-  if(opos) nota = opos.cliente ? ('<div style="margin-top:7px">Opoente: <b>'+esc(opos.cliente)+'</b></div>') : '<div class="q" style="margin-top:7px">Opoente ainda não é público, aparece quando a oposição é decidida.</div>';
-  return '<div class="motivobox" style="max-height:360px">'
-    +'<div><b>Situação atual:</b> '+esc(d.situacao||'—')+'</div>'
-    +(d.marca?('<div><b>Marca:</b> '+esc(d.marca)+'</div>'):'')
-    +(d.apresentacao?('<div><b>Apresentação:</b> '+esc(d.apresentacao)+(d.natureza?(' · '+esc(d.natureza)):'')+'</div>'):'')
-    +(d.procurador?('<div><b>Procurador:</b> '+esc(d.procurador)+'</div>'):'')
-    +'<div style="margin-top:10px;font-weight:700">Andamento do processo (INPI)</div>'+tl
-    +'<div style="margin-top:10px;font-weight:700">Petições</div>'+petLinhas+nota
-    +'</div>';
+  if(opos) nota = opos.cliente ? ('<div class="ib" style="padding-top:0"><div class="opoente">⚑ Opoente: <b>'+esc(opos.cliente)+'</b></div></div>') : '<div class="ib q" style="padding-top:0">Opoente ainda não é público, aparece quando a oposição é decidida.</div>';
+  return '<div class="iblk"><div class="ih">Andamento do processo (RPI)</div>'+(rDesp?('<table class="dett"><tbody>'+rDesp+'</tbody></table>'):'<div class="ib q">sem despachos listados</div>')+'</div>'
+    +'<div class="iblk"><div class="ih">Petições</div>'+(rPet?('<table class="dett"><tbody>'+rPet+'</tbody></table>'):'<div class="ib q">sem petições listadas</div>')+nota+'</div>';
 }
 function fichaExtraHTML(d){
   const tab=(cabs,rows)=> rows?'<table class="dett" style="margin-top:6px"><thead><tr>'+cabs.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>'+rows+'</tbody></table>':'';
   const rCls=(d.classes||[]).map(c=>'<tr><td>'+esc(c.classe)+'</td><td>'+esc(c.situacao||'—')+'</td><td>'+esc(c.especificacao||'—')+'</td></tr>').join('');
   const rVie=(d.viena||[]).map(v=>'<tr><td>'+esc(v.edicao)+'</td><td>'+esc(v.codigo)+'</td><td>'+esc(v.descricao||'')+'</td></tr>').join('');
-  const datas=(d.dataDeposito||d.dataConcessao||d.dataVigencia)?'<div class="q" style="margin-top:8px">Depósito: <b>'+esc(d.dataDeposito||'—')+'</b> · Concessão: <b>'+esc(d.dataConcessao||'—')+'</b> · Vigência: <b>'+esc(d.dataVigencia||'—')+'</b></div>':'';
+  const datas=(d.dataDeposito||d.dataConcessao||d.dataVigencia)?('Depósito: <b>'+esc(d.dataDeposito||'—')+'</b> · Concessão: <b>'+esc(d.dataConcessao||'—')+'</b> · Vigência: <b>'+esc(d.dataVigencia||'—')+'</b>'):'';
   if(!rCls && !rVie && !datas) return '';
-  return '<details class="secd" style="margin-top:10px"><summary>Ver ficha completa (classes, Viena, datas)</summary><div style="margin-top:4px">'
-    +(rCls?'<div class="q" style="font-weight:700;margin-top:6px">Classificação de produtos / serviços</div>'+tab(['Classe','Situação','Especificação'],rCls):'')
-    +(rVie?'<div class="q" style="font-weight:700;margin-top:8px">Classificação de Viena</div>'+tab(['Edição','Código','Descrição'],rVie):'')
-    +datas+'</div></details>';
+  return '<details class="secd" style="margin-top:10px"><summary>Ver ficha completa (classes, Viena, datas)</summary><div>'
+    +(rCls?('<div class="iblk"><div class="ih">Classificação de produtos / serviços</div>'+tab(['Classe','Situação','Especificação'],rCls)+'</div>'):'')
+    +(rVie?('<div class="iblk"><div class="ih">Classificação de Viena</div>'+tab(['Edição','Código','Descrição'],rVie)+'</div>'):'')
+    +(datas?('<div class="iblk"><div class="ih">Datas</div><div class="ib">'+datas+'</div></div>'):'')
+    +'</div></details>';
 }
 function detCardHTML(l, d){
-  const logo=d.logo?'<div style="margin-bottom:9px"><img src="'+d.logo+'" alt="logo" style="max-height:82px;max-width:160px;object-fit:contain;border:1px solid var(--line);border-radius:8px;background:#fff;padding:4px"></div>':'';
-  return logo+verdictHTML(l)+detalheINPIHTML(d)+fichaExtraHTML(d);
+  const sub=[d.apresentacao,d.natureza].filter(Boolean).join(' · ');
+  const head='<div class="ihead">'+(d.logo?('<img class="ilogo" src="'+d.logo+'" alt="logo">'):'')
+    +'<div style="flex:1;min-width:0"><div class="imarca">'+esc(d.marca||'(marca nominativa)')+'</div>'
+    +(sub||d.procurador?('<div class="q" style="margin-top:2px">'+esc(sub)+(d.procurador?((sub?' · ':'')+'Procurador: '+esc(d.procurador)):'')+'</div>'):'')
+    +'<div style="margin-top:6px"><span class="pill '+pillSit(d.situacao)+'">'+esc(d.situacao||'?')+'</span></div></div></div>';
+  return verdictHTML(l)+head+detalheINPIHTML(d)+fichaExtraHTML(d);
 }
 let DET_TOKEN=0;
 async function carregarDetalheINPI(l, force){
