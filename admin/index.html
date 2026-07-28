@@ -520,13 +520,13 @@ function txtAbordagem(l){
     ].join('\n\n');
   }
   if(t==='oposicao'){
-    return [ola, intro,
-      'Verificamos que o pedido de registro da sua marca'+marcaTxt+', processo nº '+proc+', recebeu uma oposição apresentada por terceiro.',
-      'Essa movimentação exige atenção, pois é importante apresentar uma manifestação com argumentos fundamentados na Lei da Propriedade Industrial. A ausência de uma defesa bem construída pode enfraquecer o pedido e aumentar o risco de indeferimento.',
-      (prazo?('O prazo para apresentar essa manifestação é até '+prazo+'.'):null),
-      'Somos especializados nesse tipo de defesa e podemos ajudar você a compreender os argumentos apresentados pela outra parte e definir a estratégia mais adequada para o processo.',
-      'Se você nos autorizar, podemos preparar um panorama inicial e explicar, de maneira simples, quais caminhos podem ser considerados para a proteção da sua marca.'
-    ].filter(Boolean).join('\n\n');
+    const marcaNome=temMarca?(' da marca '+l.marca):'';
+    return [ola,
+      'Antes de mais nada, gostaria de me apresentar. Meu chamo Juvenil e faço parte da LIV Propriedade Intelectual, uma empresa de Santa Catarina especializada em registro de marcas e acompanhamento de processos junto ao INPI.',
+      'Em uma consulta pública, verificamos que o pedido'+marcaNome+', processo nº '+proc+', recebeu uma oposição apresentada por terceiro.',
+      'Isso não significa que o registro foi negado. Nesta etapa, ainda é possível apresentar uma resposta para que o INPI também considere os argumentos do titular antes de tomar uma decisão.'+(prazo?(' O prazo informado para essa manifestação é até '+prazo+'.'):''),
+      'Nosso contato é apenas para informar sobre essa movimentação. Caso tenha interesse, podemos analisar a oposição e encaminhar um orçamento sem compromisso para a condução da defesa.'
+    ].join('\n\n');
   }
   // exigência / outro: formato provisório (serão ajustados na sequência)
   const olaOld=(nome?('Olá, '+nome+'!'):'Olá!')+' ';
@@ -572,17 +572,34 @@ function detCardHTML(l, d){
   return verdictHTML(l)+head+detalheINPIHTML(d)+fichaExtraHTML(d);
 }
 let DET_TOKEN=0;
+function detCacheNota(em){ return '<div class="q" style="margin-bottom:7px">consulta salva de '+fmtData(em)+' · clique em <b>Atualizar</b> para consultar ao vivo</div>'; }
 async function carregarDetalheINPI(l, force){
   const out=$('#mDetOut'); if(!out) return;
-  if(l._det && !force){ out.innerHTML=detCardHTML(l, l._det); return; }
+  if(l._det && !force){ out.innerHTML=(l._detEm?detCacheNota(l._detEm):'')+detCardHTML(l, l._det); return; }
   const tok=++DET_TOKEN;                       // invalida consultas de cards anteriores
-  out.innerHTML='<span class="q">consultando o INPI…</span>';
   const bt=$('#mDet'); if(bt) bt.disabled=true;
+  // 1) sem force: tenta o cache do banco (instantâneo; ao vivo fica no Atualizar)
+  if(!force){
+    out.innerHTML='<span class="q">carregando…</span>';
+    try{
+      const { data:c }=await sb.from('inpi_cache').select('dados,em').eq('numero',l.numero).maybeSingle();
+      if(tok!==DET_TOKEN) return;
+      if(c && c.dados){
+        l._det=c.dados; l._detEm=c.em;
+        out.innerHTML=detCacheNota(c.em)+detCardHTML(l, c.dados);
+        if(bt) bt.disabled=false;
+        return;
+      }
+    }catch(e){}
+  }
+  out.innerHTML='<span class="q">consultando o INPI…</span>';
   try{
-    const { data, error }=await sb.functions.invoke('consulta',{ body:{ action:'porNumero', numero:l.numero } });
+    const inv=sb.functions.invoke('consulta',{ body:{ action:'porNumero', numero:l.numero } });
+    const { data, error }=await Promise.race([inv, new Promise((_,rej)=>setTimeout(()=>rej(new Error('O INPI está lento agora. Tente de novo em instantes.')), 40000))]);
     if(error) throw error;
     if(data && data.erro) throw new Error(data.erro);
-    l._det=data;
+    l._det=data; l._detEm=new Date().toISOString();
+    try{ await sb.from('inpi_cache').upsert({ numero:l.numero, dados:data, em:l._detEm }); }catch(e){}
     if(tok!==DET_TOKEN) return;                // outro card foi aberto: descarta
     let pre='';
     if(data.marca && !l.marca){ try{ await sb.from('leads').update({ marca:data.marca }).eq('id',l.id); l.marca=data.marca; const i=(LEADS||[]).findIndex(x=>x.id===l.id); if(i>=0) LEADS[i].marca=data.marca; const ta=$('#mAbord'); if(ta) ta.value=txtAbordagem(l); pre='<div class="msg ok" style="margin-bottom:8px">✓ Nome da marca preenchido no lead: '+esc(data.marca)+'</div>'; render(); }catch(e){} }
