@@ -1017,7 +1017,32 @@ async function renderCarteira(){
 }
 
 // ===== CONSULTA (Edge Function -> INPI ao vivo) ===============================
-let CONS=null, CONS_INIT=false;
+let CONS=null, CONS_INIT=false, CONS_DET=null;
+// deriva tipo do problema (indef/oposição) do detalhe, p/ gerar proposta a partir da consulta
+function problemaDoDetalhe(d){
+  const desp=(d.despachos||[]);
+  const ind=desp.find(x=>/indefer/i.test(x.nome||''));
+  if(ind) return {tipo:'indeferido', desp:ind};
+  const opo=desp.find(x=>/notifica.*oposi|oposi..o apresentada/i.test(x.nome||''));
+  if(opo) return {tipo:'oposicao', desp:opo};
+  const sit=(d.situacao||'').toLowerCase();
+  if(/indefer/.test(sit)) return {tipo:'indeferido', desp:desp[0]};
+  if(/manifesta..o sobre oposi/.test(sit)) return {tipo:'oposicao', desp:desp[0]};
+  return null;
+}
+function maisDias(iso, dias){ if(!iso) return null; const d=new Date(iso+'T00:00:00'); d.setDate(d.getDate()+dias); return d.toISOString().slice(0,10); }
+function leadDoDetalhe(d){
+  const p=problemaDoDetalhe(d); if(!p) return null;
+  const dt=(p.desp&&p.desp.data)?isoData(p.desp.data):null;
+  let conflitos=[], base=null;
+  if(p.tipo==='indeferido' && p.desp && p.desp.complemento){
+    conflitos=[...p.desp.complemento.matchAll(/Processo\s+(\d{6,})\s*\(([^)]+)\)/g)].map(x=>({numero:x[1], marca:x[2].trim()}));
+    const a=p.desp.complemento.match(/Art\.?\s*(\d+)/i), inc=p.desp.complemento.match(/inciso\s+([IVXLCDM]+)/i);
+    if(a) base='Art. '+a[1]+(inc?(', '+inc[1]):'');
+  }
+  return { tipo_problema:p.tipo, marca:d.marca, numero:d.numeroProcesso, titular:d.titular, conflitos, base, data_publicacao:dt, data_limite:maisDias(dt,60), enriquecimento:null, _det:d };
+}
+function abrirNoInpi(num){ try{ navigator.clipboard.writeText(String(num||'')); }catch(e){} window.open('https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_num_processo.jsp','_blank','noopener'); }
 function pillSit(s){ s=(s||'').toLowerCase(); if(/em vigor/.test(s)) return 'bom'; if(/exame|aguarda|sobrestad|oposi|public|recurso|exig/.test(s)) return 'alerta'; if(/extint|arquiv|indefer|nulidad|cancel|cadu/.test(s)) return 'ruim'; return 'neutro'; }
 function renderConsulta(){
   const v=$('#view-consulta'); v.className='';
@@ -1043,6 +1068,9 @@ async function buscarNumero(){
   if(error||!data||data.erro){ $('#qStatus').textContent=''; $('#qWrap').innerHTML='<div class="status">'+esc((data&&data.erro)||(error&&error.message)||'Nada encontrado')+' para o processo '+esc(num)+'.</div>'; return; }
   $('#qStatus').innerHTML='processo <b>'+esc(num)+'</b>';
   $('#qWrap').innerHTML=detalheCompletoHTML(data);
+  CONS_DET=data;
+  if($('#qOpenInpi')) $('#qOpenInpi').onclick=()=>{ abrirNoInpi(data.numeroProcesso||num); const m=$('#qActMsg'); if(m){ m.textContent='número copiado, cole no campo do INPI'; setTimeout(()=>{ if(m)m.textContent=''; },4000); } };
+  if($('#qProp')) $('#qProp').onclick=()=>{ const ls=leadDoDetalhe(CONS_DET); if(ls) gerarProposta(ls); else alert('Modelo de proposta disponível só para indeferimento ou oposição.'); };
 }
 function detalheCompletoHTML(d){
   const sec=(t,inner)=> inner? '<div class="secblk"><div class="sech">'+t+'</div>'+inner+'</div>':'';
@@ -1053,6 +1081,7 @@ function detalheCompletoHTML(d){
   const rPub=(d.despachos||[]).map(x=>'<tr><td style="white-space:nowrap">'+esc(x.revista||'')+'<br><span class="q">'+esc(x.data||'')+'</span></td><td><b>'+esc(x.nome||'')+'</b>'+(x.complemento?('<div class="q" style="margin-top:3px;line-height:1.5">'+esc(x.complemento)+'</div>'):'')+'</td></tr>').join('');
   return '<div class="detcard">'
     +'<div class="detcab">'+(d.logo?'<img class="detlogo" src="'+d.logo+'" alt="logo">':'')+'<div style="flex:1;min-width:0"><div class="detmarca">'+esc(d.marca||'(marca nominativa, sem logotipo)')+'</div><div class="q" style="margin-top:2px">Processo '+esc(d.numeroProcesso||'—')+' · '+esc(d.apresentacao||'')+(d.natureza?(' · '+esc(d.natureza)):'')+'</div><div style="margin-top:7px"><span class="pill '+pillSit(d.situacao)+'">'+esc(d.situacao||'?')+'</span></div></div></div>'
+    +'<div class="mrow" style="margin-top:12px"><button class="ghost" id="qOpenInpi" title="abre a busca por número no INPI e copia o número">↗ Abrir no INPI</button>'+(problemaDoDetalhe(d)?'<button id="qProp">📄 Gerar proposta (DOCX)</button>':'')+'<span class="q" id="qActMsg"></span></div>'
     +sec('Titular', '<div style="font-size:13px">'+esc(d.titular||'—')+(d.procurador?('<div class="q" style="margin-top:3px">Procurador: '+esc(d.procurador)+'</div>'):'')+(d.representante?('<div class="q">Representante legal: '+esc(d.representante)+'</div>'):'')+'</div>')
     +sec('Classificação de produtos / serviços', tab(['Classe Nice','Situação','Especificação'], rCls))
     +sec('Classificação de Viena (elementos figurativos)', tab(['Edição','Código','Descrição'], rVie))
