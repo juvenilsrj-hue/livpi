@@ -1011,10 +1011,32 @@ let CONS=null, CONS_INIT=false;
 function pillSit(s){ s=(s||'').toLowerCase(); if(/em vigor/.test(s)) return 'bom'; if(/exame|aguarda|sobrestad|oposi|public|recurso|exig/.test(s)) return 'alerta'; if(/extint|arquiv|indefer|nulidad|cancel|cadu/.test(s)) return 'ruim'; return 'neutro'; }
 function renderConsulta(){
   const v=$('#view-consulta'); v.className='';
-  v.innerHTML='<div class="dbar"><input id="qMarca" placeholder="Ex.: NIKE, AÇAÍ, sua marca…" style="min-width:220px"><input id="qClasse" placeholder="classe (opc.)" style="width:110px"><select id="qModo"><option value="exata">Exata</option><option value="radical">Radical</option><option value="ambas">Exata + Radical</option></select><button id="qBt">Pesquisar</button><span class="status" id="qStatus"></span></div><div class="dwrap" id="qWrap"><div class="status">Busca ao vivo na base do INPI (pePI). Digite uma marca.</div></div>';
-  $('#qBt').onclick=buscarMarca;
+  v.innerHTML='<div class="dbar">'
+    +'<select id="qTipo"><option value="marca">Buscar por: Marca</option><option value="numero">Buscar por: Nº do processo</option></select>'
+    +'<input id="qMarca" placeholder="Ex.: NIKE, AÇAÍ, sua marca…" style="min-width:200px">'
+    +'<input id="qClasse" placeholder="classe (opc.)" style="width:110px">'
+    +'<select id="qModo"><option value="exata">Exata</option><option value="radical">Radical</option><option value="ambas">Exata + Radical</option></select>'
+    +'<input id="qNum" placeholder="Nº do processo (ex.: 937883921)" style="min-width:200px;display:none">'
+    +'<button id="qBt">Pesquisar</button><span class="status" id="qStatus"></span></div>'
+    +'<div class="dwrap" id="qWrap"><div class="status">Busca ao vivo na base do INPI (pePI). Escolha buscar por marca ou por número do processo.</div></div>';
+  const aplicaTipo=()=>{ const n=$('#qTipo').value==='numero'; ['qMarca','qClasse','qModo'].forEach(id=>$('#'+id).style.display=n?'none':''); $('#qNum').style.display=n?'':'none'; (n?$('#qNum'):$('#qMarca')).focus(); };
+  $('#qTipo').onchange=aplicaTipo;
+  $('#qBt').onclick=()=>{ ($('#qTipo').value==='numero'?buscarNumero:buscarMarca)(); };
   $('#qMarca').addEventListener('keydown',e=>{ if(e.key==='Enter') buscarMarca(); });
+  $('#qNum').addEventListener('keydown',e=>{ if(e.key==='Enter') buscarNumero(); });
   $('#qMarca').focus();
+}
+async function buscarNumero(){
+  const num=$('#qNum').value.replace(/\D/g,''); if(!num){ $('#qNum').focus(); return; }
+  $('#qStatus').textContent='consultando o INPI…'; $('#qWrap').innerHTML='';
+  const { data, error }=await sb.functions.invoke('consulta', { body:{ action:'porNumero', numero:num } });
+  if(error||!data||data.erro){ $('#qStatus').textContent=''; $('#qWrap').innerHTML='<div class="status">'+esc((data&&data.erro)||(error&&error.message)||'Nada encontrado')+' para o processo '+esc(num)+'.</div>'; return; }
+  $('#qStatus').innerHTML='processo <b>'+esc(num)+'</b>';
+  const cls=(data.classes||[]).map(c=>c.classe+(c.subclasse?(' : '+c.subclasse):'')+(c.especificacao?(' — '+c.especificacao):'')).join('<br>')||'—';
+  $('#qWrap').innerHTML=
+    '<div class="item"><div class="m" style="font-size:13px"><b>Processo '+esc(data.numeroProcesso||num)+'</b> · <b>'+esc(data.titular||'—')+'</b>'+(data.uf?(' / '+esc(data.uf)):'')
+    +'<br>Classes: '+cls+' · Depósito '+esc(data.dataDeposito||'—')+(data.dataConcessao?(' · Concessão '+esc(data.dataConcessao)):'')+(data.dataVigencia?(' · Vigência '+esc(data.dataVigencia)):'')+'</div></div>'
+    + detalheINPIHTML(data);
 }
 async function buscarMarca(){
   const marca=$('#qMarca').value.trim(); if(!marca) return;
