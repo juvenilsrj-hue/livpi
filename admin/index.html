@@ -109,6 +109,16 @@
   .sco.quente{ background:#f8e8e5; color:var(--bad) } .sco.morno{ background:#f7efdc; color:var(--warn) } .sco.frio{ background:#eceef1; color:var(--muted) }
   .motivobox{ background:var(--gelo); border:1px solid var(--line); border-radius:9px; padding:10px 12px; font-size:12.5px; line-height:1.55; color:var(--ink); max-height:190px; overflow-y:auto; white-space:pre-wrap }
   .resumo{ background:#f3ead7; border:1px solid #e6d9b8; border-radius:9px; padding:10px 12px; font-size:12.5px; line-height:1.6; color:var(--ink) }
+  .detcard{ max-width:840px }
+  .detcab{ display:flex; gap:14px; align-items:center; padding:14px 16px; background:var(--card); border:1px solid var(--line); border-radius:12px }
+  .detlogo{ width:92px; height:92px; object-fit:contain; border:1px solid var(--line); border-radius:8px; background:#fff; flex:0 0 auto }
+  .detmarca{ font-weight:800; font-size:19px; color:var(--ink); line-height:1.2 }
+  .secblk{ margin-top:14px; border:1px solid var(--line); border-radius:12px; overflow:hidden }
+  .sech{ background:var(--soft); padding:8px 14px; font-size:11px; text-transform:uppercase; letter-spacing:.06em; font-weight:700; color:var(--brass); border-bottom:1px solid var(--line) }
+  .secblk > div:not(.sech){ padding:12px 14px }
+  .dett{ width:100%; border-collapse:collapse; font-size:12.5px }
+  .dett th{ text-align:left; color:var(--muted); font-weight:700; font-size:11px; padding:7px 12px; border-bottom:1px solid var(--line); background:var(--gelo) }
+  .dett td{ padding:8px 12px; border-bottom:1px solid var(--line); vertical-align:top } .dett tr:last-child td{ border-bottom:0 }
   .anxbt{ display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--brass); border:1px solid var(--line); padding:5px 10px; border-radius:8px; cursor:pointer; background:#fff } .anxbt:hover{ background:var(--soft) }
   .anx{ display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--brass); text-decoration:none; cursor:pointer; border:1px solid var(--line); padding:3px 8px; border-radius:7px; background:#fff } .anx:hover{ background:var(--soft) }
   button.canal{ cursor:pointer } .canal.wa{ color:#1f7a4d } .canal.em{ color:var(--info) }
@@ -1032,11 +1042,24 @@ async function buscarNumero(){
   const { data, error }=await sb.functions.invoke('consulta', { body:{ action:'porNumero', numero:num } });
   if(error||!data||data.erro){ $('#qStatus').textContent=''; $('#qWrap').innerHTML='<div class="status">'+esc((data&&data.erro)||(error&&error.message)||'Nada encontrado')+' para o processo '+esc(num)+'.</div>'; return; }
   $('#qStatus').innerHTML='processo <b>'+esc(num)+'</b>';
-  const cls=(data.classes||[]).map(c=>c.classe+(c.subclasse?(' : '+c.subclasse):'')+(c.especificacao?(' — '+c.especificacao):'')).join('<br>')||'—';
-  $('#qWrap').innerHTML=
-    '<div class="item"><div class="m" style="font-size:13px"><b>Processo '+esc(data.numeroProcesso||num)+'</b> · <b>'+esc(data.titular||'—')+'</b>'+(data.uf?(' / '+esc(data.uf)):'')
-    +'<br>Classes: '+cls+' · Depósito '+esc(data.dataDeposito||'—')+(data.dataConcessao?(' · Concessão '+esc(data.dataConcessao)):'')+(data.dataVigencia?(' · Vigência '+esc(data.dataVigencia)):'')+'</div></div>'
-    + detalheINPIHTML(data);
+  $('#qWrap').innerHTML=detalheCompletoHTML(data);
+}
+function detalheCompletoHTML(d){
+  const sec=(t,inner)=> inner? '<div class="secblk"><div class="sech">'+t+'</div>'+inner+'</div>':'';
+  const tab=(cabs,rows)=> rows? '<table class="dett"><thead><tr>'+cabs.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>'+rows+'</tbody></table>':'';
+  const rCls=(d.classes||[]).map(c=>'<tr><td>'+esc(c.classe)+'</td><td>'+esc(c.situacao||'—')+'</td><td>'+esc(c.especificacao||'—')+'</td></tr>').join('');
+  const rVie=(d.viena||[]).map(v=>'<tr><td>'+esc(v.edicao)+'</td><td>'+esc(v.codigo)+'</td><td>'+esc(v.descricao||'')+'</td></tr>').join('');
+  const rPet=(d.peticoes||[]).map(x=>'<tr><td>'+esc(x.protocolo)+'</td><td>'+esc(x.data||'')+'</td><td>'+esc(servLabel(x.servico))+'</td><td>'+esc(x.cliente||'—')+'</td></tr>').join('');
+  const rPub=(d.despachos||[]).map(x=>'<tr><td style="white-space:nowrap">'+esc(x.revista||'')+'<br><span class="q">'+esc(x.data||'')+'</span></td><td><b>'+esc(x.nome||'')+'</b>'+(x.complemento?('<div class="q" style="margin-top:3px;line-height:1.5">'+esc(x.complemento)+'</div>'):'')+'</td></tr>').join('');
+  return '<div class="detcard">'
+    +'<div class="detcab">'+(d.logo?'<img class="detlogo" src="'+d.logo+'" alt="logo">':'')+'<div style="flex:1;min-width:0"><div class="detmarca">'+esc(d.marca||'(marca nominativa, sem logotipo)')+'</div><div class="q" style="margin-top:2px">Processo '+esc(d.numeroProcesso||'—')+' · '+esc(d.apresentacao||'')+(d.natureza?(' · '+esc(d.natureza)):'')+'</div><div style="margin-top:7px"><span class="pill '+pillSit(d.situacao)+'">'+esc(d.situacao||'?')+'</span></div></div></div>'
+    +sec('Titular', '<div style="font-size:13px">'+esc(d.titular||'—')+(d.procurador?('<div class="q" style="margin-top:3px">Procurador: '+esc(d.procurador)+'</div>'):'')+(d.representante?('<div class="q">Representante legal: '+esc(d.representante)+'</div>'):'')+'</div>')
+    +sec('Classificação de produtos / serviços', tab(['Classe Nice','Situação','Especificação'], rCls))
+    +sec('Classificação de Viena (elementos figurativos)', tab(['Edição','Código','Descrição'], rVie))
+    +sec('Datas', '<div style="font-size:12.5px">Depósito: <b>'+esc(d.dataDeposito||'—')+'</b> · Concessão: <b>'+esc(d.dataConcessao||'—')+'</b> · Vigência: <b>'+esc(d.dataVigencia||'—')+'</b></div>')
+    +sec('Petições', tab(['Protocolo','Data','Serviço','Cliente'], rPet))
+    +sec('Publicações / andamento (RPI)', tab(['RPI / Data','Despacho'], rPub))
+    +'</div>';
 }
 async function buscarMarca(){
   const marca=$('#qMarca').value.trim(); if(!marca) return;
