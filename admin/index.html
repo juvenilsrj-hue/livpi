@@ -550,10 +550,25 @@ function detalheINPIHTML(d){
     +'<div style="margin-top:10px;font-weight:700">Petições</div>'+petLinhas+nota
     +'</div>';
 }
+function fichaExtraHTML(d){
+  const tab=(cabs,rows)=> rows?'<table class="dett" style="margin-top:6px"><thead><tr>'+cabs.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>'+rows+'</tbody></table>':'';
+  const rCls=(d.classes||[]).map(c=>'<tr><td>'+esc(c.classe)+'</td><td>'+esc(c.situacao||'—')+'</td><td>'+esc(c.especificacao||'—')+'</td></tr>').join('');
+  const rVie=(d.viena||[]).map(v=>'<tr><td>'+esc(v.edicao)+'</td><td>'+esc(v.codigo)+'</td><td>'+esc(v.descricao||'')+'</td></tr>').join('');
+  const datas=(d.dataDeposito||d.dataConcessao||d.dataVigencia)?'<div class="q" style="margin-top:8px">Depósito: <b>'+esc(d.dataDeposito||'—')+'</b> · Concessão: <b>'+esc(d.dataConcessao||'—')+'</b> · Vigência: <b>'+esc(d.dataVigencia||'—')+'</b></div>':'';
+  if(!rCls && !rVie && !datas) return '';
+  return '<details class="secd" style="margin-top:10px"><summary>Ver ficha completa (classes, Viena, datas)</summary><div style="margin-top:4px">'
+    +(rCls?'<div class="q" style="font-weight:700;margin-top:6px">Classificação de produtos / serviços</div>'+tab(['Classe','Situação','Especificação'],rCls):'')
+    +(rVie?'<div class="q" style="font-weight:700;margin-top:8px">Classificação de Viena</div>'+tab(['Edição','Código','Descrição'],rVie):'')
+    +datas+'</div></details>';
+}
+function detCardHTML(l, d){
+  const logo=d.logo?'<div style="margin-bottom:9px"><img src="'+d.logo+'" alt="logo" style="max-height:82px;max-width:160px;object-fit:contain;border:1px solid var(--line);border-radius:8px;background:#fff;padding:4px"></div>':'';
+  return logo+verdictHTML(l)+detalheINPIHTML(d)+fichaExtraHTML(d);
+}
 let DET_TOKEN=0;
 async function carregarDetalheINPI(l, force){
   const out=$('#mDetOut'); if(!out) return;
-  if(l._det && !force){ out.innerHTML=detalheINPIHTML(l._det); return; }
+  if(l._det && !force){ out.innerHTML=detCardHTML(l, l._det); return; }
   const tok=++DET_TOKEN;                       // invalida consultas de cards anteriores
   out.innerHTML='<span class="q">consultando o INPI…</span>';
   const bt=$('#mDet'); if(bt) bt.disabled=true;
@@ -568,7 +583,7 @@ async function carregarDetalheINPI(l, force){
     // flags de abordagem (tem procurador / titular já contestou) -> grava no lead
     try{ const fl=flagsAbordagem(l,data); const pf={ inpi_procurador:fl.proc, inpi_agiu:fl.agiu, inpi_checado:new Date().toISOString() };
       await sb.from('leads').update(pf).eq('id',l.id); Object.assign(l,pf); const j=(LEADS||[]).findIndex(x=>x.id===l.id); if(j>=0) Object.assign(LEADS[j],pf); }catch(e){}
-    const o2=$('#mDetOut'); if(o2) o2.innerHTML=pre+verdictHTML(l)+detalheINPIHTML(data);
+    const o2=$('#mDetOut'); if(o2) o2.innerHTML=pre+detCardHTML(l, data);
     const rz=$('#mResumo'); if(rz) rz.innerHTML=resumoInner(l);   // oposição: agora com o opoente
     render();
   }catch(e){ if(tok===DET_TOKEN){ const o2=$('#mDetOut'); if(o2) o2.innerHTML='<span class="msg erro">Não consegui consultar o INPI agora. <a class="cedit" id="mDetRetry">tentar de novo</a></span>'; const rt=$('#mDetRetry'); if(rt) rt.onclick=()=>carregarDetalheINPI(l, true); } }
