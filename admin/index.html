@@ -385,10 +385,26 @@ function scoreBucket(s){ return s>=7?{k:'quente',e:'🔥'}:s>=4?{k:'morno',e:'�
 function scoreBadge(l){ const s=scoreLead(l); const b=scoreBucket(s); return '<span class="sco '+b.k+'" title="prioridade (alcance + prazo + tipo)">'+b.e+' '+s+'</span>'; }
 // FLAGS DE ABORDAGEM (do detalhe INPI): tem procurador OU o titular já se manifestou = NÃO abordar
 const normNome=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+// data em que o PROBLEMA de fato começou (não a data da revista, que sai depois):
+// oposição -> data em que a oposição foi protocolada (petição 332)
+// indeferido/exigência -> data do despacho correspondente
+function refProblema(l, d){
+  const t=l.tipo_problema;
+  if(t==='oposicao'){
+    const op=(d.peticoes||[]).filter(p=>p.servico==='332').map(p=>isoData(p.data)).filter(Boolean).sort();
+    if(op[0]) return op[0];
+  }
+  const re = t==='indeferido'?/indefer/i : t==='oposicao'?/oposi/i : t==='exigencia'?/exig/i : null;
+  if(re){
+    const ds=(d.despachos||[]).filter(x=>re.test(x.nome||'')).map(x=>isoData(x.data)).filter(Boolean).sort();
+    if(ds[0]) return ds[0];
+  }
+  return isoData(l.data_publicacao)||isoData(l.data_evento)||null;
+}
 function flagsAbordagem(l, d){
   const proc=String(d.procurador||d.representante||'').trim()||null;
   const tit=normNome(l.titular);
-  const probISO=isoData(l.data_publicacao)||isoData(l.data_evento)||null; // data do problema (indef/oposição)
+  const probISO=refProblema(l, d);
   const agiu=(d.peticoes||[]).some(p=>{
     if(!p.cliente || p.servico==='389' || p.servico==='332') return false; // 389=pedido, 332=oposição do opoente
     const c=normNome(p.cliente); if(!c||!tit) return false;
