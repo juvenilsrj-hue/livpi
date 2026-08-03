@@ -573,6 +573,31 @@ function toast(msg){
   toast._t = setTimeout(()=>toastEl.classList.remove('show'), 2600);
 }
 
+/* Registro da adesão com a LIV (Supabase, tabela adesoes: o público só insere) */
+const SB_URL="https://fptkrfvbkxrzhvqgvime.supabase.co";
+const SB_KEY="sb_publishable_2ItWHYF3hao6aYP4SONG0A_DpGyAuR3"; // chave pública (publishable)
+let _enviadoHash=null;
+async function enviarAdesao(){
+  if(!SIG || SIG.hash===_enviadoHash) return;
+  const rec={
+    titular_nome:val('titular_nome'), titular_doc:val('titular_doc'), titular_tel:val('titular_tel'),
+    titular_email:val('titular_email'), titular_cidade:val('titular_cidade'),
+    marca_nome:val('marca_nome'), marca_processo:val('marca_processo'), marca_situacao:val('marca_situacao'),
+    marca_tipo:val('marca_tipo'), marca_classe:val('marca_classe'), marca_uso:val('marca_uso'), marca_links:val('marca_links'),
+    venda_valor:val('venda_valor'), venda_urgencia:val('venda_urgencia'), venda_motivo:val('venda_motivo'), venda_obs:val('venda_obs'),
+    sig_nome:SIG.nome, sig_local:SIG.local, sig_stamp:SIG.stamp, sig_iso:SIG.iso, sig_ip:SIG.ip,
+    sig_code:SIG.code, sig_hash:SIG.hash, sig_algo:SIG.algo,
+    termo_texto:plainText()
+  };
+  const r=await fetch(SB_URL+'/rest/v1/adesoes',{
+    method:'POST',
+    headers:{apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'},
+    body:JSON.stringify(rec)
+  });
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  _enviadoHash=SIG.hash;
+}
+
 document.getElementById('gerar').addEventListener('click', async ()=>{
   if(!validate()) return;
   const btn=document.getElementById('gerar');
@@ -591,6 +616,8 @@ document.getElementById('gerar').addEventListener('click', async ()=>{
   result.classList.add('show');
   result.scrollIntoView({behavior:'smooth', block:'start'});
   btn.disabled=false; btn.textContent=prev;
+  try{ await enviarAdesao(); toast('Adesão registrada com a LIV ✓'); }
+  catch(e){ toast('Termo gerado. Envie o PDF pelo WhatsApp ou e-mail para concluir.'); }
 });
 
 form.addEventListener('reset', ()=>{ SIG=null; result.classList.remove('show'); clearInvalid(); });
