@@ -109,6 +109,16 @@
   .checkbox span{font-size:13.5px;color:var(--ink-2);line-height:1.5;}
   .checkbox.invalid{border-color:var(--err);box-shadow:0 0 0 3px rgba(180,72,63,.10);}
 
+  /* autocomplete de cidades */
+  .autocomp{position:relative;}
+  .sug{position:absolute;top:calc(100% - 2px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:0 0 10px 10px;box-shadow:0 18px 34px -18px rgba(43,58,72,.35);max-height:225px;overflow:auto;z-index:30;display:none;}
+  .sug.open{display:block;}
+  .sug div{padding:10px 14px;font-size:14px;font-family:'Poppins',sans-serif;color:var(--ink);cursor:pointer;border-bottom:1px solid var(--line-2);}
+  .sug div:last-child{border-bottom:none;}
+  .sug div:hover,.sug div.sel{background:var(--cream);}
+  .sug div b{color:var(--terra);font-weight:600;}
+  .sug .nada{color:var(--ink-2);font-style:italic;cursor:default;}
+
   .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;}
   button{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;border:none;border-radius:9px;padding:14px 24px;cursor:pointer;transition:transform .06s, background .2s, opacity .2s;}
   button:active{transform:translateY(1px);}
@@ -241,9 +251,11 @@
           <label>E-mail <span class="req">*</span></label>
           <input type="email" name="titular_email" data-req placeholder="voce@email.com">
         </div>
-        <div class="field">
+        <div class="field autocomp">
           <label>Cidade / UF <span class="req">*</span></label>
-          <input type="text" name="titular_cidade" data-req placeholder="Ex.: Lages / SC">
+          <input type="text" name="titular_cidade" id="cidadeBusca" data-req placeholder="Comece a digitar a sua cidade…" autocomplete="off">
+          <span class="hint">Digite e escolha na lista. Vamos usar a cidade para preencher o local da assinatura.</span>
+          <div class="sug" id="cidadeSug"></div>
         </div>
       </div>
     </div>
@@ -365,7 +377,8 @@
         </div>
         <div class="field full">
           <label>Local e data <span class="req">*</span></label>
-          <input type="text" name="decl_local" data-req placeholder="Ex.: Lages/SC, 23/07/2026">
+          <input type="text" name="decl_local" id="declLocal" data-req placeholder="Preenchido com a sua cidade e a data de hoje">
+          <span class="hint">Preenchemos automaticamente com a cidade informada e a data de hoje. Pode ajustar se precisar.</span>
         </div>
       </div>
 
@@ -478,6 +491,68 @@ function stampBrasilia(d){
   const s=d.toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
   return s+' (horário de Brasília)';
 }
+
+/* ===== Buscador de cidades (IBGE) + preenchimento automático de "Local e data" ===== */
+let CIDADES=null,_cidReq=null,_sugIdx=-1;
+const _cid=document.getElementById('cidadeBusca');
+const _sug=document.getElementById('cidadeSug');
+const _loc=document.getElementById('declLocal');
+const semAcento=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+function carregaCidades(){
+  if(CIDADES) return Promise.resolve();
+  if(_cidReq) return _cidReq;
+  _cidReq=fetch('https://servicodados.ibge.gov.br/api/v1/localidades/municipios?view=nivelado')
+    .then(r=>r.json())
+    .then(j=>{ CIDADES=j.map(m=>({n:m['municipio-nome'],uf:m['UF-sigla']})); })
+    .catch(()=>{ _cidReq=null; }); // sem internet/IBGE fora: campo segue como texto livre
+  return _cidReq;
+}
+function fechaSug(){ if(_sug){ _sug.classList.remove('open'); _sug.innerHTML=''; } _sugIdx=-1; }
+function hojeBR(){ return new Date().toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'}); }
+function preencheLocal(){
+  if(!_cid||!_loc) return;
+  const c=_cid.value.trim(); if(!c) return;
+  if(_loc.value.trim() && _loc.dataset.auto!=='1') return; // não sobrescreve o que o usuário digitou
+  _loc.value=c.replace(/\s*\/\s*/,'/')+', '+hojeBR();
+  _loc.dataset.auto='1';
+  _loc.classList.remove('invalid');
+}
+function mostraSug(){
+  if(!_sug) return;
+  const q=semAcento(_cid.value.trim());
+  if(!CIDADES || q.length<2){ fechaSug(); return; }
+  const comeca=[],contem=[];
+  for(const c of CIDADES){
+    const n=semAcento(c.n);
+    if(n.startsWith(q)){ comeca.push(c); if(comeca.length>=8) break; }
+    else if(contem.length<8 && n.includes(q)) contem.push(c);
+  }
+  const lista=comeca.concat(contem).slice(0,8);
+  if(!lista.length){ _sug.innerHTML='<div class="nada">Nenhuma cidade encontrada, confira a grafia.</div>'; _sug.classList.add('open'); return; }
+  _sug.innerHTML=lista.map((c,i)=>'<div data-i="'+i+'">'+escapeHtml(c.n)+' <b>/ '+c.uf+'</b></div>').join('');
+  _sug.classList.add('open'); _sugIdx=-1; _sug._lista=lista;
+  _sug.querySelectorAll('div[data-i]').forEach((el,i)=>{
+    el.addEventListener('mousedown',ev=>{ ev.preventDefault(); escolheCidade(lista[i]); });
+  });
+}
+function escolheCidade(c){ _cid.value=c.n+' / '+c.uf; _cid.classList.remove('invalid'); fechaSug(); preencheLocal(); }
+if(_cid){
+  _cid.addEventListener('focus',()=>{ carregaCidades().then(()=>{ if(document.activeElement===_cid) mostraSug(); }); });
+  _cid.addEventListener('input',()=>{ if(CIDADES) mostraSug(); else carregaCidades().then(mostraSug); });
+  _cid.addEventListener('blur',()=>{ setTimeout(fechaSug,150); preencheLocal(); });
+  _cid.addEventListener('keydown',e=>{
+    const its=_sug?_sug.querySelectorAll('div[data-i]'):[];
+    if(!_sug || !_sug.classList.contains('open') || !its.length) return;
+    if(e.key==='ArrowDown'){ e.preventDefault(); _sugIdx=Math.min(_sugIdx+1,its.length-1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); _sugIdx=Math.max(_sugIdx-1,0); }
+    else if(e.key==='Enter'){ if(_sugIdx>=0){ e.preventDefault(); escolheCidade(_sug._lista[_sugIdx]); } return; }
+    else if(e.key==='Escape'){ fechaSug(); return; }
+    else return;
+    its.forEach((el,i)=>el.classList.toggle('sel',i===_sugIdx));
+    if(its[_sugIdx]) its[_sugIdx].scrollIntoView({block:'nearest'});
+  });
+}
+if(_loc){ _loc.addEventListener('input',()=>{ _loc.dataset.auto=''; }); }
 
 function val(name){
   const el = form.elements[name];
