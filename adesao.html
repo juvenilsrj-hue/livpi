@@ -294,14 +294,6 @@
           </div>
         </div>
         <div class="field full">
-          <label>Existe algum processo, oposição ou disputa envolvendo a marca?</label>
-          <div class="radios">
-            <label><input type="radio" name="marca_litigio" value="Não, nada em curso"> Não</label>
-            <label><input type="radio" name="marca_litigio" value="Sim (descrito nas observações)"> Sim</label>
-            <label><input type="radio" name="marca_litigio" value="Não sei informar"> Não sei</label>
-          </div>
-        </div>
-        <div class="field full">
           <label>Site, rede social ou material da marca (se houver)</label>
           <input type="text" name="marca_links" placeholder="Ex.: @suamarca / www.suamarca.com.br">
         </div>
@@ -354,6 +346,11 @@
       <label class="checkbox" data-req-check>
         <input type="checkbox" name="decl_ciencia">
         <span>Estou ciente de que esta adesão <strong>não gera obrigação de compra ou de venda</strong>, e que as <strong>condições comerciais</strong> (valor final e demais termos) serão definidas em <strong>proposta e contrato específicos</strong> antes de qualquer negócio.</span>
+      </label>
+
+      <label class="checkbox" data-req-check>
+        <input type="checkbox" name="decl_exclusiv">
+        <span>Concedo à <strong>LIV Propriedade Intelectual</strong> <strong>exclusividade</strong> na intermediação desta venda. Comprometo-me a não vender nem negociar a marca por conta própria ou por meio de terceiros enquanto durar esta adesão. Caso a venda ocorra por fora, a <strong>comissão de intermediação será devida à LIV</strong>.</span>
       </label>
     </div>
 
@@ -444,13 +441,13 @@ const LABELS = {
   titular_email:"E-mail", titular_cidade:"Cidade/UF",
   marca_nome:"Nome da marca", marca_processo:"Processo INPI", marca_situacao:"Situação",
   marca_tipo:"Tipo", marca_classe:"Classe/Ramo", marca_uso:"Marca em uso",
-  marca_litigio:"Disputa/Oposição", marca_links:"Site/Redes",
+  marca_links:"Site/Redes",
   venda_valor:"Valor pretendido", venda_urgencia:"Urgência", venda_motivo:"Motivo da venda",
   venda_obs:"Observações", decl_local:"Local e data"
 };
 const GROUPS = [
   { title:"Titular", keys:["titular_nome","titular_doc","titular_tel","titular_email","titular_cidade"] },
-  { title:"Marca",   keys:["marca_nome","marca_processo","marca_situacao","marca_tipo","marca_classe","marca_uso","marca_litigio","marca_links"] },
+  { title:"Marca",   keys:["marca_nome","marca_processo","marca_situacao","marca_tipo","marca_classe","marca_uso","marca_links"] },
   { title:"Condições da venda", keys:["venda_valor","venda_urgencia","venda_motivo","venda_obs"] }
 ];
 
@@ -530,7 +527,7 @@ function buildDoc(){
 
   // Declarações
   html += `<div class="doc-sec"><h4>Declaração</h4>
-    <div class="doc-declar">O titular declara ser o legítimo detentor (ou representante legal) da marca acima e que as informações são verdadeiras. Autoriza a ${LIV.nome} a analisar a situação da marca e a intermediar a sua venda, incluindo divulgação a potenciais compradores. Está ciente de que esta adesão não gera obrigação de compra ou de venda, e que as condições comerciais serão definidas em proposta e contrato específicos.</div></div>`;
+    <div class="doc-declar">O titular declara ser o legítimo detentor (ou representante legal) da marca acima e que as informações são verdadeiras. Autoriza a ${LIV.nome} a analisar a situação da marca e a intermediar a sua venda, incluindo divulgação a potenciais compradores. Concede à ${LIV.nome} exclusividade na intermediação e compromete-se a não vender ou negociar a marca por conta própria ou por meio de terceiros enquanto durar esta adesão; caso a venda ocorra por fora, a comissão de intermediação será devida à ${LIV.nome}. Está ciente de que esta adesão não gera obrigação de compra ou de venda, e que as condições comerciais serão definidas em proposta e contrato específicos.</div></div>`;
 
   // Autenticação / assinatura eletrônica
   if(SIG){
@@ -561,7 +558,7 @@ function contentText(){
     const lines = g.keys.map(k=>{ const v=val(k); return v ? `• ${LABELS[k]}: ${v}` : ""; }).filter(Boolean);
     if(lines.length){ t += `\n[${g.title.toUpperCase()}]\n` + lines.join("\n") + "\n"; }
   });
-  t += `\n[DECLARAÇÃO]\nDeclaro ser titular/representante legal da marca, autorizo a ${LIV.nome} a intermediar a venda e estou ciente de que as condições comerciais serão definidas em proposta específica.\n`;
+  t += `\n[DECLARAÇÃO]\nDeclaro ser titular/representante legal da marca e autorizo a ${LIV.nome} a intermediar a venda. Concedo exclusividade à ${LIV.nome} e comprometo-me a não vender ou negociar a marca por fora (por conta própria ou por terceiros) enquanto durar esta adesão; caso isso ocorra, a comissão de intermediação será devida à ${LIV.nome}. Estou ciente de que as condições comerciais serão definidas em proposta específica.\n`;
   return t;
 }
 function plainText(){
