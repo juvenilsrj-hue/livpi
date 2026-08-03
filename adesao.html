@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIV Propriedade Intelectual · Adesão para Venda de Marca Registrada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     LIV · CONFIGURAÇÃO RÁPIDA (edite os dados de contato aqui)
+     Os valores reais ficam no bloco <script> no fim do arquivo,
+     na constante LIV = { ... }. Procure por "EDITE AQUI".
+     ============================================================ */
+  :root{
+    --cream:#F4EEE4;
+    --cream-2:#FBF8F2;
+    --ink:#2B3A48;
+    --ink-2:#54626F;
+    --terra:#B5733F;
+    --terra-soft:#c98f5f;
+    --line:#DCD3C4;
+    --line-2:#e8e0d2;
+    --ok:#3f7d5c;
+    --err:#b4483f;
+    --radius:10px;
+    --shadow:0 18px 50px -30px rgba(43,58,72,.55);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Lora',Georgia,serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:34px 22px 90px;position:relative;}
+
+  /* Corner brackets (elemento da marca) */
+  .frame{position:fixed;inset:16px;pointer-events:none;z-index:0;}
+  .frame span{position:absolute;width:34px;height:34px;border-color:var(--line);border-style:solid;border-width:0;}
+  .frame .tl{top:0;left:0;border-top-width:2px;border-left-width:2px;}
+  .frame .tr{top:0;right:0;border-top-width:2px;border-right-width:2px;}
+  .frame .bl{bottom:0;left:0;border-bottom-width:2px;border-left-width:2px;}
+  .frame .br{bottom:0;right:0;border-bottom-width:2px;border-right-width:2px;}
+  @media (max-width:620px){.frame{display:none;}}
+
+  .content{position:relative;z-index:1;}
+
+  /* Logo */
+  .brandbar{display:flex;justify-content:center;margin-bottom:30px;}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo .mark{display:flex;align-items:flex-end;gap:7px;}
+  .logo .li{font-family:'Poppins',sans-serif;font-weight:500;font-size:34px;letter-spacing:2px;color:#8b98a3;line-height:.8;}
+  .logo .box{width:34px;height:34px;border:2px solid var(--terra);border-radius:5px;display:flex;align-items:center;justify-content:center;}
+  .logo .box svg{width:20px;height:20px;}
+  .logo .txt{font-family:'Poppins',sans-serif;font-weight:500;font-size:11px;letter-spacing:3px;color:var(--ink-2);line-height:1.35;text-transform:uppercase;}
+  .logo .dots{display:flex;gap:4px;margin-top:5px;}
+  .logo .dots i{width:3px;height:3px;background:var(--terra);border-radius:50%;display:block;}
+
+  /* Kicker label da marca */
+  .kicker{font-family:'Poppins',sans-serif;font-weight:600;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--terra);display:inline-block;margin-bottom:14px;}
+  .kicker::after{content:"";display:block;width:46px;height:2px;background:var(--terra);margin-top:9px;}
+
+  h1{font-family:'Poppins',sans-serif;font-weight:700;font-size:clamp(30px,5.4vw,46px);line-height:1.1;letter-spacing:-.5px;margin:0 0 18px;color:var(--ink);}
+  h2{font-family:'Poppins',sans-serif;font-weight:600;font-size:19px;letter-spacing:.2px;margin:0 0 4px;color:var(--ink);}
+  .lead{font-size:18px;color:var(--ink-2);max-width:640px;margin:0 0 6px;}
+  p{margin:0 0 14px;}
+
+  .hero{margin-bottom:44px;}
+
+  /* Como funciona */
+  .section-label{font-family:'Poppins',sans-serif;font-weight:600;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--terra);margin:0 0 18px;}
+  .section-label::after{content:"";display:block;width:40px;height:2px;background:var(--terra);margin-top:9px;}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:52px;}
+  @media (max-width:720px){.steps{grid-template-columns:1fr 1fr;}}
+  @media (max-width:430px){.steps{grid-template-columns:1fr;}}
+  .step{background:var(--cream-2);border:1px solid var(--line-2);border-radius:var(--radius);padding:20px 18px;}
+  .step .n{font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;color:var(--terra);border:1.5px solid var(--terra);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+  .step h3{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;margin:0 0 6px;color:var(--ink);}
+  .step p{font-size:14px;color:var(--ink-2);margin:0;line-height:1.5;}
+
+  /* Form */
+  form{margin-top:6px;}
+  .card{background:var(--cream-2);border:1px solid var(--line-2);border-radius:14px;padding:30px 28px;margin-bottom:22px;box-shadow:var(--shadow);}
+  @media (max-width:520px){.card{padding:24px 18px;}}
+  .card > .head{display:flex;align-items:center;gap:12px;margin-bottom:22px;}
+  .card > .head .num{font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;color:#fff;background:var(--ink);width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .card > .head .sub{font-size:13.5px;color:var(--ink-2);font-style:italic;margin:0;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;}
+  @media (max-width:560px){.grid{grid-template-columns:1fr;}}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field.full{grid-column:1 / -1;}
+  label{font-family:'Poppins',sans-serif;font-weight:500;font-size:13px;color:var(--ink);letter-spacing:.2px;}
+  label .req{color:var(--terra);}
+  .hint{font-size:12px;color:var(--ink-2);font-style:italic;margin-top:-1px;}
+  input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],select,textarea{
+    font-family:'Poppins',sans-serif;font-size:14px;color:var(--ink);
+    background:#fff;border:1px solid var(--line);border-radius:8px;padding:11px 13px;width:100%;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  textarea{font-family:'Lora',serif;min-height:82px;resize:vertical;line-height:1.5;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--terra);box-shadow:0 0 0 3px rgba(181,115,63,.15);}
+  input.invalid,select.invalid,textarea.invalid{border-color:var(--err);box-shadow:0 0 0 3px rgba(180,72,63,.12);}
+  select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2354626F' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 13px center;padding-right:36px;}
+  .radios{display:flex;flex-wrap:wrap;gap:10px;}
+  .radios label{display:flex;align-items:center;gap:7px;font-weight:400;font-family:'Lora',serif;font-size:14px;color:var(--ink-2);background:#fff;border:1px solid var(--line);border-radius:20px;padding:7px 14px;cursor:pointer;}
+  .radios input{accent-color:var(--terra);}
+  .checkbox{display:flex;align-items:flex-start;gap:11px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 15px;margin-bottom:12px;cursor:pointer;}
+  .checkbox input{margin-top:3px;accent-color:var(--terra);width:17px;height:17px;flex:0 0 auto;}
+  .checkbox span{font-size:13.5px;color:var(--ink-2);line-height:1.5;}
+  .checkbox.invalid{border-color:var(--err);box-shadow:0 0 0 3px rgba(180,72,63,.10);}
+
+  .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;}
+  button{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;border:none;border-radius:9px;padding:14px 24px;cursor:pointer;transition:transform .06s, background .2s, opacity .2s;}
+  button:active{transform:translateY(1px);}
+  .btn-primary{background:var(--ink);color:#fff;}
+  .btn-primary:hover{background:#1f2c38;}
+  .btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--ink);}
+  .btn-terra{background:var(--terra);color:#fff;}
+  .btn-terra:hover{background:#a4652f;}
+
+  .form-error{display:none;background:rgba(180,72,63,.08);border:1px solid rgba(180,72,63,.35);color:#8f342c;font-family:'Poppins',sans-serif;font-size:13.5px;border-radius:9px;padding:12px 15px;margin-top:18px;}
+  .form-error.show{display:block;}
+
+  /* Resumo gerado */
+  .result{display:none;margin-top:34px;}
+  .result.show{display:block;}
+  .doc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:38px 40px;box-shadow:var(--shadow);}
+  @media (max-width:520px){.doc{padding:26px 20px;}}
+  .doc .doc-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:22px;gap:14px;flex-wrap:wrap;}
+  .doc .doc-head .t{font-family:'Poppins',sans-serif;font-weight:700;font-size:17px;color:var(--ink);letter-spacing:.2px;margin:0;}
+  .doc .doc-head .meta{font-family:'Poppins',sans-serif;font-size:11.5px;color:var(--ink-2);text-align:right;}
+  .doc-sec{margin-bottom:20px;}
+  .doc-sec h4{font-family:'Poppins',sans-serif;font-weight:600;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--terra);margin:0 0 10px;border-bottom:1px solid var(--line-2);padding-bottom:6px;}
+  .doc-row{display:grid;grid-template-columns:210px 1fr;gap:4px 16px;font-size:14px;padding:4px 0;}
+  @media (max-width:520px){.doc-row{grid-template-columns:1fr;gap:0;padding:6px 0;}}
+  .doc-row .k{font-family:'Poppins',sans-serif;font-weight:500;font-size:12.5px;color:var(--ink-2);}
+  .doc-row .v{color:var(--ink);}
+  .doc-declar{font-size:13px;color:var(--ink-2);background:var(--cream);border:1px solid var(--line-2);border-radius:8px;padding:14px 16px;line-height:1.55;font-style:italic;}
+  .doc-auth{margin-top:8px;background:var(--cream);border:1px solid var(--line-2);border-radius:8px;padding:16px 18px;}
+  .doc-auth .a-row{display:grid;grid-template-columns:180px 1fr;gap:2px 14px;font-size:13px;padding:3px 0;}
+  @media (max-width:520px){.doc-auth .a-row{grid-template-columns:1fr;}}
+  .doc-auth .a-row .k{font-family:'Poppins',sans-serif;font-weight:500;font-size:12px;color:var(--ink-2);}
+  .doc-auth .a-row .v{color:var(--ink);word-break:break-word;}
+  .doc-auth .a-code{font-family:'Poppins',sans-serif;font-weight:600;color:var(--terra);letter-spacing:.5px;}
+  .doc-auth .a-note{font-size:11.5px;color:var(--ink-2);font-style:italic;margin-top:10px;line-height:1.5;}
+  .doc-sign{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:30px;}
+  @media (max-width:520px){.doc-sign{grid-template-columns:1fr;gap:36px;}}
+  .doc-sign .line{border-top:1px solid var(--ink);padding-top:6px;font-family:'Poppins',sans-serif;font-size:12px;color:var(--ink-2);text-align:center;}
+
+  .result .after{margin-top:22px;}
+  .result .after p{font-size:14.5px;color:var(--ink-2);}
+  .copybox{display:none;}
+
+  footer{margin-top:60px;border-top:1px solid var(--line);padding-top:26px;font-size:13.5px;color:var(--ink-2);}
+  footer .fc{display:flex;flex-wrap:wrap;gap:6px 22px;margin-bottom:14px;}
+  footer .fc a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line);}
+  footer .fc a:hover{border-color:var(--terra);color:var(--terra);}
+  footer .fine{font-size:12px;line-height:1.55;}
+
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;font-family:'Poppins',sans-serif;font-size:14px;padding:12px 22px;border-radius:30px;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;z-index:50;box-shadow:0 12px 30px -12px rgba(0,0,0,.5);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* Impressão: mostra apenas o documento gerado */
+  @media print{
+    @page{margin:16mm;}
+    body{background:#fff;}
+    .frame,.brandbar,.hero,.steps,.section-label,form,footer,.actions,.result .after,.result .print-hide{display:none !important;}
+    .wrap{padding:0;max-width:none;}
+    .result{display:block !important;margin:0;}
+    .doc{border:none;box-shadow:none;padding:0;}
+    .doc .doc-head{border-bottom:2px solid #000;}
+  }
+</style>
+</head>
+<body>
+<div class="frame"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+
+<div class="wrap"><div class="content">
+
+  <!-- LOGO -->
+  <div class="brandbar">
+    <div class="logo">
+      <div class="mark">
+        <span class="li">LI</span>
+        <span class="box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2B3A48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 5"/></svg>
+        </span>
+      </div>
+      <div>
+        <div class="txt">Propriedade<br>Intelectual</div>
+        <div class="dots"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <span class="kicker">Venda de Marca Registrada</span>
+    <h1>Coloque sua marca à venda com quem entende do valor dela.</h1>
+    <p class="lead">Uma marca registrada não é papelada, é um ativo. Ela pode ser avaliada, posicionada e vendida com segurança jurídica. A LIV cuida da análise, da documentação no INPI e da transferência de titularidade para que você venda o seu registro sem correr risco.</p>
+    <p class="lead">Preencha o cadastro abaixo. Ele funciona como o seu <strong>Termo de Adesão</strong> à intermediação de venda. Ao final, você <strong>assina eletronicamente</strong> e gera o documento em PDF para enviar à nossa equipe.</p>
+  </section>
+
+  <!-- COMO FUNCIONA -->
+  <p class="section-label">Como funciona</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Você cadastra</h3><p>Preenche os dados da marca e as condições que pretende para a venda.</p></div>
+    <div class="step"><div class="n">2</div><h3>Analisamos</h3><p>Verificamos a situação no INPI, a viabilidade e o valor de mercado do registro.</p></div>
+    <div class="step"><div class="n">3</div><h3>Posicionamos</h3><p>Divulgamos a marca com segurança para compradores qualificados.</p></div>
+    <div class="step"><div class="n">4</div><h3>Intermediamos</h3><p>Conduzimos a negociação e a transferência de titularidade com respaldo técnico.</p></div>
+  </div>
+
+  <!-- FORM -->
+  <p class="section-label">Cadastro / Termo de Adesão</p>
+  <form id="form" novalidate>
+
+    <!-- Bloco 1 -->
+    <div class="card">
+      <div class="head"><span class="num">1</span><div><h2>Dados do titular</h2><p class="sub">Quem é o dono atual do registro.</p></div></div>
+      <div class="grid">
+        <div class="field full">
+          <label>Nome completo ou Razão social <span class="req">*</span></label>
+          <input type="text" name="titular_nome" data-req placeholder="Ex.: João da Silva ou Empresa X Ltda.">
+        </div>
+        <div class="field">
+          <label>CPF ou CNPJ <span class="req">*</span></label>
+          <input type="text" name="titular_doc" data-req placeholder="000.000.000-00">
+        </div>
+        <div class="field">
+          <label>Telefone / WhatsApp <span class="req">*</span></label>
+          <input type="tel" name="titular_tel" data-req placeholder="(00) 00000-0000">
+        </div>
+        <div class="field">
+          <label>E-mail <span class="req">*</span></label>
+          <input type="email" name="titular_email" data-req placeholder="voce@email.com">
+        </div>
+        <div class="field">
+          <label>Cidade / UF <span class="req">*</span></label>
+          <input type="text" name="titular_cidade" data-req placeholder="Ex.: Lages / SC">
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloco 2 -->
+    <div class="card">
+      <div class="head"><span class="num">2</span><div><h2>Dados da marca</h2><p class="sub">As informações do registro que você quer vender.</p></div></div>
+      <div class="grid">
+        <div class="field full">
+          <label>Nome da marca <span class="req">*</span></label>
+          <input type="text" name="marca_nome" data-req placeholder="O nome exatamente como está registrado">
+        </div>
+        <div class="field">
+          <label>Nº do processo / registro no INPI</label>
+          <input type="text" name="marca_processo" placeholder="Ex.: 900000000">
+          <span class="hint">Se não souber, deixe em branco, nós localizamos.</span>
+        </div>
+        <div class="field">
+          <label>Situação atual <span class="req">*</span></label>
+          <select name="marca_situacao" data-req>
+            <option value="">Selecione…</option>
+            <option>Registrada (concedida)</option>
+            <option>Em processo (pedido depositado)</option>
+            <option>Registrada, mas sem uso</option>
+            <option>Não tenho certeza</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tipo de marca <span class="req">*</span></label>
+          <select name="marca_tipo" data-req>
+            <option value="">Selecione…</option>
+            <option>Nominativa (apenas o nome)</option>
+            <option>Mista (nome + logo)</option>
+            <option>Figurativa (apenas símbolo)</option>
+            <option>Tridimensional</option>
+            <option>Não sei</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Classe(s) / ramo de atividade</label>
+          <input type="text" name="marca_classe" placeholder="Ex.: Classe 43, restaurantes">
+        </div>
+        <div class="field full">
+          <label>A marca está em uso hoje?</label>
+          <div class="radios">
+            <label><input type="radio" name="marca_uso" value="Sim, está em uso"> Sim</label>
+            <label><input type="radio" name="marca_uso" value="Não, está sem uso"> Não</label>
+            <label><input type="radio" name="marca_uso" value="Parcialmente / esporádico"> Parcialmente</label>
+          </div>
+        </div>
+        <div class="field full">
+          <label>Existe algum processo, oposição ou disputa envolvendo a marca?</label>
+          <div class="radios">
+            <label><input type="radio" name="marca_litigio" value="Não, nada em curso"> Não</label>
+            <label><input type="radio" name="marca_litigio" value="Sim (descrito nas observações)"> Sim</label>
+            <label><input type="radio" name="marca_litigio" value="Não sei informar"> Não sei</label>
+          </div>
+        </div>
+        <div class="field full">
+          <label>Site, rede social ou material da marca (se houver)</label>
+          <input type="text" name="marca_links" placeholder="Ex.: @suamarca / www.suamarca.com.br">
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloco 3 -->
+    <div class="card">
+      <div class="head"><span class="num">3</span><div><h2>Condições pretendidas para a venda</h2><p class="sub">Um ponto de partida, tudo pode ser ajustado após a nossa análise.</p></div></div>
+      <div class="grid">
+        <div class="field">
+          <label>Valor pretendido (R$)</label>
+          <input type="text" name="venda_valor" placeholder="Ex.: 25.000 (ou 'a avaliar')">
+          <span class="hint">Sem ideia de preço? Escreva "a avaliar".</span>
+        </div>
+        <div class="field">
+          <label>Urgência da venda</label>
+          <select name="venda_urgencia">
+            <option value="">Selecione…</option>
+            <option>Tenho pressa (o quanto antes)</option>
+            <option>Prazo médio (alguns meses)</option>
+            <option>Sem pressa (aguardo a melhor proposta)</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Motivo da venda (opcional)</label>
+          <input type="text" name="venda_motivo" placeholder="Ex.: encerrei a operação, mudei de ramo, registro parado…">
+        </div>
+        <div class="field full">
+          <label>Observações que a LIV deve saber</label>
+          <textarea name="venda_obs" placeholder="Detalhes de disputas, propostas anteriores, documentos que possui (certificado de registro etc.), ou qualquer informação relevante."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloco 4 -->
+    <div class="card">
+      <div class="head"><span class="num">4</span><div><h2>Declaração e autorização</h2><p class="sub">Necessário para prosseguirmos com a intermediação.</p></div></div>
+
+      <label class="checkbox" data-req-check>
+        <input type="checkbox" name="decl_titular">
+        <span>Declaro que sou o <strong>titular</strong> da marca (ou represento legalmente quem é) e que as informações prestadas são <strong>verdadeiras</strong>.</span>
+      </label>
+
+      <label class="checkbox" data-req-check>
+        <input type="checkbox" name="decl_autoriza">
+        <span>Autorizo a <strong>LIV Propriedade Intelectual</strong> a analisar a situação da marca e a <strong>intermediar a sua venda</strong>, incluindo divulgação a potenciais compradores.</span>
+      </label>
+
+      <label class="checkbox" data-req-check>
+        <input type="checkbox" name="decl_ciencia">
+        <span>Estou ciente de que esta adesão <strong>não gera obrigação de compra ou de venda</strong>, e que as <strong>condições comerciais</strong> (valor final e demais termos) serão definidas em <strong>proposta e contrato específicos</strong> antes de qualquer negócio.</span>
+      </label>
+    </div>
+
+    <!-- Bloco 5 -->
+    <div class="card">
+      <div class="head"><span class="num">5</span><div><h2>Assinatura eletrônica</h2><p class="sub">Você assina digitando o seu nome. Registramos data, hora e IP como evidência do aceite.</p></div></div>
+      <div class="grid">
+        <div class="field full">
+          <label>Nome completo (assinatura) <span class="req">*</span></label>
+          <input type="text" name="sig_nome" data-req placeholder="Digite o seu nome completo para assinar">
+        </div>
+        <div class="field full">
+          <label>Local e data <span class="req">*</span></label>
+          <input type="text" name="decl_local" data-req placeholder="Ex.: Lages/SC, 23/07/2026">
+        </div>
+      </div>
+
+      <label class="checkbox" data-req-check style="margin-top:16px;">
+        <input type="checkbox" name="decl_assina">
+        <span>Assino este Termo de Adesão <strong>eletronicamente</strong> e concordo com os seus termos. Estou ciente de que a <strong>data, a hora e o meu endereço IP</strong> serão registrados como evidência do aceite (assinatura eletrônica, nos termos da MP 2.200-2/2001).</span>
+      </label>
+
+      <div class="actions">
+        <button type="button" class="btn-primary" id="gerar">Assinar e gerar o Termo</button>
+        <button type="reset" class="btn-ghost">Limpar</button>
+      </div>
+      <div class="form-error" id="formError">Faltou preencher alguns campos obrigatórios (marcados com <strong style="color:var(--terra)">*</strong>) e/ou as declarações. Confira os itens destacados.</div>
+    </div>
+  </form>
+
+  <!-- RESULTADO -->
+  <section class="result" id="result">
+    <p class="section-label print-hide">Seu resumo está pronto</p>
+    <div class="doc" id="doc">
+      <div class="doc-head">
+        <div>
+          <p class="t">Termo de Adesão para Venda de Marca Registrada</p>
+          <div style="font-family:'Poppins',sans-serif;font-size:11.5px;color:var(--ink-2);margin-top:3px;">LIV Propriedade Intelectual</div>
+        </div>
+        <div class="meta" id="docMeta"></div>
+      </div>
+      <div id="docBody"></div>
+    </div>
+
+    <div class="after print-hide">
+      <div class="actions">
+        <button type="button" class="btn-terra" id="baixarPdf">Baixar PDF</button>
+        <button type="button" class="btn-ghost" id="copiar">Copiar resumo</button>
+        <button type="button" class="btn-ghost" id="enviarZap">Enviar por WhatsApp</button>
+        <button type="button" class="btn-ghost" id="enviarEmail">Enviar por e-mail</button>
+        <button type="button" class="btn-ghost" id="editar">Voltar e editar</button>
+      </div>
+      <p style="margin-top:14px;">Para gerar o <strong>PDF</strong>, clique em “Baixar PDF” e, na janela de impressão, escolha <strong>“Salvar como PDF”</strong>. Depois é só nos enviar o arquivo (ou o texto copiado) por WhatsApp ou e-mail.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="fc" id="footContacts"><!-- preenchido via JS --></div>
+    <p class="fine">A adesão não gera obrigação de compra ou venda. As condições comerciais (valor final e demais termos) são definidas em proposta e contrato específicos após a análise da marca pela LIV Propriedade Intelectual. As informações prestadas são de responsabilidade do titular.</p>
+  </footer>
+
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   EDITE AQUI: dados de contato da LIV
+   ============================================================ */
+const LIV = {
+  nome:      "LIV Propriedade Intelectual",
+  whatsapp:  "5549999647004",                     // só números, com DDI 55 + DDD
+  whatsZap:  "(49) 99964-7004",                   // como aparece na tela
+  email:     "contato@livpi.com.br",
+  site:      "www.livpi.com.br",
+  instagram: "@liv.propriedadeintelectual"
+};
+/* ============================================================ */
+
+const form   = document.getElementById('form');
+const result = document.getElementById('result');
+const toastEl= document.getElementById('toast');
+
+// Rótulos amigáveis para o resumo
+const LABELS = {
+  titular_nome:"Titular", titular_doc:"CPF/CNPJ", titular_tel:"Telefone/WhatsApp",
+  titular_email:"E-mail", titular_cidade:"Cidade/UF",
+  marca_nome:"Nome da marca", marca_processo:"Processo INPI", marca_situacao:"Situação",
+  marca_tipo:"Tipo", marca_classe:"Classe/Ramo", marca_uso:"Marca em uso",
+  marca_litigio:"Disputa/Oposição", marca_links:"Site/Redes",
+  venda_valor:"Valor pretendido", venda_urgencia:"Urgência", venda_motivo:"Motivo da venda",
+  venda_obs:"Observações", decl_local:"Local e data"
+};
+const GROUPS = [
+  { title:"Titular", keys:["titular_nome","titular_doc","titular_tel","titular_email","titular_cidade"] },
+  { title:"Marca",   keys:["marca_nome","marca_processo","marca_situacao","marca_tipo","marca_classe","marca_uso","marca_litigio","marca_links"] },
+  { title:"Condições da venda", keys:["venda_valor","venda_urgencia","venda_motivo","venda_obs"] }
+];
+
+let SIG = null; // registro da assinatura eletrônica (preenchido ao assinar)
+
+async function sha256Hex(str){
+  try{
+    if(window.crypto && crypto.subtle){
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return { algo:'SHA-256', hex:[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('') };
+    }
+  }catch(e){}
+  // fallback não-criptográfico (FNV-1a) caso SHA-256 esteja indisponível
+  let h=0x811c9dc5>>>0;
+  for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=(h+((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24)))>>>0; }
+  const base=('00000000'+h.toString(16)).slice(-8);
+  return { algo:'checksum', hex:(base+base+base+base).slice(0,32) };
+}
+async function getIP(){
+  try{
+    const c=new AbortController(); const t=setTimeout(()=>c.abort(),6000);
+    const r=await fetch('https://api.ipify.org?format=json',{cache:'no-store',signal:c.signal});
+    clearTimeout(t); const j=await r.json(); return (j&&j.ip)?j.ip:'';
+  }catch(e){ return ''; }
+}
+function stampBrasilia(d){
+  const s=d.toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  return s+' (horário de Brasília)';
+}
+
+function val(name){
+  const el = form.elements[name];
+  if(!el) return "";
+  if(el.length && el[0] && el[0].type === "radio"){
+    const c = form.querySelector(`input[name="${name}"]:checked`);
+    return c ? c.value : "";
+  }
+  return (el.value || "").trim();
+}
+
+function clearInvalid(){
+  form.querySelectorAll('.invalid').forEach(e=>e.classList.remove('invalid'));
+  document.getElementById('formError').classList.remove('show');
+}
+
+function validate(){
+  clearInvalid();
+  let ok = true, first = null;
+  form.querySelectorAll('[data-req]').forEach(el=>{
+    if(!el.value.trim()){ el.classList.add('invalid'); ok=false; first=first||el; }
+    if(el.type==="email" && el.value && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(el.value)){ el.classList.add('invalid'); ok=false; first=first||el; }
+  });
+  form.querySelectorAll('[data-req-check]').forEach(box=>{
+    const cb = box.querySelector('input[type=checkbox]');
+    if(!cb.checked){ box.classList.add('invalid'); ok=false; first=first||box; }
+  });
+  if(!ok){
+    document.getElementById('formError').classList.add('show');
+    if(first) first.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+  return ok;
+}
+
+function buildDoc(){
+  document.getElementById('docMeta').innerHTML =
+    (SIG ? escapeHtml(SIG.local) : (val('decl_local') ? escapeHtml(val('decl_local')) : "Data: _____ / _____ / __________"));
+
+  let html = "";
+  GROUPS.forEach(g=>{
+    const rows = g.keys.map(k=>{
+      const v = val(k);
+      if(!v) return "";
+      return `<div class="doc-row"><span class="k">${LABELS[k]}</span><span class="v">${escapeHtml(v)}</span></div>`;
+    }).join("");
+    if(rows) html += `<div class="doc-sec"><h4>${g.title}</h4>${rows}</div>`;
+  });
+
+  // Declarações
+  html += `<div class="doc-sec"><h4>Declaração</h4>
+    <div class="doc-declar">O titular declara ser o legítimo detentor (ou representante legal) da marca acima e que as informações são verdadeiras. Autoriza a ${LIV.nome} a analisar a situação da marca e a intermediar a sua venda, incluindo divulgação a potenciais compradores. Está ciente de que esta adesão não gera obrigação de compra ou de venda, e que as condições comerciais serão definidas em proposta e contrato específicos.</div></div>`;
+
+  // Autenticação / assinatura eletrônica
+  if(SIG){
+    html += `<div class="doc-sec"><h4>Assinatura eletrônica</h4><div class="doc-auth">`+
+      `<div class="a-row"><span class="k">Assinado por</span><span class="v">${escapeHtml(SIG.nome)}</span></div>`+
+      `<div class="a-row"><span class="k">CPF / CNPJ</span><span class="v">${escapeHtml(SIG.doc)}</span></div>`+
+      `<div class="a-row"><span class="k">Local e data</span><span class="v">${escapeHtml(SIG.local)}</span></div>`+
+      `<div class="a-row"><span class="k">Data/hora do aceite</span><span class="v">${escapeHtml(SIG.stamp)}</span></div>`+
+      `<div class="a-row"><span class="k">Endereço IP</span><span class="v">${escapeHtml(SIG.ip)}</span></div>`+
+      `<div class="a-row"><span class="k">Código de verificação</span><span class="v a-code">${SIG.code}</span></div>`+
+      `<div class="a-row"><span class="k">Integridade (${SIG.algo})</span><span class="v" style="font-size:10.5px">${SIG.hash}</span></div>`+
+      `<div class="a-note">Documento aceito eletronicamente pelo titular (assinatura eletrônica, nos termos do art. 10, §2º, da MP 2.200-2/2001). O código de verificação e o hash acima permitem conferir a integridade deste documento. Trata-se de assinatura eletrônica simples e não substitui certificado digital ICP-Brasil.</div>`+
+    `</div></div>`;
+  }
+
+  // Assinatura (linha)
+  html += `<div class="doc-sign">
+      <div class="line">${escapeHtml((SIG?SIG.nome:val('titular_nome'))||'Titular')}<br>Titular da marca${SIG?', assinado eletronicamente':''}</div>
+      <div class="line">${LIV.nome}<br>Intermediadora</div>
+    </div>`;
+
+  document.getElementById('docBody').innerHTML = html;
+}
+
+function contentText(){
+  let t = `TERMO DE ADESÃO PARA VENDA DE MARCA REGISTRADA\n${LIV.nome}\n`;
+  GROUPS.forEach(g=>{
+    const lines = g.keys.map(k=>{ const v=val(k); return v ? `• ${LABELS[k]}: ${v}` : ""; }).filter(Boolean);
+    if(lines.length){ t += `\n[${g.title.toUpperCase()}]\n` + lines.join("\n") + "\n"; }
+  });
+  t += `\n[DECLARAÇÃO]\nDeclaro ser titular/representante legal da marca, autorizo a ${LIV.nome} a intermediar a venda e estou ciente de que as condições comerciais serão definidas em proposta específica.\n`;
+  return t;
+}
+function plainText(){
+  let t = contentText();
+  if(SIG){
+    t += `\n[ASSINATURA ELETRÔNICA]\n`;
+    t += `• Assinado por: ${SIG.nome}\n`;
+    t += `• CPF/CNPJ: ${SIG.doc}\n`;
+    t += `• Local e data: ${SIG.local}\n`;
+    t += `• Data/hora do aceite: ${SIG.stamp}\n`;
+    t += `• Endereço IP: ${SIG.ip}\n`;
+    t += `• Código de verificação: ${SIG.code}\n`;
+    t += `• Integridade (${SIG.algo}): ${SIG.hash}\n`;
+    t += `Documento aceito eletronicamente (assinatura eletrônica, MP 2.200-2/2001). O código e o hash acima permitem conferir a integridade do documento.\n`;
+  }
+  return t;
+}
+
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>toastEl.classList.remove('show'), 2600);
+}
+
+document.getElementById('gerar').addEventListener('click', async ()=>{
+  if(!validate()) return;
+  const btn=document.getElementById('gerar');
+  const prev=btn.textContent; btn.disabled=true; btn.textContent='Assinando…';
+  try{
+    const now=new Date();
+    const ip=await getIP();
+    SIG={ nome:val('sig_nome'), doc:val('titular_doc'), local:val('decl_local'),
+          stamp:stampBrasilia(now), iso:now.toISOString(), ip: ip||'não capturado' };
+    const canonical = contentText()+`\n[ASSINANTE] ${SIG.nome}|${SIG.doc}|${SIG.iso}|${SIG.ip}`;
+    const h=await sha256Hex(canonical);
+    SIG.algo=h.algo; SIG.hash=h.hex;
+    SIG.code='LIV-'+h.hex.slice(0,4).toUpperCase()+'-'+h.hex.slice(4,8).toUpperCase()+'-'+h.hex.slice(8,12).toUpperCase();
+  }catch(e){}
+  buildDoc();
+  result.classList.add('show');
+  result.scrollIntoView({behavior:'smooth', block:'start'});
+  btn.disabled=false; btn.textContent=prev;
+});
+
+form.addEventListener('reset', ()=>{ SIG=null; result.classList.remove('show'); clearInvalid(); });
+
+document.getElementById('editar').addEventListener('click', ()=>{
+  form.scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+document.getElementById('baixarPdf').addEventListener('click', ()=> window.print());
+
+document.getElementById('copiar').addEventListener('click', async ()=>{
+  try{ await navigator.clipboard.writeText(plainText()); toast("Resumo copiado ✓"); }
+  catch(e){
+    const ta=document.createElement('textarea'); ta.value=plainText(); document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); ta.remove(); toast("Resumo copiado ✓");
+  }
+});
+
+document.getElementById('enviarZap').addEventListener('click', ()=>{
+  const url = `https://wa.me/${LIV.whatsapp}?text=${encodeURIComponent(plainText())}`;
+  window.open(url, '_blank');
+});
+
+document.getElementById('enviarEmail').addEventListener('click', ()=>{
+  const subj = `Adesão para venda de marca: ${val('marca_nome')||'sem nome'}`;
+  const url = `mailto:${LIV.email}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(plainText())}`;
+  window.location.href = url;
+});
+
+// Footer + placeholder de data
+document.getElementById('footContacts').innerHTML =
+  `<a href="https://wa.me/${LIV.whatsapp}" target="_blank">WhatsApp ${LIV.whatsZap}</a>`+
+  `<a href="mailto:${LIV.email}">${LIV.email}</a>`+
+  `<a href="https://${LIV.site}" target="_blank">${LIV.site}</a>`+
+  `<span>Instagram ${LIV.instagram}</span>`;
+</script>
+</body>
+</html>

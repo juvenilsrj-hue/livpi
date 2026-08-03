@@ -183,7 +183,7 @@ footer{margin-top:0}
       <span class="eyebrow">Para quem tem uma marca</span>
       <h2>Tem uma marca registrada parada?</h2>
       <p>Transforme um ativo sem uso em oportunidade. Anuncie a sua marca com a LIV e alcance quem procura exatamente por ela, com avaliação técnica e transferência segura no INPI.</p>
-      <a class="btn btn-primary" id="waAnunciar" href="#" target="_blank" rel="noopener">Anunciar minha marca</a>
+      <a class="btn btn-primary" href="adesao.html">Anunciar minha marca</a>
     </div>
 
   </div>
@@ -234,7 +234,6 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 ['navWa','footWa','waFoot','waFloat'].forEach(id=>{const el=document.getElementById(id);if(el)el.href=waBase("Olá! Vim pelo catálogo de marcas da LIV e gostaria de falar com um especialista.");});
 const wav=document.getElementById('waAviso'); if(wav)wav.href=waBase("Olá! Quero saber sobre as marcas à venda da LIV (comprar ou anunciar a minha).");
 const wac=document.getElementById('waCatalogo'); if(wac)wac.href=waBase("Olá! Gostaria de ver o catálogo completo de marcas à venda da LIV.");
-const wan=document.getElementById('waAnunciar'); if(wan)wan.href=waBase("Olá! Tenho uma marca registrada e gostaria de anunciá-la para venda com a LIV.");
 document.querySelectorAll('.js-wa-interesse').forEach(a=>{
   const card=a.closest('.mk-card');
   const nm=card?card.querySelector('.mk-name').textContent.trim():'';

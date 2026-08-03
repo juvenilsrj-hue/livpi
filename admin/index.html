@@ -625,7 +625,16 @@ async function carregarDetalheINPI(l, force){
     const o2=$('#mDetOut'); if(o2) o2.innerHTML=pre+detCardHTML(l, data);
     const rz=$('#mResumo'); if(rz) rz.innerHTML=resumoInner(l);   // oposição: agora com o opoente
     render();
-  }catch(e){ if(tok===DET_TOKEN){ const o2=$('#mDetOut'); if(o2) o2.innerHTML='<span class="msg erro">Não consegui consultar o INPI agora. <a class="cedit" id="mDetRetry">tentar de novo</a></span>'; const rt=$('#mDetRetry'); if(rt) rt.onclick=()=>carregarDetalheINPI(l, true); } }
+  }catch(e){
+    if(tok===DET_TOKEN){
+      const o2=$('#mDetOut');
+      const fora=/demorou para responder|Failed to fetch|network|500|timeout|lento/i.test(String((e&&e.message)||''));
+      const aviso='<div class="msg erro">'+(fora?'O site do INPI está instável ou fora do ar agora. Isso é do lado deles, não do LIV.':esc((e&&e.message)||'falha na consulta'))+' <a class="cedit" id="mDetRetry">tentar de novo</a></div>';
+      // se houver consulta salva, mostra ela em vez de deixar a seção vazia
+      if(o2) o2.innerHTML=aviso+(l._det?(detCacheNota(l._detEm||'')+detCardHTML(l,l._det)):'');
+      const rt=$('#mDetRetry'); if(rt) rt.onclick=()=>carregarDetalheINPI(l, true);
+    }
+  }
   const bt2=$('#mDet'); if(bt2) bt2.disabled=false;
 }
 // RESUMO (leitura rápida do que houve) a partir da base legal + conflito + opoente
