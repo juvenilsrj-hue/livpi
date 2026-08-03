@@ -147,6 +147,10 @@
   .ades-sec{ margin:14px 0 4px; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--brass); border-bottom:1px solid var(--line); padding-bottom:5px }
   .ades-kv{ display:grid; grid-template-columns:190px 1fr; gap:3px 14px; font-size:13px; padding:3px 0 }
   .ades-kv .k{ color:var(--muted); font-size:12px } .ades-kv .v{ color:var(--ink); word-break:break-word }
+  .ades-row .aSel{ width:16px; height:16px; accent-color:var(--brass); flex:0 0 auto; cursor:pointer; padding:0 }
+  .ades-selall{ display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); cursor:pointer; user-select:none; white-space:nowrap }
+  .ades-selall input{ width:15px; height:15px; accent-color:var(--brass); padding:0 }
+  #aExcluir{ background:var(--bad) }
   .panel{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin:12px 0 }
   .panel h4{ font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--brass); margin:0 0 12px }
   .stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px }
@@ -1270,10 +1274,19 @@ async function renderAdesoes(){
     +'<select id="aUrg"><option value="">Urgência: todas</option></select>'
     +'<span class="status">Registro:</span><input type="date" id="aDe" title="registrado de"><span class="status">até</span><input type="date" id="aAte" title="registrado até">'
     +'<button class="ghost" id="aAtualiza">↻ Atualizar</button>'
+    +'<label class="ades-selall"><input type="checkbox" id="aTodos"> selecionar todas</label>'
+    +'<button id="aExcluir" style="display:none">🗑 Excluir (0)</button>'
     +'<span class="status" id="aStatus"></span></div>'
     +'<div class="dwrap" id="aWrap">carregando…</div>';
   ['aTxt','aSit','aUrg','aDe','aAte'].forEach(id=> $('#'+id).addEventListener('input', pintaAdesoes));
   $('#aAtualiza').onclick=carregaAdesoes;
+  $('#aTodos').addEventListener('change', ()=>{
+    const vis=filtraAdesoes();
+    if($('#aTodos').checked) vis.forEach(a=>ASEL.add(a.id));
+    else vis.forEach(a=>ASEL.delete(a.id));
+    pintaAdesoes();
+  });
+  $('#aExcluir').onclick=excluirAdesoes;
   await carregaAdesoes();
 }
 async function carregaAdesoes(){
@@ -1281,6 +1294,7 @@ async function carregaAdesoes(){
   const { data, error } = await sb.from('adesoes').select('*').order('created_at',{ascending:false});
   if(error){ $('#aWrap').innerHTML='<div class="msg erro">Erro ao carregar: '+esc(error.message)+'</div>'; $('#aStatus').textContent=''; return; }
   ADES=data||[];
+  ASEL=new Set([...ASEL].filter(id=>ADES.some(a=>a.id===id)));
   // popula filtros com os valores existentes
   const sits=[...new Set(ADES.map(a=>a.marca_situacao).filter(Boolean))].sort();
   const urgs=[...new Set(ADES.map(a=>a.venda_urgencia).filter(Boolean))].sort();
@@ -1289,11 +1303,12 @@ async function carregaAdesoes(){
   pintaAdesoes();
 }
 function dataBR(iso){ if(!iso) return '—'; const d=new Date(iso); return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); }
-function pintaAdesoes(){
+let ASEL=new Set();
+function filtraAdesoes(){
   const q=($('#aTxt').value||'').toLowerCase(), fs=$('#aSit').value, fu=$('#aUrg').value;
   const de=$('#aDe').value?new Date($('#aDe').value+'T00:00:00'):null;
   const ate=$('#aAte').value?new Date($('#aAte').value+'T23:59:59'):null;
-  const lista=ADES.filter(a=>{
+  return ADES.filter(a=>{
     if(q && !((a.titular_nome||'')+' '+(a.marca_nome||'')+' '+(a.titular_email||'')+' '+(a.titular_doc||'')).toLowerCase().includes(q)) return false;
     if(fs && a.marca_situacao!==fs) return false;
     if(fu && a.venda_urgencia!==fu) return false;
@@ -1302,9 +1317,30 @@ function pintaAdesoes(){
     if(ate && d>ate) return false;
     return true;
   });
+}
+function atualizaSelUI(lista){
+  const btn=$('#aExcluir'); if(!btn) return;
+  btn.style.display=ASEL.size?'':'none';
+  btn.textContent='🗑 Excluir ('+ASEL.size+')';
+  const todos=$('#aTodos');
+  if(todos) todos.checked=lista.length>0 && lista.every(a=>ASEL.has(a.id));
+}
+async function excluirAdesoes(){
+  if(!ASEL.size) return;
+  const n=ASEL.size;
+  if(!confirm('Excluir '+n+' adesã'+(n>1?'oes':'o')+'? Os termos assinados serão removidos do banco e esta ação não pode ser desfeita.')) return;
+  const { error }=await sb.from('adesoes').delete().in('id',[...ASEL]);
+  if(error){ alert('Erro ao excluir: '+error.message); return; }
+  ASEL.clear();
+  await carregaAdesoes();
+}
+function pintaAdesoes(){
+  const lista=filtraAdesoes();
   $('#aStatus').textContent=lista.length+' de '+ADES.length;
+  atualizaSelUI(lista);
   if(!lista.length){ $('#aWrap').innerHTML='<div class="painel" style="padding:30px 0">Nenhuma adesão '+(ADES.length?'com esses filtros.':'registrada ainda. Quando alguém assinar o Termo em livpi.com.br/adesao, aparece aqui.')+'</div>'; return; }
   $('#aWrap').innerHTML=lista.map(a=>'<div class="ades-row">'
+    +'<input type="checkbox" class="aSel" data-id="'+a.id+'"'+(ASEL.has(a.id)?' checked':'')+' title="selecionar">'
     +'<span class="ades-data" title="data de registro do pedido">📅 '+dataBR(a.created_at)+'</span>'
     +'<div class="ades-main"><b>'+esc(a.marca_nome||'—')+'</b> · '+esc(a.titular_nome||'—')
       +'<div class="sm">'+esc(a.titular_email||'')+(a.titular_tel?(' · '+esc(a.titular_tel)):'')+(a.titular_cidade?(' · '+esc(a.titular_cidade)):'')+'</div></div>'
@@ -1318,6 +1354,10 @@ function pintaAdesoes(){
   +'</div>').join('');
   $('#aWrap').querySelectorAll('.aFicha').forEach(b=> b.onclick=()=>fichaAdesao(b.dataset.id));
   $('#aWrap').querySelectorAll('.aBaixa').forEach(b=> b.onclick=()=>baixaTermo(b.dataset.id));
+  $('#aWrap').querySelectorAll('.aSel').forEach(cb=> cb.addEventListener('change', ()=>{
+    if(cb.checked) ASEL.add(cb.dataset.id); else ASEL.delete(cb.dataset.id);
+    atualizaSelUI(filtraAdesoes());
+  }));
 }
 function kv(k,v){ return v?('<div class="ades-kv"><span class="k">'+k+'</span><span class="v">'+esc(v)+'</span></div>'):''; }
 function fichaAdesao(id){
