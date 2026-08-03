@@ -50,16 +50,11 @@
 
   .content{position:relative;z-index:1;}
 
-  /* Logo */
+  /* Logo (marca oficial da LIV) */
   .brandbar{display:flex;justify-content:center;margin-bottom:30px;}
-  .logo{display:flex;align-items:center;gap:12px;}
-  .logo .mark{display:flex;align-items:flex-end;gap:7px;}
-  .logo .li{font-family:'Poppins',sans-serif;font-weight:500;font-size:34px;letter-spacing:2px;color:#8b98a3;line-height:.8;}
-  .logo .box{width:34px;height:34px;border:2px solid var(--terra);border-radius:5px;display:flex;align-items:center;justify-content:center;}
-  .logo .box svg{width:20px;height:20px;}
-  .logo .txt{font-family:'Poppins',sans-serif;font-weight:500;font-size:11px;letter-spacing:3px;color:var(--ink-2);line-height:1.35;text-transform:uppercase;}
-  .logo .dots{display:flex;gap:4px;margin-top:5px;}
-  .logo .dots i{width:3px;height:3px;background:var(--terra);border-radius:50%;display:block;}
+  .logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+  .liv-mark{height:46px;width:auto;flex-shrink:0;display:block;}
+  .logo-txt{font-family:'Poppins',sans-serif;line-height:1.25;font-size:12px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-2);max-width:130px;}
 
   /* Kicker label da marca */
   .kicker{font-family:'Poppins',sans-serif;font-weight:600;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--terra);display:inline-block;margin-bottom:14px;}
@@ -183,20 +178,12 @@
 
 <div class="wrap"><div class="content">
 
-  <!-- LOGO -->
+  <!-- LOGO (marca oficial) -->
   <div class="brandbar">
-    <div class="logo">
-      <div class="mark">
-        <span class="li">LI</span>
-        <span class="box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#2B3A48" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 5"/></svg>
-        </span>
-      </div>
-      <div>
-        <div class="txt">Propriedade<br>Intelectual</div>
-        <div class="dots"><i></i><i></i><i></i><i></i><i></i></div>
-      </div>
-    </div>
+    <a href="index.html" class="logo" aria-label="LIV Propriedade Intelectual">
+      <img class="liv-mark" src="liv_mark_dark.png" alt="LIV Propriedade Intelectual">
+      <span class="logo-txt">Propriedade Intelectual</span>
+    </a>
   </div>
 
   <!-- HERO -->
