@@ -522,18 +522,67 @@ async function gerarProposta(l){
     DATA_DESPACHO: escXml(dataExtenso(dataDoLead(l))||'____'), PRAZO: escXml(dataExtenso(l.data_limite)||'____'),
   };
   const bt=$('#mProp'); if(bt){ bt.disabled=true; bt.textContent='gerando…'; }
-  try{
-    const buf = await fetch(tpl).then(r=>{ if(!r.ok) throw new Error('modelo não encontrado no servidor'); return r.arrayBuffer(); });
-    const zip = await JSZip.loadAsync(buf);
-    let xml = await zip.file('word/document.xml').async('string');
-    xml = xml.replace(/\{\{(\w+)\}\}/g, (m,k)=> (k in dados)?dados[k]:m);
-    zip.file('word/document.xml', xml);
-    const blob = await zip.generateAsync({ type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-    a.download='Proposta '+(t==='oposicao'?'Oposição':'Recurso')+' - '+(marca||l.numero||'LIV')+'.docx';
-    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),5000);
-  }catch(e){ alert('Erro ao gerar a proposta: '+(e.message||e)); }
+  try{ await baixarDocx(tpl, dados, 'Proposta '+(t==='oposicao'?'Oposição':'Recurso')+' - '+(marca||l.numero||'LIV')+'.docx'); }
+  catch(e){ alert('Erro ao gerar a proposta: '+(e.message||e)); }
   if(bt){ bt.disabled=false; bt.textContent='📄 Gerar proposta (DOCX)'; }
+}
+// preenche um template DOCX com {{CAMPOS}} e baixa
+async function baixarDocx(tpl, dados, nomeArquivo){
+  if(typeof JSZip==='undefined') throw new Error('biblioteca de DOCX ainda carregando, tente de novo');
+  const buf = await fetch(tpl).then(r=>{ if(!r.ok) throw new Error('modelo não encontrado no servidor'); return r.arrayBuffer(); });
+  const zip = await JSZip.loadAsync(buf);
+  let xml = await zip.file('word/document.xml').async('string');
+  xml = xml.replace(/\{\{(\w+)\}\}/g, (m,k)=> (k in dados)?dados[k]:m);
+  zip.file('word/document.xml', xml);
+  const blob = await zip.generateAsync({ type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=nomeArquivo; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
+// ---- DOCUMENTOS DO FECHAMENTO (procuração + contrato) -----------------------
+const fmtCNPJ=s=>{ const d=String(s||'').replace(/\D/g,''); return d.length===14?d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5'):(d.length===11?d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/,'$1.$2.$3-$4'):String(s||'')); };
+function docsHTML(l){
+  const t=l.tipo_problema; if(t!=='indeferido'&&t!=='oposicao') return '';
+  const e=l.enriquecimento||{};
+  const pj=(l.tipo_pessoa==='PJ')||!!e.cnpj;
+  const cliente=(e.razaoSocial||String(l.titular||'').replace(/^\d[\d.\/-]*\s+/,'')).trim();
+  const doc=fmtCNPJ(e.cnpj||l.documento||'');
+  const rep=(Array.isArray(e.socios)&&e.socios[0])?titleCase(e.socios[0]):'';
+  const hoje=dataExtenso(new Date().toISOString().slice(0,10));
+  const i='width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;background:#fff';
+  const campo=(id,rot,val,ph)=>'<div style="flex:1;min-width:150px"><label class="q" style="display:block;margin-bottom:3px">'+rot+'</label><input id="'+id+'" value="'+esc(val||'')+'" placeholder="'+(ph||'')+'" style="'+i+'"></div>';
+  return '<details class="secd"><summary>Documentos do fechamento (procuração + contrato)</summary>'
+    +'<div class="q" style="margin:8px 0">Confira os dados antes de gerar. São documentos jurídicos, então o que estiver em branco precisa ser preenchido aqui.</div>'
+    +'<div class="mrow" style="gap:10px">'+campo('dCli','Cliente (razão social / nome)',cliente)
+    +'<div style="flex:0 0 120px"><label class="q" style="display:block;margin-bottom:3px">Tipo</label><select id="dTipo" style="'+i+'"><option value="PJ"'+(pj?' selected':'')+'>PJ</option><option value="PF"'+(pj?'':' selected')+'>PF</option></select></div></div>'
+    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dDoc','CNPJ / CPF',doc,'só números ou formatado')+campo('dRep','Representante legal (se PJ)',rep)+'</div>'
+    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dEnd','Endereço completo',e.endereco||'','rua, nº, bairro, cidade/UF, CEP')+'</div>'
+    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dMarca','Marca',l.marca||(l._det&&l._det.marca)||'')+campo('dProc','Processo',l.numero||'')+'</div>'
+    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dValor','Valor (R$)','980,00')+campo('dEntrada','Entrada (R$)','330,00')+campo('dParcela','2x de (R$)','325,00')+'</div>'
+    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dValorExt','Valor por extenso','novecentos e oitenta reais')+campo('dData','Data',hoje)+'</div>'
+    +'<div class="mrow" style="margin-top:11px"><button id="mProcur">📑 Gerar procuração</button><button id="mContr">📄 Gerar contrato</button><span class="q" id="mDocMsg"></span></div>'
+    +'</details>';
+}
+function dadosDocs(l){
+  const v=id=>{ const el=$('#'+id); return el?String(el.value||'').trim():''; };
+  const pj=v('dTipo')==='PJ';
+  const cli=v('dCli')||'____________________';
+  const doc=v('dDoc')||'____________________';
+  const end=v('dEnd')||'____________________';
+  const rep=v('dRep');
+  const qual=pj
+    ? ('pessoa jurídica inscrita no CNPJ sob o nº '+doc+', situada à '+end+(rep?(', por seu representante legal '+rep):''))
+    : ('pessoa física inscrita no CPF sob o nº '+doc+', residente e domiciliada à '+end);
+  const t=l.tipo_problema;
+  return {
+    CLIENTE: escXml(cli), CLIENTE_MAI: escXml(cli.toUpperCase()), QUALIFICACAO: escXml(qual),
+    MARCA: escXml(v('dMarca')||'____'), PROCESSO: escXml(v('dProc')||'____'),
+    OBJETIVO: escXml(t==='oposicao'?'Manifestação a oposição':'Recurso ao indeferimento'),
+    SERVICO: escXml(t==='oposicao'?'Defesa em oposição':'Recurso ao indeferimento'),
+    VALOR: escXml(v('dValor')||'980,00'), VALOR_EXTENSO: escXml(v('dValorExt')||'novecentos e oitenta reais'),
+    ENTRADA: escXml(v('dEntrada')||'330,00'), PARCELA: escXml(v('dParcela')||'325,00'),
+    DATA: escXml(v('dData')||dataExtenso(new Date().toISOString().slice(0,10))),
+  };
 }
 function propostaHTML(l){ const t=l.tipo_problema; if(t!=='indeferido'&&t!=='oposicao') return ''; return '<div class="sec"><h4>Proposta comercial</h4><button id="mProp">📄 Gerar proposta (DOCX)</button> <span class="q">modelo '+(t==='oposicao'?'de defesa de oposição':'de recurso')+', preenchido com os dados do lead</span></div>'; }
 function txtAbordagem(l){
@@ -831,6 +880,7 @@ function renderModal(l){
     +detalheBtnHTML(l)
     +abordagemHTML(l)
     +propostaHTML(l)
+    +docsHTML(l)
     +'<div class="sec"><h4>Observações / comentários</h4><textarea id="mCom" placeholder="escreva uma observação... (pode colar um print aqui)"></textarea>'
     +'<div class="mrow" style="margin-top:6px; justify-content:space-between">'
     +'<div class="mrow" style="gap:6px"><label class="anxbt">📎 Anexar<input type="file" id="mFile" style="display:none" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.csv,.txt"></label><span class="q" id="mFileName"></span></div>'
@@ -847,6 +897,19 @@ function renderModal(l){
   $('#mAbCopy').onclick=()=>{ navigator.clipboard.writeText($('#mAbord').value).then(()=>okMsg('copiado!')); };
   $('#mAbReset').onclick=()=>{ $('#mAbord').value=txtAbordagem(l); okMsg('regerado'); };
   if($('#mProp')) $('#mProp').onclick=()=>gerarProposta(l);
+  // documentos do fechamento (procuração / contrato)
+  const gerarDoc=async (tpl, prefixo, bt)=>{
+    const msg=$('#mDocMsg'); const rot=bt.textContent;
+    bt.disabled=true; bt.textContent='gerando…';
+    try{
+      const d=dadosDocs(l);
+      await baixarDocx(tpl, d, prefixo+' - '+((($('#dMarca')||{}).value)||l.numero||'LIV')+'.docx');
+      if(msg){ msg.textContent='✓ gerado'; setTimeout(()=>{ if(msg) msg.textContent=''; },3000); }
+    }catch(e){ alert('Erro ao gerar: '+(e.message||e)); }
+    bt.disabled=false; bt.textContent=rot;
+  };
+  if($('#mProcur')) $('#mProcur').onclick=e=>gerarDoc('tpl/procuracao.docx','Procuração', e.target);
+  if($('#mContr')) $('#mContr').onclick=e=>gerarDoc('tpl/contrato-servicos.docx','Contrato', e.target);
   // detalhe ao vivo no INPI: carrega AUTOMÁTICO ao abrir; botão só re-consulta
   const btDet=$('#mDet');
   if(btDet) btDet.onclick=()=>carregarDetalheINPI(l, true);
