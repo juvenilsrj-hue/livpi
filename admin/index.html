@@ -607,10 +607,11 @@ function txtAbordagem(l){
   if(t==='oposicao'){
     const marcaNome=temMarca?(' da marca '+l.marca):'';
     return [ola,
-      'Antes de mais nada, gostaria de me apresentar. Meu chamo Juvenil e faço parte da LIV Propriedade Intelectual, uma empresa de Santa Catarina especializada em registro de marcas e acompanhamento de processos junto ao INPI.',
+      'Antes de mais nada, gostaria de me apresentar. Me chamo Juvenil e faço parte da LIV Propriedade Intelectual, uma empresa de Santa Catarina especializada em registro de marcas e acompanhamento de processos junto ao INPI.',
       'Em uma consulta pública, verificamos que o pedido'+marcaNome+', processo nº '+proc+', recebeu uma oposição apresentada por terceiro.',
-      'Isso não significa que o registro foi negado. Nesta etapa, ainda é possível apresentar uma resposta para que o INPI também considere os argumentos do titular antes de tomar uma decisão.'+(prazo?(' O prazo informado para essa manifestação é até '+prazo+'.'):''),
-      'Nosso contato é apenas para informar sobre essa movimentação. Caso tenha interesse, podemos analisar a oposição e encaminhar um orçamento sem compromisso para a condução da defesa.'
+      'Nesta etapa, isso não significa que o registro foi negado ainda é possível apresentar uma resposta para que o INPI também considere os argumentos do titular antes de tomar uma decisão.'+(prazo?(' O prazo informado para essa manifestação é até '+prazo+'.'):''),
+      'Meu contato é apenas para informar sobre essa movimentação. Caso tenha interesse, podemos analisar a oposição e encaminhar um orçamento sem compromisso para a condução da defesa.',
+      'Aproveito para comentar que trabalho junto com minha esposa, que é advogada e atua há mais de 14 anos com registro e defesa de marcas. Já conduzimos diversos casos de oposição com resultados positivos, sempre com muito cuidado e responsabilidade, pois sabemos o valor que uma marca representa para o negócio.'
     ].join('\n\n');
   }
   // exigência / outro: formato provisório (serão ajustados na sequência)
