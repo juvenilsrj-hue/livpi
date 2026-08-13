@@ -116,6 +116,9 @@
   .iblk .ih{ background:var(--gelo); padding:6px 12px; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; font-weight:700; color:var(--muted); border-bottom:1px solid var(--line) }
   .iblk .ib{ padding:9px 12px; font-size:12.5px }
   .opoente{ background:#f7efdc; border:1px solid #e6d9b8; border-radius:8px; padding:7px 10px; font-size:12.5px }
+  .opogrid{ display:flex; gap:10px; flex-wrap:wrap }
+  .opocard{ flex:0 0 210px; background:var(--card); border:1px solid var(--line); border-radius:11px; padding:11px 12px; cursor:pointer }
+  .opocard:hover{ border-color:var(--brass2) } .opocard.on{ border-color:var(--brass); box-shadow:0 0 0 2px rgba(154,123,63,.14); background:#fffdf8 }
   .detcard{ max-width:840px }
   .detcab{ display:flex; gap:14px; align-items:center; padding:14px 16px; background:var(--card); border:1px solid var(--line); border-radius:12px }
   .detlogo{ width:92px; height:92px; object-fit:contain; border:1px solid var(--line); border-radius:8px; background:#fff; flex:0 0 auto }
@@ -210,6 +213,7 @@
     <div class="grp">Atendimento</div>
     <button class="tab on" data-tab="leads"><span class="ic">🗂️</span>Leads / CRM</button>
     <button class="tab" data-tab="adesoes"><span class="ic">📝</span>Adesões</button>
+    <button class="tab" data-tab="oportunidades"><span class="ic">🎯</span>Oportunidades</button>
     <div class="grp">Gestão processual</div>
     <button class="tab" data-tab="processos"><span class="ic">📁</span>Processos</button>
     <button class="tab soon" data-tab="movimentacoes"><span class="ic">🔔</span>Movimentações<span class="badge">em breve</span></button>
@@ -259,6 +263,7 @@
   </div>
 
   <div id="view-adesoes" style="display:none"></div>
+  <div id="view-oportunidades" style="display:none"></div>
   <div id="view-processos" style="display:none"></div>
   <div id="view-movimentacoes" class="painel" style="display:none"></div>
   <div id="view-tarefas" class="painel" style="display:none"></div>
@@ -1329,6 +1334,106 @@ const MOD_INFO={
 };
 function placeholderMod(v){ const m=MOD_INFO[v]||['🚧','Módulo','Em construção.']; return '<div class="constru"><div class="em">'+m[0]+'</div><span class="tag">em construção · próxima etapa</span><h3>'+m[1]+'</h3><p>'+m[2]+'</p></div>'; }
 
+// ===== OPORTUNIDADES (marcas à venda × leads indeferidos) ====================
+// Cruza quem teve a marca NEGADA com as marcas que estão à venda: em vez de
+// recomeçar do zero, o titular assume uma marca que já passou pelo INPI.
+let OPO_INIT=false, OPO_SEL=null;
+const NICE_AREAS={'1':'Produtos químicos','2':'Tintas e vernizes','3':'Cosméticos e higiene','4':'Óleos e combustíveis','5':'Produtos farmacêuticos','6':'Metais comuns','7':'Máquinas','8':'Ferramentas manuais','9':'Eletrônicos e software','10':'Aparelhos médicos','11':'Iluminação e aquecimento','12':'Veículos','13':'Armas e fogos','14':'Joias e relógios','15':'Instrumentos musicais','16':'Papelaria e impressos','17':'Borracha e plásticos','18':'Couro e bolsas','19':'Construção (não metálica)','20':'Móveis','21':'Utensílios domésticos','22':'Cordas e tecidos brutos','23':'Fios têxteis','24':'Tecidos e cama','25':'Vestuário e calçados','26':'Armarinho e bordados','27':'Tapetes e revestimentos','28':'Jogos, brinquedos e esporte','29':'Carnes e alimentos','30':'Café, massas e panificação','31':'Agrícolas e animais','32':'Bebidas não alcoólicas','33':'Bebidas alcoólicas','34':'Tabaco','35':'Publicidade e gestão','36':'Finanças e seguros','37':'Construção e reparação','38':'Telecomunicações','39':'Transporte e logística','40':'Tratamento de materiais','41':'Educação e entretenimento','42':'Tecnologia e TI','43':'Alimentação e hospedagem','44':'Saúde e beleza','45':'Jurídico e segurança'};
+const SEGMENTOS=[['Tecnologia e comunicação',['9','38','42']],['Moda e acessórios',['14','18','24','25','26']],['Alimentos e bebidas',['29','30','31','32','33','43']],['Saúde e beleza',['3','5','10','44']],['Negócios, publicidade e finanças',['35','36']],['Educação, mídia e lazer',['15','16','28','41']],['Construção, casa e móveis',['6','11','19','20','21','27','37']],['Indústria e materiais',['1','2','4','7','8','17','22','23','34','40']],['Transporte e veículos',['12','39']],['Jurídico e segurança',['13','45']]];
+const normTxt=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const soLetras=s=>normTxt(s).replace(/[^a-z0-9]/g,'');
+function segmentoDe(c){ const g=SEGMENTOS.find(([,cs])=>cs.includes(String(c))); return g?g[0]:null; }
+function classesDe(txt){ return [...String(txt||'').matchAll(/\d{1,2}/g)].map(m=>String(+m[0])).filter(c=>+c>=1&&+c<=45); }
+// classe da adesão: aceita número ("42") ou texto livre ("Vestuário, roupas")
+function classesAdesao(a){
+  const nums=classesDe(a.marca_classe);
+  if(nums.length) return nums;
+  const n=normTxt(a.marca_classe);
+  if(!n) return [];
+  return Object.keys(NICE_AREAS).filter(c=> normTxt(NICE_AREAS[c]).split(/[\s,()]+/).some(p=>p.length>4 && n.includes(p)) );
+}
+function afinidade(l, a, clsA){
+  const mv=soLetras(a.marca_nome);
+  if(mv.length>2 && (l.conflitos||[]).some(c=>{ const cm=soLetras(c.marca); return cm.length>2 && (cm===mv||cm.includes(mv)||mv.includes(cm)); }))
+    return {n:3,k:'conflito',txt:'🎯 conflito direto'};
+  const clsL=classesDe(l.classes);
+  if(clsL.some(c=>clsA.includes(c))) return {n:2,k:'classe',txt:'🔵 mesma classe'};
+  const segA=new Set(clsA.map(segmentoDe).filter(Boolean));
+  if(clsL.some(c=>segA.has(segmentoDe(c)))) return {n:1,k:'segmento',txt:'⚪ mesmo segmento'};
+  return null;
+}
+function paresDaMarca(a){
+  const clsA=classesAdesao(a); const out=[];
+  for(const l of (LEADS||[])){
+    if(l.descartado || l.tipo_problema!=='indeferido' || !l.numero) continue;
+    const af=afinidade(l,a,clsA); if(!af) continue;
+    out.push({l,af});
+  }
+  return out.sort((x,y)=> (y.af.n-x.af.n) || (scoreLead(y.l)-scoreLead(x.l)) );
+}
+// abordagem específica de OFERTA de marca
+function txtOferta(l,a){
+  const nome=primeiroNome(l);
+  const ola=nome?('Olá, '+nome+'! Tudo bem?'):'Olá! Tudo bem?';
+  const conf=(l.conflitos||[])[0];
+  const cls=classesAdesao(a); const clsTxt=cls.length?('na classe '+cls.join(', ')):'';
+  const jaReg=/concedid|registrad/i.test(a.marca_situacao||'');
+  return [ola,
+    'Antes de mais nada, gostaria de me apresentar. Me chamo '+REMETENTE+' e faço parte da LIV Propriedade Intelectual, uma empresa de Santa Catarina especializada em registro de marcas e acompanhamento de processos junto ao INPI.',
+    'Em uma consulta pública, verificamos que '+(l.marca?('o pedido da marca '+l.marca):'o seu pedido de marca')+', processo nº '+(l.numero||'')+', foi indeferido pelo INPI'+(conf?(' por semelhança com a marca '+conf.marca):'')+'.',
+    'Entrei em contato porque existe um caminho que costuma resolver isso de forma mais rápida: a marca '+a.marca_nome+', '+(jaReg?'já registrada e concedida':'com pedido já em andamento')+(clsTxt?(' '+clsTxt):'')+', está disponível para transferência de titularidade.',
+    'Na prática, em vez de recomeçar um novo pedido e correr o risco de outro indeferimento, o titular assume uma marca que já passou pelo INPI. A LIV conduz todo o processo de cessão junto ao INPI, com segurança para as duas partes.',
+    'Se fizer sentido para você, posso enviar os detalhes da marca e as condições, sem compromisso.'
+  ].join('\n\n');
+}
+async function renderOportunidades(){
+  const v=$('#view-oportunidades'); v.className='';
+  v.innerHTML='<div class="bar"><b style="font-size:15px">Oportunidades</b><span class="status">marcas à venda × pedidos indeferidos</span></div><div style="padding:0 20px 24px" id="opoWrap">carregando…</div>';
+  if(!ADES.length){ try{ const { data }=await sb.from('adesoes').select('*').order('created_at',{ascending:false}); ADES=data||[]; }catch(e){} }
+  if(!ADES.length){ $('#opoWrap').innerHTML='<div class="status">Nenhuma marca cadastrada para venda ainda. Elas aparecem aqui assim que entrarem em <b>Adesões</b>.</div>'; return; }
+  const cards=ADES.map((a,i)=>{
+    const n=paresDaMarca(a).length; const cls=classesAdesao(a);
+    return '<div class="opocard'+(i===0?' on':'')+'" data-i="'+i+'"><div style="font-weight:800;font-size:14px">'+esc(a.marca_nome||'—')+'</div>'
+      +'<div class="q" style="margin-top:2px">'+esc(a.marca_situacao||'')+(cls.length?(' · cl. '+cls.join(', ')):'')+'</div>'
+      +'<div style="margin-top:6px"><span class="pill '+(n?'chance':'neutro')+'">'+fmtN(n)+' compatíveis</span>'+(a.venda_valor?('<span class="q" style="margin-left:6px">R$ '+esc(a.venda_valor)+'</span>'):'')+'</div></div>';
+  }).join('');
+  $('#opoWrap').innerHTML='<div class="opogrid">'+cards+'</div>'
+    +'<div class="mrow" style="margin:14px 0 10px"><select id="opoAf"><option value="">Afinidade: todas</option><option value="conflito">🎯 só conflito direto</option><option value="classe">🔵 mesma classe ou melhor</option></select>'
+    +'<select id="opoUF" style="min-width:130px"><option value="">UF: todas</option></select>'
+    +'<input id="opoTxt" placeholder="buscar titular/marca…" style="min-width:170px"><span class="status" id="opoStatus"></span></div>'
+    +'<div id="opoLista"></div>';
+  const ufs=[...new Set((LEADS||[]).filter(l=>l.uf).map(l=>l.uf))].sort();
+  $('#opoUF').innerHTML='<option value="">UF: todas</option>'+ufs.map(u=>'<option>'+esc(u)+'</option>').join('');
+  document.querySelectorAll('.opocard').forEach(c=> c.onclick=()=>{ document.querySelectorAll('.opocard').forEach(x=>x.classList.toggle('on',x===c)); OPO_SEL=+c.dataset.i; pintaOportunidades(); });
+  ['opoAf','opoUF','opoTxt'].forEach(id=> $('#'+id).addEventListener('input', pintaOportunidades));
+  OPO_SEL=0; pintaOportunidades();
+}
+function pintaOportunidades(){
+  const a=ADES[OPO_SEL||0]; if(!a) return;
+  const fa=$('#opoAf').value, fu=$('#opoUF').value, ft=normTxt($('#opoTxt').value.trim());
+  let pares=paresDaMarca(a);
+  if(fa==='conflito') pares=pares.filter(p=>p.af.k==='conflito');
+  else if(fa==='classe') pares=pares.filter(p=>p.af.n>=2);
+  if(fu) pares=pares.filter(p=>p.l.uf===fu);
+  if(ft) pares=pares.filter(p=> normTxt(p.l.titular).includes(ft) || normTxt(p.l.marca).includes(ft));
+  $('#opoStatus').innerHTML='<b>'+fmtN(pares.length)+'</b> lead(s) compatíveis com <b>'+esc(a.marca_nome)+'</b>';
+  const linhas=pares.slice(0,150).map(p=>{
+    const l=p.l, s=scoreLead(l), b=scoreBucket(s);
+    const conf=(l.conflitos||[])[0];
+    return '<tr data-id="'+esc(l.id)+'"><td><span class="sco '+b.k+'" style="margin:0">'+b.e+' '+s+'</span></td>'
+      +'<td><b>'+esc(l.titular||'—')+'</b><div class="status">'+esc(l.marca||'(sem nome no INPI)')+(l.classes?(' · cl. '+esc(l.classes)):'')+(l.uf?(' · '+esc(l.uf)):'')+'</div></td>'
+      +'<td><span class="pill '+(p.af.k==='conflito'?'ruim':p.af.k==='classe'?'chance':'neutro')+'">'+p.af.txt+'</span>'+(conf?('<div class="status">barrado por '+esc(conf.marca)+'</div>'):'')+'</td>'
+      +'<td class="q">proc. '+esc(l.numero||'')+'<br>'+esc(l.data_evento||dataDoLead(l)||'')+'</td>'
+      +'<td style="white-space:nowrap"><button class="ghost opoAb" data-id="'+esc(l.id)+'">Abrir card</button> <button class="ghost opoCp" data-id="'+esc(l.id)+'">Copiar oferta</button></td></tr>';
+  }).join('');
+  $('#opoLista').innerHTML = pares.length
+    ? '<table class="grid"><thead><tr><th>Prior.</th><th>Titular / marca negada</th><th>Afinidade</th><th>Processo</th><th></th></tr></thead><tbody>'+linhas+'</tbody></table>'
+      +(pares.length>150?('<div class="status" style="margin-top:8px">mostrando os 150 melhores de '+fmtN(pares.length)+' · use os filtros</div>'):'')
+    : '<div class="status">Nenhum lead compatível com esses filtros.</div>';
+  document.querySelectorAll('.opoAb').forEach(b=> b.onclick=()=>abrirCard(b.dataset.id));
+  document.querySelectorAll('.opoCp').forEach(b=> b.onclick=()=>{ const l=leadDe(b.dataset.id); if(!l) return; navigator.clipboard.writeText(txtOferta(l,a)).then(()=>{ const t=b.textContent; b.textContent='copiado!'; setTimeout(()=>b.textContent=t,2000); }); });
+}
+
 // ===== ADESÕES (venda de marca) ==============================================
 let ADES_INIT=false, ADES=[];
 async function renderAdesoes(){
@@ -1463,7 +1568,7 @@ function baixaTermo(id){
 }
 
 // ===== TABS ===================================================================
-const VIEWS=['leads','adesoes','processos','movimentacoes','tarefas','pessoas','dashboard','carteira','consulta','financeiro','automacao'];
+const VIEWS=['leads','adesoes','oportunidades','processos','movimentacoes','tarefas','pessoas','dashboard','carteira','consulta','financeiro','automacao'];
 document.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x===t));
   const v=t.dataset.tab;
@@ -1473,6 +1578,7 @@ document.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{
   if(v==='consulta' && !CONS_INIT){ CONS_INIT=true; renderConsulta(); }
   if(v==='processos' && !PROC_INIT){ PROC_INIT=true; renderProcessos(); }
   if(v==='adesoes' && !ADES_INIT){ ADES_INIT=true; renderAdesoes(); }
+  if(v==='oportunidades' && !OPO_INIT){ OPO_INIT=true; renderOportunidades(); }
   if(MOD_INFO[v] && !$('#view-'+v).innerHTML.trim()){ $('#view-'+v).innerHTML=placeholderMod(v); }
 });
 
