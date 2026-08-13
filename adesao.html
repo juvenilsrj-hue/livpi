@@ -295,8 +295,61 @@
           </select>
         </div>
         <div class="field">
-          <label>Classe(s) / ramo de atividade</label>
-          <input type="text" name="marca_classe" placeholder="Ex.: Classe 43, restaurantes">
+          <label>Classe / ramo de atividade</label>
+          <select name="marca_classe">
+            <option value="">Selecione…</option>
+            <option value="Não sei informar">Não sei informar (localizamos pelo processo)</option>
+            <optgroup label="Serviços">
+              <option value="35 — Publicidade e gestão">35 — Publicidade, marketing, comércio e gestão</option>
+              <option value="36 — Finanças e seguros">36 — Finanças, seguros e imóveis</option>
+              <option value="37 — Construção e reparação">37 — Construção, reforma e manutenção</option>
+              <option value="38 — Telecomunicações">38 — Telecomunicações</option>
+              <option value="39 — Transporte e logística">39 — Transporte, logística e viagens</option>
+              <option value="40 — Tratamento de materiais">40 — Tratamento de materiais</option>
+              <option value="41 — Educação e entretenimento">41 — Educação, cursos, eventos e entretenimento</option>
+              <option value="42 — Tecnologia e TI">42 — Tecnologia, software e TI</option>
+              <option value="43 — Alimentação e hospedagem">43 — Restaurantes, bares, cafés e hotéis</option>
+              <option value="44 — Saúde e beleza">44 — Saúde, estética e beleza</option>
+              <option value="45 — Jurídico e segurança">45 — Jurídico, segurança e serviços pessoais</option>
+            </optgroup>
+            <optgroup label="Produtos">
+              <option value="25 — Vestuário e calçados">25 — Roupas, calçados e chapelaria</option>
+              <option value="3 — Cosméticos e higiene">3 — Cosméticos, perfumaria e higiene</option>
+              <option value="5 — Produtos farmacêuticos">5 — Farmacêuticos e suplementos</option>
+              <option value="9 — Eletrônicos e software">9 — Eletrônicos, aplicativos e óculos</option>
+              <option value="14 — Joias e relógios">14 — Joias, bijuterias e relógios</option>
+              <option value="16 — Papelaria e impressos">16 — Papelaria, livros e impressos</option>
+              <option value="18 — Couro e bolsas">18 — Bolsas, malas e couro</option>
+              <option value="20 — Móveis">20 — Móveis e decoração</option>
+              <option value="21 — Utensílios domésticos">21 — Utensílios domésticos</option>
+              <option value="24 — Tecidos e cama">24 — Tecidos, cama, mesa e banho</option>
+              <option value="28 — Jogos, brinquedos e esporte">28 — Brinquedos, jogos e artigos esportivos</option>
+              <option value="29 — Carnes e alimentos">29 — Carnes, laticínios e congelados</option>
+              <option value="30 — Café, massas e panificação">30 — Café, doces, massas e panificação</option>
+              <option value="31 — Agrícolas e animais">31 — Agrícolas, plantas e pet</option>
+              <option value="32 — Bebidas não alcoólicas">32 — Águas, sucos e refrigerantes</option>
+              <option value="33 — Bebidas alcoólicas">33 — Bebidas alcoólicas</option>
+              <option value="1 — Produtos químicos">1 — Produtos químicos</option>
+              <option value="2 — Tintas e vernizes">2 — Tintas e vernizes</option>
+              <option value="4 — Óleos e combustíveis">4 — Óleos e combustíveis</option>
+              <option value="6 — Metais comuns">6 — Metais comuns</option>
+              <option value="7 — Máquinas">7 — Máquinas e equipamentos</option>
+              <option value="8 — Ferramentas manuais">8 — Ferramentas manuais</option>
+              <option value="10 — Aparelhos médicos">10 — Aparelhos médicos</option>
+              <option value="11 — Iluminação e aquecimento">11 — Iluminação, aquecimento e refrigeração</option>
+              <option value="12 — Veículos">12 — Veículos e peças</option>
+              <option value="13 — Armas e fogos">13 — Armas e fogos de artifício</option>
+              <option value="15 — Instrumentos musicais">15 — Instrumentos musicais</option>
+              <option value="17 — Borracha e plásticos">17 — Borracha e plásticos</option>
+              <option value="19 — Construção (não metálica)">19 — Materiais de construção</option>
+              <option value="22 — Cordas e tecidos brutos">22 — Cordas e tecidos brutos</option>
+              <option value="23 — Fios têxteis">23 — Fios têxteis</option>
+              <option value="26 — Armarinho e bordados">26 — Armarinho e bordados</option>
+              <option value="27 — Tapetes e revestimentos">27 — Tapetes e revestimentos</option>
+              <option value="34 — Tabaco">34 — Tabaco</option>
+            </optgroup>
+          </select>
+          <span class="hint">É a categoria em que a marca foi registrada. Na dúvida, escolha "Não sei informar".</span>
         </div>
         <div class="field full">
           <label>A marca está em uso hoje?</label>
