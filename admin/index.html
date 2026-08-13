@@ -1444,6 +1444,7 @@ async function renderAdesoes(){
     +'<select id="aUrg"><option value="">Urgência: todas</option></select>'
     +'<span class="status">Registro:</span><input type="date" id="aDe" title="registrado de"><span class="status">até</span><input type="date" id="aAte" title="registrado até">'
     +'<button class="ghost" id="aAtualiza">↻ Atualizar</button>'
+    +'<button class="ghost" id="aInpi" title="consulta cada processo no INPI e padroniza a classe (e avisa divergências)">🔎 Conferir no INPI</button>'
     +'<label class="ades-selall"><input type="checkbox" id="aTodos"> selecionar todas</label>'
     +'<button id="aExcluir" style="display:none">🗑 Excluir (0)</button>'
     +'<span class="status" id="aStatus"></span></div>'
@@ -1457,7 +1458,37 @@ async function renderAdesoes(){
     pintaAdesoes();
   });
   $('#aExcluir').onclick=excluirAdesoes;
+  $('#aInpi').onclick=conferirAdesoesNoInpi;
   await carregaAdesoes();
+}
+// Padroniza a classe das adesões pelo que está REGISTRADO no INPI (fonte da verdade)
+async function conferirAdesoesNoInpi(){
+  if(!ADES.length) return;
+  const alvos=ADES.filter(a=>String(a.marca_processo||'').replace(/\D/g,'').length===9);
+  const invalidos=ADES.filter(a=>String(a.marca_processo||'').replace(/\D/g,'').length!==9);
+  if(!alvos.length){ alert('Nenhuma adesão com nº de processo válido (9 dígitos) para consultar.'); return; }
+  if(!confirm('Consultar '+alvos.length+' processo(s) no INPI e padronizar a classe?\nLeva ~3s cada.')) return;
+  const bt=$('#aInpi'); bt.disabled=true; const st=$('#aStatus');
+  let ok=0, erro=0; const avisos=[];
+  for(let i=0;i<alvos.length;i++){
+    const a=alvos[i]; const num=String(a.marca_processo).replace(/\D/g,'');
+    st.textContent='conferindo '+(i+1)+'/'+alvos.length+'…';
+    try{
+      const { data, error }=await sb.functions.invoke('consulta',{ body:{ action:'porNumero', numero:num } });
+      if(error||!data||data.erro) throw new Error((data&&data.erro)||'falha');
+      const cls=(data.classes||[]).map(c=>(String(c.classe).match(/(\d{1,2})\s*$/)||[])[1]).filter(Boolean);
+      if(!cls.length){ avisos.push(a.marca_nome+': o INPI não retornou classe'); erro++; continue; }
+      const padrao=cls.map(c=>(+c)+' — '+(NICE_AREAS[String(+c)]||'?')).join(' | ');
+      const patch={ marca_classe:padrao };
+      if(padrao!==a.marca_classe) avisos.push(a.marca_nome+': classe "'+(a.marca_classe||'vazia')+'" → "'+padrao+'"');
+      if(data.marca && soLetras(data.marca)!==soLetras(a.marca_nome)) avisos.push('⚠ '+a.marca_nome+': no INPI a marca é "'+data.marca+'"');
+      await sb.from('adesoes').update(patch).eq('id',a.id); Object.assign(a,patch); ok++;
+    }catch(e){ erro++; avisos.push('✗ '+a.marca_nome+': '+(e.message||'erro')); }
+  }
+  for(const a of invalidos) avisos.push('⚠ '+a.marca_nome+': nº de processo inválido ("'+(a.marca_processo||'vazio')+'"), corrija no cadastro');
+  bt.disabled=false; pintaAdesoes();
+  st.textContent=ok+' conferida(s) no INPI'+(erro?(' · '+erro+' com problema'):'');
+  if(avisos.length) alert('Conferência no INPI:\n\n'+avisos.join('\n'));
 }
 async function carregaAdesoes(){
   $('#aStatus').textContent='carregando…';
