@@ -1340,6 +1340,7 @@ function placeholderMod(v){ const m=MOD_INFO[v]||['🚧','Módulo','Em construç
 // Cruza quem teve a marca NEGADA com as marcas que estão à venda: em vez de
 // recomeçar do zero, o titular assume uma marca que já passou pelo INPI.
 let OPO_INIT=false, OPO_SEL=null, OPO_VIS=[];
+let OPO_LIM=500;                    // quantas linhas por vez (o "Mostrar mais" aumenta)
 // preenche o nome da marca (consultando o INPI) só dos leads que estão na tela
 async function buscarMarcasVisiveis(){
   const faltam=OPO_VIS.map(p=>p.l).filter(l=>!l.marca && l.numero);
@@ -1440,8 +1441,8 @@ async function renderOportunidades(){
   const lista=Object.keys(revs).sort((x,y)=>(revs[y]||'').localeCompare(revs[x]||'')||y.localeCompare(x));
   $('#opoRev').innerHTML='<option value="">Publicação: todas</option>'+lista.map(r=>'<option value="'+esc(r)+'">RPI '+esc(r)+(revs[r]?(' · '+brDe(revs[r])):'')+'</option>').join('');
   $('#opoMarcas').onclick=buscarMarcasVisiveis;
-  document.querySelectorAll('.opocard').forEach(c=> c.onclick=()=>{ document.querySelectorAll('.opocard').forEach(x=>x.classList.toggle('on',x===c)); OPO_SEL=+c.dataset.i; pintaOportunidades(); });
-  ['opoAf','opoUF','opoRev','opoTxt','opoNovos'].forEach(id=> $('#'+id).addEventListener('input', pintaOportunidades));
+  document.querySelectorAll('.opocard').forEach(c=> c.onclick=()=>{ document.querySelectorAll('.opocard').forEach(x=>x.classList.toggle('on',x===c)); OPO_SEL=+c.dataset.i; OPO_LIM=500; pintaOportunidades(); });
+  ['opoAf','opoUF','opoRev','opoTxt','opoNovos'].forEach(id=> $('#'+id).addEventListener('input', ()=>{ OPO_LIM=500; pintaOportunidades(); }));
   OPO_SEL=0; pintaOportunidades();
 }
 function pintaOportunidades(){
@@ -1458,7 +1459,7 @@ function pintaOportunidades(){
   if($('#opoNovos') && $('#opoNovos').checked) pares=pares.filter(p=>!jaOfertado(p.l));
   const nOf=pares.filter(p=>jaOfertado(p.l)).length;
   $('#opoStatus').innerHTML='<b>'+fmtN(pares.length)+'</b> lead(s) compatíveis com <b>'+esc(a.marca_nome)+'</b>'+(nOf?(' · '+nOf+' já ofertado(s)'):'');
-  OPO_VIS=pares.slice(0,150);
+  OPO_VIS=pares.slice(0,OPO_LIM);
   const linhas=OPO_VIS.map(p=>{
     const l=p.l, s=scoreLead(l), b=scoreBucket(s);
     const conf=(l.conflitos||[])[0], of=jaOfertado(l);
@@ -1470,8 +1471,10 @@ function pintaOportunidades(){
   }).join('');
   $('#opoLista').innerHTML = pares.length
     ? '<table class="grid"><thead><tr><th>Prior.</th><th>Titular / marca negada</th><th>Afinidade</th><th>Processo</th><th></th></tr></thead><tbody>'+linhas+'</tbody></table>'
-      +(pares.length>150?('<div class="status" style="margin-top:8px">mostrando os 150 melhores de '+fmtN(pares.length)+' · use os filtros</div>'):'')
+      +(pares.length>OPO_VIS.length?('<div class="mrow" style="margin-top:10px"><button class="ghost" id="opoMais">Mostrar mais '+fmtN(Math.min(500,pares.length-OPO_VIS.length))+'</button><button class="ghost" id="opoTudo">Mostrar todos ('+fmtN(pares.length)+')</button><span class="status">mostrando '+fmtN(OPO_VIS.length)+' de '+fmtN(pares.length)+'</span></div>'):'')
     : '<div class="status">Nenhum lead compatível com esses filtros.</div>';
+  if($('#opoMais')) $('#opoMais').onclick=()=>{ OPO_LIM+=500; pintaOportunidades(); };
+  if($('#opoTudo')) $('#opoTudo').onclick=()=>{ OPO_LIM=1e6; pintaOportunidades(); };
   document.querySelectorAll('.opoAb').forEach(b=> b.onclick=()=>abrirCard(b.dataset.id));
   // copiar a oferta TAMBÉM registra: comentário + etiqueta + move p/ a coluna Oportunidade
   document.querySelectorAll('.opoCp').forEach(b=> b.onclick=async ()=>{
