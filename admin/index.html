@@ -1435,7 +1435,7 @@ function pintaOportunidades(){
     const l=p.l, s=scoreLead(l), b=scoreBucket(s);
     const conf=(l.conflitos||[])[0], of=jaOfertado(l);
     return '<tr data-id="'+esc(l.id)+'"><td><span class="sco '+b.k+'" style="margin:0">'+b.e+' '+s+'</span></td>'
-      +'<td><b>'+esc(l.titular||'—')+'</b>'+(of?' <span class="chip" style="background:#6a4fb3">✓ ofertado</span>':'')+'<div class="status">'+esc(l.marca||'(sem nome no INPI)')+(l.classes?(' · cl. '+esc(l.classes)):'')+(l.uf?(' · '+esc(l.uf)):'')+'</div></td>'
+      +'<td><b>'+esc(l.titular||'—')+'</b>'+(of?' <span class="chip opoUn" data-id="'+esc(l.id)+'" style="background:#6a4fb3;cursor:pointer" title="clique para desfazer a marcação de ofertado">✓ ofertado ✕</span>':'')+'<div class="status">'+esc(l.marca||'(sem nome no INPI)')+(l.classes?(' · cl. '+esc(l.classes)):'')+(l.uf?(' · '+esc(l.uf)):'')+'</div></td>'
       +'<td><span class="pill '+(p.af.k==='conflito'?'ruim':p.af.k==='classe'?'chance':'neutro')+'">'+p.af.txt+'</span>'+(conf?('<div class="status">barrado por '+esc(conf.marca)+'</div>'):'')+'</td>'
       +'<td class="q">proc. '+esc(l.numero||'')+'<br>'+esc(l.data_evento||dataDoLead(l)||'')+'</td>'
       +'<td style="white-space:nowrap"><button class="ghost opoAb" data-id="'+esc(l.id)+'">Abrir card</button> <button class="ghost opoCp" data-id="'+esc(l.id)+'">'+(of?'Copiar de novo':'Copiar oferta')+'</button></td></tr>';
@@ -1454,10 +1454,29 @@ function pintaOportunidades(){
       b.textContent='registrando…';
       await comentar(l.id,'Oferta da marca "'+a.marca_nome+'" copiada para envio (módulo Oportunidades).');
       if(!(l.etiquetas||[]).includes('oferta-marca')) await toggleEtq(l.id,'oferta-marca',true);
-      if(l.estagio!=='oportunidade'){ l.estagio='oportunidade'; await moverLead(l.id,'oportunidade'); }
+      if(l.estagio!=='oportunidade'){
+        const antes=l.estagio;                                  // guarda p/ poder desfazer
+        await sb.from('leads').update({ estagio_pre_oferta:antes }).eq('id',l.id); l.estagio_pre_oferta=antes;
+        l.estagio='oportunidade'; await moverLead(l.id,'oportunidade');
+      }
       b.textContent='✓ copiado e registrado'; render(); pintaOportunidades();
     }catch(e){ b.textContent='copiado (falhou registrar)'; }
     setTimeout(()=>{ b.textContent=rot; b.disabled=false; }, 2500);
+  });
+  // desfazer a marcação (caso não tenha sido ofertado de fato)
+  document.querySelectorAll('.opoUn').forEach(b=> b.onclick=async ()=>{
+    const l=leadDe(b.dataset.id); if(!l) return;
+    if(!confirm('Desfazer a marcação de "ofertado" deste lead?\n\nEle volta para a etapa anterior e some do "já ofertado", podendo ser ofertado de novo.')) return;
+    try{
+      if((l.etiquetas||[]).includes('oferta-marca')) await toggleEtq(l.id,'oferta-marca',false);
+      if(l.estagio==='oportunidade'){
+        const volta=l.estagio_pre_oferta||'novo';
+        l.estagio=volta; await moverLead(l.id,volta);
+        await sb.from('leads').update({ estagio_pre_oferta:null }).eq('id',l.id); l.estagio_pre_oferta=null;
+      }
+      await comentar(l.id,'Marcação de oferta desfeita (não foi ofertado).');
+      render(); pintaOportunidades();
+    }catch(e){ alert('Não consegui desfazer: '+(e.message||e)); }
   });
 }
 
