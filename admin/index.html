@@ -1400,14 +1400,21 @@ async function renderOportunidades(){
   $('#opoWrap').innerHTML='<div class="opogrid">'+cards+'</div>'
     +'<div class="mrow" style="margin:14px 0 10px"><select id="opoAf"><option value="">Afinidade: todas</option><option value="conflito">🎯 só conflito direto</option><option value="classe">🔵 mesma classe ou melhor</option></select>'
     +'<select id="opoUF" style="min-width:130px"><option value="">UF: todas</option></select>'
+    +'<select id="opoRev"><option value="">Publicação: todas</option></select>'
     +'<input id="opoTxt" placeholder="buscar titular/marca…" style="min-width:170px">'
     +'<label class="q" style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" id="opoNovos"> ocultar já ofertados</label>'
     +'<span class="status" id="opoStatus"></span></div>'
     +'<div id="opoLista"></div>';
   const ufs=[...new Set((LEADS||[]).filter(l=>l.uf).map(l=>l.uf))].sort();
   $('#opoUF').innerHTML='<option value="">UF: todas</option>'+ufs.map(u=>'<option>'+esc(u)+'</option>').join('');
+  // publicações (RPI) presentes nos indeferidos, mais recente primeiro
+  const revs={};
+  for(const l of (LEADS||[])){ if(l.tipo_problema!=='indeferido'||!l.revista) continue; const r=String(l.revista); if(!(r in revs)) revs[r]=isoData(l.data_publicacao)||''; }
+  const brDe=iso=> iso?iso.slice(8,10)+'/'+iso.slice(5,7)+'/'+iso.slice(0,4):'';
+  const lista=Object.keys(revs).sort((x,y)=>(revs[y]||'').localeCompare(revs[x]||'')||y.localeCompare(x));
+  $('#opoRev').innerHTML='<option value="">Publicação: todas</option>'+lista.map(r=>'<option value="'+esc(r)+'">RPI '+esc(r)+(revs[r]?(' · '+brDe(revs[r])):'')+'</option>').join('');
   document.querySelectorAll('.opocard').forEach(c=> c.onclick=()=>{ document.querySelectorAll('.opocard').forEach(x=>x.classList.toggle('on',x===c)); OPO_SEL=+c.dataset.i; pintaOportunidades(); });
-  ['opoAf','opoUF','opoTxt','opoNovos'].forEach(id=> $('#'+id).addEventListener('input', pintaOportunidades));
+  ['opoAf','opoUF','opoRev','opoTxt','opoNovos'].forEach(id=> $('#'+id).addEventListener('input', pintaOportunidades));
   OPO_SEL=0; pintaOportunidades();
 }
 function pintaOportunidades(){
@@ -1417,6 +1424,8 @@ function pintaOportunidades(){
   if(fa==='conflito') pares=pares.filter(p=>p.af.k==='conflito');
   else if(fa==='classe') pares=pares.filter(p=>p.af.n>=2);
   if(fu) pares=pares.filter(p=>p.l.uf===fu);
+  const fr=$('#opoRev')?$('#opoRev').value:'';
+  if(fr) pares=pares.filter(p=>String(p.l.revista||'')===fr);
   if(ft) pares=pares.filter(p=> normTxt(p.l.titular).includes(ft) || normTxt(p.l.marca).includes(ft));
   const jaOfertado=l=>(l.etiquetas||[]).includes('oferta-marca')||l.estagio==='oportunidade';
   if($('#opoNovos') && $('#opoNovos').checked) pares=pares.filter(p=>!jaOfertado(p.l));
