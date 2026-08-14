@@ -1546,8 +1546,8 @@ function pintaOportunidades(){
       refTxt='<div class="status" style="margin-top:3px">'+(p.ref.sem?'sem consulta INPI':(partes.join(' · ')||'sem sobreposição'))+'</div>';
     }
     return '<tr data-id="'+esc(l.id)+'"><td><span class="sco '+b.k+'" style="margin:0">'+b.e+' '+s+'</span></td>'
-      +'<td style="white-space:nowrap"><button class="ghost opoAb" data-id="'+esc(l.id)+'">Abrir card</button></td>'
       +'<td><b>'+esc(l.titular||'—')+'</b>'+(of?' <span class="chip opoUn" data-id="'+esc(l.id)+'" style="background:#6a4fb3;cursor:pointer" title="clique para desfazer a marcação de ofertado">✓ ofertado ✕</span>':'')+'<div class="status">'+esc(l.marca||'(sem nome no INPI)')+(l.classes?(' · cl. '+esc(l.classes)):'')+(l.uf?(' · '+esc(l.uf)):'')+'</div></td>'
+      +'<td style="white-space:nowrap"><button class="ghost opoAb" data-id="'+esc(l.id)+'">Abrir card</button></td>'
       +'<td><span class="pill '+(p.af.k==='conflito'?'ruim':p.af.k==='classe'?'chance':'neutro')+'">'+p.af.txt+'</span>'+refTxt+'</td>'
       +'<td>'+(conf?('<b style="font-size:12.5px">'+esc(conf.marca)+'</b>'+(conf.numero?('<div class="status">proc. '+esc(conf.numero)+'</div>'):'')):'<span class="q">—</span>')+'</td>'
       +'<td class="q">proc. '+esc(l.numero||'')+'<br>'+esc(l.data_evento||dataDoLead(l)||'')+'</td>'
@@ -1556,8 +1556,8 @@ function pintaOportunidades(){
   $('#opoLista').innerHTML = pares.length
     ? (function(){ const seta=k=> OPO_ORD.k===k?(OPO_ORD.d===1?' ▲':' ▼'):'';
         return '<table class="grid"><thead><tr>'
-          +'<th class="ordh" data-ord="prior" title="ordenar por prioridade">Prior.'+seta('prior')+'</th><th></th>'
-          +'<th class="ordh" data-ord="titular" title="ordenar por ordem alfabética">Titular / marca negada'+seta('titular')+'</th>'
+          +'<th class="ordh" data-ord="prior" title="ordenar por prioridade">Prior.'+seta('prior')+'</th>'
+          +'<th class="ordh" data-ord="titular" title="ordenar por ordem alfabética">Titular / marca negada'+seta('titular')+'</th><th></th>'
           +'<th>Afinidade</th>'
           +'<th class="ordh" data-ord="barrado" title="ordenar pela marca que barrou">Barrado por'+seta('barrado')+'</th>'
           +'<th class="ordh" data-ord="data" title="ordenar por data">Processo'+seta('data')+'</th><th></th></tr></thead><tbody>'+linhas+'</tbody></table>'; })()
