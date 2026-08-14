@@ -1464,13 +1464,14 @@ function pintaOportunidades(){
     const l=p.l, s=scoreLead(l), b=scoreBucket(s);
     const conf=(l.conflitos||[])[0], of=jaOfertado(l);
     return '<tr data-id="'+esc(l.id)+'"><td><span class="sco '+b.k+'" style="margin:0">'+b.e+' '+s+'</span></td>'
+      +'<td style="white-space:nowrap"><button class="ghost opoAb" data-id="'+esc(l.id)+'">Abrir card</button></td>'
       +'<td><b>'+esc(l.titular||'—')+'</b>'+(of?' <span class="chip opoUn" data-id="'+esc(l.id)+'" style="background:#6a4fb3;cursor:pointer" title="clique para desfazer a marcação de ofertado">✓ ofertado ✕</span>':'')+'<div class="status">'+esc(l.marca||'(sem nome no INPI)')+(l.classes?(' · cl. '+esc(l.classes)):'')+(l.uf?(' · '+esc(l.uf)):'')+'</div></td>'
       +'<td><span class="pill '+(p.af.k==='conflito'?'ruim':p.af.k==='classe'?'chance':'neutro')+'">'+p.af.txt+'</span>'+(conf?('<div class="status">barrado por '+esc(conf.marca)+'</div>'):'')+'</td>'
       +'<td class="q">proc. '+esc(l.numero||'')+'<br>'+esc(l.data_evento||dataDoLead(l)||'')+'</td>'
-      +'<td style="white-space:nowrap"><button class="ghost opoAb" data-id="'+esc(l.id)+'">Abrir card</button> <button class="ghost opoCp" data-id="'+esc(l.id)+'">'+(of?'Copiar de novo':'Copiar oferta')+'</button></td></tr>';
+      +'<td style="white-space:nowrap"><button class="ghost opoCp" data-id="'+esc(l.id)+'">'+(of?'Copiar de novo':'Copiar oferta')+'</button></td></tr>';
   }).join('');
   $('#opoLista').innerHTML = pares.length
-    ? '<table class="grid"><thead><tr><th>Prior.</th><th>Titular / marca negada</th><th>Afinidade</th><th>Processo</th><th></th></tr></thead><tbody>'+linhas+'</tbody></table>'
+    ? '<table class="grid"><thead><tr><th>Prior.</th><th></th><th>Titular / marca negada</th><th>Afinidade</th><th>Processo</th><th></th></tr></thead><tbody>'+linhas+'</tbody></table>'
       +(pares.length>OPO_VIS.length?('<div class="mrow" style="margin-top:10px"><button class="ghost" id="opoMais">Mostrar mais '+fmtN(Math.min(500,pares.length-OPO_VIS.length))+'</button><button class="ghost" id="opoTudo">Mostrar todos ('+fmtN(pares.length)+')</button><span class="status">mostrando '+fmtN(OPO_VIS.length)+' de '+fmtN(pares.length)+'</span></div>'):'')
     : '<div class="status">Nenhum lead compatível com esses filtros.</div>';
   if($('#opoMais')) $('#opoMais').onclick=()=>{ OPO_LIM+=500; pintaOportunidades(); };
