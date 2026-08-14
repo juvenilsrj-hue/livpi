@@ -45,7 +45,7 @@
   .sair{ margin-left:auto; text-decoration:none; color:var(--muted); font-size:12px; border:1px solid var(--line); padding:5px 10px; border-radius:8px; cursor:pointer; background:#fff }
   .main{ flex:1; min-width:0; min-height:0; display:flex; flex-direction:column }
   .main > div{ flex:1; min-height:0 }
-  #view-dashboard,#view-carteira,#view-consulta,#view-processos,#view-movimentacoes,#view-tarefas,#view-pessoas,#view-financeiro,#view-automacao{ overflow-y:auto }
+  #view-dashboard,#view-carteira,#view-consulta,#view-processos,#view-adesoes,#view-oportunidades,#view-movimentacoes,#view-tarefas,#view-pessoas,#view-financeiro,#view-automacao{ overflow-y:auto }
   .bar{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:12px 20px 10px }
   .maisf{ display:none; gap:8px; flex-wrap:wrap; align-items:center; padding:2px 20px 12px; border-bottom:1px solid var(--line); background:var(--gelo) } .maisf.open{ display:flex }
   /* grid de processos */
@@ -1466,12 +1466,13 @@ function pintaOportunidades(){
     return '<tr data-id="'+esc(l.id)+'"><td><span class="sco '+b.k+'" style="margin:0">'+b.e+' '+s+'</span></td>'
       +'<td style="white-space:nowrap"><button class="ghost opoAb" data-id="'+esc(l.id)+'">Abrir card</button></td>'
       +'<td><b>'+esc(l.titular||'—')+'</b>'+(of?' <span class="chip opoUn" data-id="'+esc(l.id)+'" style="background:#6a4fb3;cursor:pointer" title="clique para desfazer a marcação de ofertado">✓ ofertado ✕</span>':'')+'<div class="status">'+esc(l.marca||'(sem nome no INPI)')+(l.classes?(' · cl. '+esc(l.classes)):'')+(l.uf?(' · '+esc(l.uf)):'')+'</div></td>'
-      +'<td><span class="pill '+(p.af.k==='conflito'?'ruim':p.af.k==='classe'?'chance':'neutro')+'">'+p.af.txt+'</span>'+(conf?('<div class="status">barrado por '+esc(conf.marca)+'</div>'):'')+'</td>'
+      +'<td><span class="pill '+(p.af.k==='conflito'?'ruim':p.af.k==='classe'?'chance':'neutro')+'">'+p.af.txt+'</span></td>'
+      +'<td>'+(conf?('<b style="font-size:12.5px">'+esc(conf.marca)+'</b>'+(conf.numero?('<div class="status">proc. '+esc(conf.numero)+'</div>'):'')):'<span class="q">—</span>')+'</td>'
       +'<td class="q">proc. '+esc(l.numero||'')+'<br>'+esc(l.data_evento||dataDoLead(l)||'')+'</td>'
       +'<td style="white-space:nowrap"><button class="ghost opoCp" data-id="'+esc(l.id)+'">'+(of?'Copiar de novo':'Copiar oferta')+'</button></td></tr>';
   }).join('');
   $('#opoLista').innerHTML = pares.length
-    ? '<table class="grid"><thead><tr><th>Prior.</th><th></th><th>Titular / marca negada</th><th>Afinidade</th><th>Processo</th><th></th></tr></thead><tbody>'+linhas+'</tbody></table>'
+    ? '<table class="grid"><thead><tr><th>Prior.</th><th></th><th>Titular / marca negada</th><th>Afinidade</th><th>Barrado por</th><th>Processo</th><th></th></tr></thead><tbody>'+linhas+'</tbody></table>'
       +(pares.length>OPO_VIS.length?('<div class="mrow" style="margin-top:10px"><button class="ghost" id="opoMais">Mostrar mais '+fmtN(Math.min(500,pares.length-OPO_VIS.length))+'</button><button class="ghost" id="opoTudo">Mostrar todos ('+fmtN(pares.length)+')</button><span class="status">mostrando '+fmtN(OPO_VIS.length)+' de '+fmtN(pares.length)+'</span></div>'):'')
     : '<div class="status">Nenhum lead compatível com esses filtros.</div>';
   if($('#opoMais')) $('#opoMais').onclick=()=>{ OPO_LIM+=500; pintaOportunidades(); };
