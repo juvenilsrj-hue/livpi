@@ -1445,19 +1445,21 @@ function paresDaMarca(a){
   }
   return out.sort((x,y)=> (y.af.n-x.af.n) || (scoreLead(y.l)-scoreLead(x.l)) );
 }
-// abordagem específica de OFERTA de marca
+// abordagem específica de OFERTA de marca (versão do dono, 2026-08-14; não nomeia a marca à venda)
 function txtOferta(l,a){
   const nome=primeiroNome(l);
   const ola=nome?('Olá, '+nome+'! Tudo bem?'):'Olá! Tudo bem?';
-  const conf=(l.conflitos||[])[0];
-  const cls=classesAdesao(a); const clsTxt=cls.length?('na classe '+cls.join(', ')):'';
-  const jaReg=/concedid|registrad/i.test(a.marca_situacao||'');
+  const alvo=(l.marca&&String(l.marca).trim())
+    ? ('o pedido de registro da marca '+l.marca)
+    : ('o seu pedido de registro de marca'+(l.numero?(' (processo nº '+l.numero+')'):''));
   return [ola,
-    'Antes de mais nada, gostaria de me apresentar. Me chamo '+REMETENTE+' e faço parte da LIV Propriedade Intelectual, uma empresa de Santa Catarina especializada em registro de marcas e acompanhamento de processos junto ao INPI.',
-    'Em uma consulta pública, verificamos que '+(l.marca?('o pedido da marca '+l.marca):'o seu pedido de marca')+', processo nº '+(l.numero||'')+', foi indeferido pelo INPI'+(conf?(' por semelhança com a marca '+conf.marca):'')+'.',
-    'Entrei em contato porque existe um caminho que costuma resolver isso de forma mais rápida: a marca '+a.marca_nome+', '+(jaReg?'já registrada e concedida':'com pedido já em andamento')+(clsTxt?(' '+clsTxt):'')+', está disponível para transferência de titularidade.',
-    'Na prática, em vez de recomeçar um novo pedido e correr o risco de outro indeferimento, o titular assume uma marca que já passou pelo INPI. A LIV conduz todo o processo de cessão junto ao INPI, com segurança para as duas partes.',
-    'Se fizer sentido para você, posso enviar os detalhes da marca e as condições, sem compromisso.'
+    'Antes de mais nada, gostaria de me apresentar. Me chamo '+REMETENTE+' e faço parte da LIV Propriedade Intelectual, empresa de Santa Catarina que atua com registro, proteção e negociação de marcas junto ao INPI.',
+    'Em uma consulta pública, verificamos que '+alvo+' teve uma decisão de indeferimento.',
+    'Esse tipo de situação acontece com certa frequência e, dependendo do caso, pode levar a empresa a avaliar alguns caminhos, como recorrer da decisão, ajustar a estratégia de proteção ou até considerar uma nova marca.',
+    'Foi justamente por isso que resolvi entrar em contato.',
+    'Hoje temos conhecimento de uma marca já registrada e disponível para negociação, que pode ter relação com o segmento e com o posicionamento que vocês buscavam proteger.',
+    'Antes de qualquer avanço, nossa condução é sempre entender se essa alternativa realmente faz sentido para a empresa. Avaliamos o registro, as classes envolvidas, a compatibilidade com a atividade e, havendo interesse, também auxiliamos em toda a negociação e transferência da titularidade junto ao INPI.',
+    'Caso tenha interesse, posso lhe apresentar essa marca e explicar de forma simples como funcionaria essa possibilidade, sem qualquer compromisso. A partir daí, vocês avaliam com tranquilidade se vale a pena considerar esse caminho.'
   ].join('\n\n');
 }
 async function renderOportunidades(){
