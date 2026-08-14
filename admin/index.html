@@ -1341,6 +1341,52 @@ function placeholderMod(v){ const m=MOD_INFO[v]||['🚧','Módulo','Em construç
 // recomeçar do zero, o titular assume uma marca que já passou pelo INPI.
 let OPO_INIT=false, OPO_SEL=null, OPO_VIS=[];
 let OPO_LIM=500;                    // quantas linhas por vez (o "Mostrar mais" aumenta)
+// ---- REFINO opcional: cruza a ESPECIFICAÇÃO (produtos/serviços do INPI) e o NOME ----
+let OPO_REF='none';                 // none | esp | nome (esp+nome)
+const OPO_ESP=new Map();            // numero do lead -> {marca, espec} (do inpi_cache) | null = sem consulta
+const OPO_ADET=new Map();           // processo da adesão -> {marca, espec}
+const STOP_ESP=new Set(['para','com','sem','das','dos','uma','por','que','nao','este','esta','como','sendo','seus','suas','tipo','meio','forma','todos','todas','outros','outras','geral','gerais','saber','ambos']);
+function tokensEspec(s){ return new Set(normTxt(s).split(/[^a-z0-9]+/).filter(w=>w.length>=4 && !STOP_ESP.has(w))); }
+function especDe(dados){ return ((dados&&dados.classes)||[]).map(c=>c.especificacao||'').filter(Boolean).join('; '); }
+// similaridade de nome por bigramas (0-100)
+function simNome(a,b){ a=soLetras(a); b=soLetras(b); if(a.length<3||b.length<3) return 0; if(a===b) return 100;
+  const big=s=>{ const r=[]; for(let i=0;i<s.length-1;i++) r.push(s.slice(i,i+2)); return r; };
+  const A=big(a), B=big(b), m=new Map(); B.forEach(x=>m.set(x,(m.get(x)||0)+1));
+  let inter=0; A.forEach(x=>{ const c=m.get(x)||0; if(c>0){ inter++; m.set(x,c-1); } });
+  return Math.round(200*inter/(A.length+B.length)); }
+async function carregarEspecs(nums){
+  const faltam=[...new Set(nums)].filter(n=>n && !OPO_ESP.has(n));
+  for(let i=0;i<faltam.length;i+=150){
+    const chunk=faltam.slice(i,i+150);
+    try{
+      const { data }=await sb.from('inpi_cache').select('numero,dados').in('numero',chunk);
+      (data||[]).forEach(r=>OPO_ESP.set(r.numero,{ marca:(r.dados&&r.dados.marca)||null, espec:especDe(r.dados) }));
+    }catch(e){}
+    chunk.forEach(n=>{ if(!OPO_ESP.has(n)) OPO_ESP.set(n,null); });
+  }
+}
+async function adesaoDet(a){
+  const num=String(a.marca_processo||'').replace(/\D/g,'');
+  if(!num) return null;
+  if(OPO_ADET.has(num)) return OPO_ADET.get(num);
+  let det=null;
+  try{ const { data:c }=await sb.from('inpi_cache').select('dados').eq('numero',num).maybeSingle(); if(c&&c.dados) det=c.dados; }catch(e){}
+  if(!det){
+    try{ const { data }=await sb.functions.invoke('consulta',{ body:{ action:'porNumero', numero:num } });
+      if(data&&!data.erro){ det=data; try{ await sb.from('inpi_cache').upsert({ numero:num, dados:data, em:new Date().toISOString() }); }catch(e){} } }catch(e){}
+  }
+  const v=det?{ marca:det.marca||a.marca_nome, espec:especDe(det) }:null;
+  OPO_ADET.set(num,v); return v;
+}
+async function aplicarRefino(){
+  if(OPO_REF==='none'){ pintaOportunidades(); return; }
+  const a=ADES[OPO_SEL||0]; if(!a) return;
+  const st=$('#opoStatus'); if(st) st.textContent='carregando especificações (consultas já salvas do INPI)…';
+  const ad=await adesaoDet(a);
+  await carregarEspecs(paresDaMarca(a).map(p=>p.l.numero));
+  if(!ad||!ad.espec){ alert('Não consegui obter a especificação da marca '+a.marca_nome+' no INPI agora. O refino considera só o que estiver disponível.'); }
+  pintaOportunidades();
+}
 // preenche o nome da marca (consultando o INPI) só dos leads que estão na tela
 async function buscarMarcasVisiveis(){
   const faltam=OPO_VIS.map(p=>p.l).filter(l=>!l.marca && l.numero);
@@ -1356,6 +1402,7 @@ async function buscarMarcasVisiveis(){
       const { data, error }=await sb.functions.invoke('consulta',{ body:{ action:'porNumero', numero:l.numero } });
       if(error||!data||data.erro) throw new Error('falha');
       try{ await sb.from('inpi_cache').upsert({ numero:l.numero, dados:data, em:new Date().toISOString() }); }catch(e){}
+      OPO_ESP.set(l.numero,{ marca:data.marca||null, espec:especDe(data) });   // refino enxerga na hora
       if(data.marca){ await sb.from('leads').update({ marca:data.marca }).eq('id',l.id); l.marca=data.marca; ok++; }
     }catch(e){ err++; }
     if((i+1)%10===0) pintaOportunidades();
@@ -1427,6 +1474,7 @@ async function renderOportunidades(){
     +'<div class="mrow" style="margin:14px 0 10px"><select id="opoAf"><option value="">Afinidade: todas</option><option value="conflito">🎯 só conflito direto</option><option value="classe">🔵 mesma classe ou melhor</option></select>'
     +'<select id="opoUF" style="min-width:130px"><option value="">UF: todas</option></select>'
     +'<select id="opoRev"><option value="">Publicação: todas</option></select>'
+    +'<select id="opoRef" title="cruza a especificação de produtos/serviços (e o nome) dos processos"><option value="none">Refino: nenhum</option><option value="esp">Refino: + especificação</option><option value="nome">Refino: especificação + nome</option></select>'
     +'<input id="opoTxt" placeholder="buscar titular/marca…" style="min-width:170px">'
     +'<label class="q" style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" id="opoNovos"> ocultar já ofertados</label>'
     +'<button class="ghost" id="opoMarcas" title="consulta o INPI e preenche o nome da marca dos leads listados">🔎 Buscar marcas</button>'
@@ -1441,8 +1489,9 @@ async function renderOportunidades(){
   const lista=Object.keys(revs).sort((x,y)=>(revs[y]||'').localeCompare(revs[x]||'')||y.localeCompare(x));
   $('#opoRev').innerHTML='<option value="">Publicação: todas</option>'+lista.map(r=>'<option value="'+esc(r)+'">RPI '+esc(r)+(revs[r]?(' · '+brDe(revs[r])):'')+'</option>').join('');
   $('#opoMarcas').onclick=buscarMarcasVisiveis;
-  document.querySelectorAll('.opocard').forEach(c=> c.onclick=()=>{ document.querySelectorAll('.opocard').forEach(x=>x.classList.toggle('on',x===c)); OPO_SEL=+c.dataset.i; OPO_LIM=500; pintaOportunidades(); });
+  document.querySelectorAll('.opocard').forEach(c=> c.onclick=()=>{ document.querySelectorAll('.opocard').forEach(x=>x.classList.toggle('on',x===c)); OPO_SEL=+c.dataset.i; OPO_LIM=500; (OPO_REF!=='none'?aplicarRefino():pintaOportunidades()); });
   ['opoAf','opoUF','opoRev','opoTxt','opoNovos'].forEach(id=> $('#'+id).addEventListener('input', ()=>{ OPO_LIM=500; pintaOportunidades(); }));
+  $('#opoRef').addEventListener('change', ()=>{ OPO_REF=$('#opoRef').value; OPO_LIM=500; aplicarRefino(); });
   OPO_SEL=0; pintaOportunidades();
 }
 function pintaOportunidades(){
@@ -1455,6 +1504,23 @@ function pintaOportunidades(){
   const fr=$('#opoRev')?$('#opoRev').value:'';
   if(fr) pares=pares.filter(p=>String(p.l.revista||'')===fr);
   if(ft) pares=pares.filter(p=> normTxt(p.l.titular).includes(ft) || normTxt(p.l.marca).includes(ft));
+  // refino opcional: sobreposição de especificação (e semelhança de nome)
+  if(OPO_REF!=='none'){
+    const ad=OPO_ADET.get(String(a.marca_processo||'').replace(/\D/g,''));
+    const tokA=(ad&&ad.espec)?tokensEspec(ad.espec):null;
+    for(const p of pares){
+      const info=OPO_ESP.get(p.l.numero)||null;
+      const r={ espN:0, esp:0, nome:0, sem:!info };
+      if(tokA && info && info.espec){
+        const tokL=tokensEspec(info.espec); let inter=0;
+        tokL.forEach(t=>{ if(tokA.has(t)) inter++; });
+        r.espN=inter; r.esp=Math.round(100*inter/Math.max(1,Math.min(tokA.size,tokL.size)));
+      }
+      if(OPO_REF==='nome'){ const nm=p.l.marca||(info&&info.marca)||''; if(nm) r.nome=simNome(nm, a.marca_nome); }
+      p.ref=r;
+    }
+    pares.sort((x,y)=> (y.af.n-x.af.n) || ((y.ref.esp+y.ref.nome)-(x.ref.esp+x.ref.nome)) || (scoreLead(y.l)-scoreLead(x.l)));
+  } else pares.forEach(p=>{ p.ref=null; });
   const jaOfertado=l=>(l.etiquetas||[]).includes('oferta-marca')||l.estagio==='oportunidade';
   if($('#opoNovos') && $('#opoNovos').checked) pares=pares.filter(p=>!jaOfertado(p.l));
   const nOf=pares.filter(p=>jaOfertado(p.l)).length;
@@ -1463,10 +1529,17 @@ function pintaOportunidades(){
   const linhas=OPO_VIS.map(p=>{
     const l=p.l, s=scoreLead(l), b=scoreBucket(s);
     const conf=(l.conflitos||[])[0], of=jaOfertado(l);
+    let refTxt='';
+    if(p.ref){
+      const partes=[];
+      if(p.ref.espN) partes.push('🧬 '+p.ref.espN+' termo(s) em comum · '+p.ref.esp+'%');
+      if(p.ref.nome>=35) partes.push('✏️ nome '+p.ref.nome+'%');
+      refTxt='<div class="status" style="margin-top:3px">'+(p.ref.sem?'sem consulta INPI':(partes.join(' · ')||'sem sobreposição'))+'</div>';
+    }
     return '<tr data-id="'+esc(l.id)+'"><td><span class="sco '+b.k+'" style="margin:0">'+b.e+' '+s+'</span></td>'
       +'<td style="white-space:nowrap"><button class="ghost opoAb" data-id="'+esc(l.id)+'">Abrir card</button></td>'
       +'<td><b>'+esc(l.titular||'—')+'</b>'+(of?' <span class="chip opoUn" data-id="'+esc(l.id)+'" style="background:#6a4fb3;cursor:pointer" title="clique para desfazer a marcação de ofertado">✓ ofertado ✕</span>':'')+'<div class="status">'+esc(l.marca||'(sem nome no INPI)')+(l.classes?(' · cl. '+esc(l.classes)):'')+(l.uf?(' · '+esc(l.uf)):'')+'</div></td>'
-      +'<td><span class="pill '+(p.af.k==='conflito'?'ruim':p.af.k==='classe'?'chance':'neutro')+'">'+p.af.txt+'</span></td>'
+      +'<td><span class="pill '+(p.af.k==='conflito'?'ruim':p.af.k==='classe'?'chance':'neutro')+'">'+p.af.txt+'</span>'+refTxt+'</td>'
       +'<td>'+(conf?('<b style="font-size:12.5px">'+esc(conf.marca)+'</b>'+(conf.numero?('<div class="status">proc. '+esc(conf.numero)+'</div>'):'')):'<span class="q">—</span>')+'</td>'
       +'<td class="q">proc. '+esc(l.numero||'')+'<br>'+esc(l.data_evento||dataDoLead(l)||'')+'</td>'
       +'<td style="white-space:nowrap"><button class="ghost opoCp" data-id="'+esc(l.id)+'">'+(of?'Copiar de novo':'Copiar oferta')+'</button></td></tr>';
