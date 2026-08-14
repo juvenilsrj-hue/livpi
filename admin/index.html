@@ -116,6 +116,7 @@
   .iblk .ih{ background:var(--gelo); padding:6px 12px; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; font-weight:700; color:var(--muted); border-bottom:1px solid var(--line) }
   .iblk .ib{ padding:9px 12px; font-size:12.5px }
   .opoente{ background:#f7efdc; border:1px solid #e6d9b8; border-radius:8px; padding:7px 10px; font-size:12.5px }
+  .ordh{ cursor:pointer; user-select:none; white-space:nowrap } .ordh:hover{ color:var(--brass) }
   .opogrid{ display:flex; gap:10px; flex-wrap:wrap }
   .opocard{ flex:0 0 210px; background:var(--card); border:1px solid var(--line); border-radius:11px; padding:11px 12px; cursor:pointer }
   .opocard:hover{ border-color:var(--brass2) } .opocard.on{ border-color:var(--brass); box-shadow:0 0 0 2px rgba(154,123,63,.14); background:#fffdf8 }
@@ -1343,6 +1344,7 @@ let OPO_INIT=false, OPO_SEL=null, OPO_VIS=[];
 let OPO_LIM=500;                    // quantas linhas por vez (o "Mostrar mais" aumenta)
 // ---- REFINO opcional: cruza a ESPECIFICAÇÃO (produtos/serviços do INPI) e o NOME ----
 let OPO_REF='none';                 // none | esp | nome (esp+nome)
+let OPO_ORD={ k:'prior', d:1 };     // ordenação por clique no cabeçalho (prior|titular|barrado|data)
 const OPO_ESP=new Map();            // numero do lead -> {marca, espec} (do inpi_cache) | null = sem consulta
 const OPO_ADET=new Map();           // processo da adesão -> {marca, espec}
 const STOP_ESP=new Set(['para','com','sem','das','dos','uma','por','que','nao','este','esta','como','sendo','seus','suas','tipo','meio','forma','todos','todas','outros','outras','geral','gerais','saber','ambos']);
@@ -1523,6 +1525,11 @@ function pintaOportunidades(){
   } else pares.forEach(p=>{ p.ref=null; });
   const jaOfertado=l=>(l.etiquetas||[]).includes('oferta-marca')||l.estagio==='oportunidade';
   if($('#opoNovos') && $('#opoNovos').checked) pares=pares.filter(p=>!jaOfertado(p.l));
+  // ordenação escolhida no cabeçalho (padrão = prioridade/afinidade)
+  if(OPO_ORD.k==='titular') pares.sort((x,y)=> OPO_ORD.d * normTxt(x.l.titular||'').localeCompare(normTxt(y.l.titular||'')));
+  else if(OPO_ORD.k==='barrado') pares.sort((x,y)=> OPO_ORD.d * (normTxt((((x.l.conflitos||[])[0]||{}).marca)||'zzzz')).localeCompare(normTxt((((y.l.conflitos||[])[0]||{}).marca)||'zzzz')));
+  else if(OPO_ORD.k==='data') pares.sort((x,y)=> OPO_ORD.d * String(dataDoLead(x.l)||'').localeCompare(String(dataDoLead(y.l)||'')));
+  else if(OPO_ORD.d===-1) pares.reverse();
   const nOf=pares.filter(p=>jaOfertado(p.l)).length;
   $('#opoStatus').innerHTML='<b>'+fmtN(pares.length)+'</b> lead(s) compatíveis com <b>'+esc(a.marca_nome)+'</b>'+(nOf?(' · '+nOf+' já ofertado(s)'):'');
   OPO_VIS=pares.slice(0,OPO_LIM);
@@ -1545,9 +1552,16 @@ function pintaOportunidades(){
       +'<td style="white-space:nowrap"><button class="ghost opoCp" data-id="'+esc(l.id)+'">'+(of?'Copiar de novo':'Copiar oferta')+'</button></td></tr>';
   }).join('');
   $('#opoLista').innerHTML = pares.length
-    ? '<table class="grid"><thead><tr><th>Prior.</th><th></th><th>Titular / marca negada</th><th>Afinidade</th><th>Barrado por</th><th>Processo</th><th></th></tr></thead><tbody>'+linhas+'</tbody></table>'
+    ? (function(){ const seta=k=> OPO_ORD.k===k?(OPO_ORD.d===1?' ▲':' ▼'):'';
+        return '<table class="grid"><thead><tr>'
+          +'<th class="ordh" data-ord="prior" title="ordenar por prioridade">Prior.'+seta('prior')+'</th><th></th>'
+          +'<th class="ordh" data-ord="titular" title="ordenar por ordem alfabética">Titular / marca negada'+seta('titular')+'</th>'
+          +'<th>Afinidade</th>'
+          +'<th class="ordh" data-ord="barrado" title="ordenar pela marca que barrou">Barrado por'+seta('barrado')+'</th>'
+          +'<th class="ordh" data-ord="data" title="ordenar por data">Processo'+seta('data')+'</th><th></th></tr></thead><tbody>'+linhas+'</tbody></table>'; })()
       +(pares.length>OPO_VIS.length?('<div class="mrow" style="margin-top:10px"><button class="ghost" id="opoMais">Mostrar mais '+fmtN(Math.min(500,pares.length-OPO_VIS.length))+'</button><button class="ghost" id="opoTudo">Mostrar todos ('+fmtN(pares.length)+')</button><span class="status">mostrando '+fmtN(OPO_VIS.length)+' de '+fmtN(pares.length)+'</span></div>'):'')
     : '<div class="status">Nenhum lead compatível com esses filtros.</div>';
+  document.querySelectorAll('.ordh').forEach(h=> h.onclick=()=>{ const k=h.dataset.ord; if(OPO_ORD.k===k) OPO_ORD.d*=-1; else OPO_ORD={k, d:1}; pintaOportunidades(); });
   if($('#opoMais')) $('#opoMais').onclick=()=>{ OPO_LIM+=500; pintaOportunidades(); };
   if($('#opoTudo')) $('#opoTudo').onclick=()=>{ OPO_LIM=1e6; pintaOportunidades(); };
   document.querySelectorAll('.opoAb').forEach(b=> b.onclick=()=>abrirCard(b.dataset.id));
