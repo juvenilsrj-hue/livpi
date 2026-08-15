@@ -1729,14 +1729,67 @@ function pintaAdesoes(){
   }));
 }
 function kv(k,v){ return v?('<div class="ades-kv"><span class="k">'+k+'</span><span class="v">'+esc(v)+'</span></div>'):''; }
+// seção "Dados da marca" da ficha, em modo edição (corrigir o que veio "Não sei")
+const ADES_SIT=['Registrada (concedida)','Em processo (pedido depositado)','Registrada, mas sem uso','Não tenho certeza'];
+const ADES_TIPO=['Nominativa (apenas o nome)','Mista (nome + logo)','Figurativa (apenas símbolo)','Tridimensional','Não sei'];
+const ADES_USO=['Sim, está em uso','Não, está sem uso','Parcialmente / esporádico'];
+function adesOpt(lista,cur){ let h='<option value=""></option>'; if(cur && !lista.includes(cur)) h+='<option selected>'+esc(cur)+'</option>'; return h+lista.map(o=>'<option'+(o===cur?' selected':'')+'>'+esc(o)+'</option>').join(''); }
+function fichaMarcaEdit(a){
+  const inp='width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;background:#fff';
+  const clsList=['Não sei informar'].concat(Object.keys(NICE_AREAS).map(c=>c+' — '+NICE_AREAS[c]));
+  const fe=(k,ctrl)=>'<div class="ades-kv"><span class="k" style="align-self:center">'+k+'</span><span class="v">'+ctrl+'</span></div>';
+  return fe('Nome da marca','<input id="fmNome" value="'+esc(a.marca_nome||'')+'" style="'+inp+'">')
+    +fe('Nº do processo no INPI','<input id="fmProc" value="'+esc(a.marca_processo||'')+'" placeholder="9 dígitos" style="'+inp+'">')
+    +fe('Situação atual','<select id="fmSit" style="'+inp+'">'+adesOpt(ADES_SIT,a.marca_situacao)+'</select>')
+    +fe('Tipo de marca','<select id="fmTipo" style="'+inp+'">'+adesOpt(ADES_TIPO,a.marca_tipo)+'</select>')
+    +fe('Classe / ramo','<select id="fmCls" style="'+inp+'">'+adesOpt(clsList,a.marca_classe)+'</select>')
+    +fe('Marca em uso hoje','<select id="fmUso" style="'+inp+'">'+adesOpt(ADES_USO,a.marca_uso)+'</select>')
+    +fe('Site / redes','<input id="fmLinks" value="'+esc(a.marca_links||'')+'" style="'+inp+'">')
+    +'<div class="mrow" style="margin:9px 0 4px"><button id="fmSalvar">Salvar dados da marca</button><button class="ghost" id="fmInpi" title="consulta o processo e preenche nome, situação, tipo e classe">🔎 Preencher pelo INPI</button><span class="q" id="fmMsg"></span></div>';
+}
+function ligarFichaMarca(a){
+  const msg=t=>{ const m=$('#fmMsg'); if(m) m.textContent=t; };
+  $('#fmSalvar').onclick=async ()=>{
+    const patch={ marca_nome:$('#fmNome').value.trim()||null, marca_processo:$('#fmProc').value.trim()||null,
+      marca_situacao:$('#fmSit').value||null, marca_tipo:$('#fmTipo').value||null,
+      marca_classe:$('#fmCls').value||null, marca_uso:$('#fmUso').value||null, marca_links:$('#fmLinks').value.trim()||null };
+    msg('salvando…');
+    const { error }=await sb.from('adesoes').update(patch).eq('id',a.id);
+    if(error){ msg('erro: '+error.message); return; }
+    Object.assign(a,patch);
+    const h=$('#modalcard .mhead h3'); if(h) h.textContent=a.marca_nome||'—';
+    pintaAdesoes(); msg('✓ salvo'); setTimeout(()=>msg(''),3000);
+  };
+  $('#fmInpi').onclick=async ()=>{
+    const num=String($('#fmProc').value||'').replace(/\D/g,'');
+    if(num.length!==9){ msg('informe um nº de processo válido (9 dígitos) primeiro'); return; }
+    const bt=$('#fmInpi'); bt.disabled=true; msg('consultando o INPI…');
+    try{
+      const { data, error }=await sb.functions.invoke('consulta',{ body:{ action:'porNumero', numero:num } });
+      if(error||!data||data.erro) throw new Error((data&&data.erro)||'falha na consulta');
+      try{ await sb.from('inpi_cache').upsert({ numero:num, dados:data, em:new Date().toISOString() }); }catch(e){}
+      if(data.marca) $('#fmNome').value=data.marca;
+      if(data.situacao) $('#fmSit').innerHTML=adesOpt(ADES_SIT,data.situacao);
+      const mapT={ 'Nominativa':'Nominativa (apenas o nome)', 'Mista':'Mista (nome + logo)', 'Figurativa':'Figurativa (apenas símbolo)', 'Tridimensional':'Tridimensional' };
+      const t=Object.keys(mapT).find(k=>new RegExp('^'+k,'i').test(data.apresentacao||''));
+      if(t) $('#fmTipo').innerHTML=adesOpt(ADES_TIPO,mapT[t]);
+      const cls=(data.classes||[]).map(c=>(String(c.classe).match(/(\d{1,2})\s*$/)||[])[1]).filter(Boolean);
+      if(cls.length){ const padrao=cls.map(c=>(+c)+' — '+(NICE_AREAS[String(+c)]||'?')).join(' | ');
+        const clsList=['Não sei informar'].concat(Object.keys(NICE_AREAS).map(c=>c+' — '+NICE_AREAS[c]));
+        $('#fmCls').innerHTML=adesOpt(clsList,padrao); }
+      msg('✓ preenchido pelo INPI — confira e clique em Salvar');
+    }catch(e){ msg('erro: '+(e.message||'falha')); }
+    bt.disabled=false;
+  };
+}
 function fichaAdesao(id){
   const a=ADES.find(x=>x.id===id); if(!a) return;
   $('#modalcard').innerHTML='<div class="mhead"><div><h3>'+esc(a.marca_nome||'—')+'</h3><div class="s">Adesão de venda · registrada em '+dataBR(a.created_at)+'</div></div><button class="mx" id="mx">×</button></div>'
    +'<div class="mbody">'
    +'<div class="ades-sec">Dados do titular</div>'
    +kv('Nome completo / Razão social',a.titular_nome)+kv('CPF ou CNPJ',a.titular_doc)+kv('Telefone / WhatsApp',a.titular_tel)+kv('E-mail',a.titular_email)+kv('Cidade / UF',a.titular_cidade)
-   +'<div class="ades-sec">Dados da marca</div>'
-   +kv('Nome da marca',a.marca_nome)+kv('Nº do processo no INPI',a.marca_processo)+kv('Situação atual',a.marca_situacao)+kv('Tipo de marca',a.marca_tipo)+kv('Classe(s) / ramo',a.marca_classe)+kv('Marca em uso hoje',a.marca_uso)+kv('Site / redes',a.marca_links)
+   +'<div class="ades-sec">Dados da marca <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)">· editáveis — corrija o que o titular não soube informar</span></div>'
+   +fichaMarcaEdit(a)
    +'<div class="ades-sec">Condições pretendidas para a venda</div>'
    +kv('Valor pretendido (R$)',a.venda_valor)+kv('Urgência da venda',a.venda_urgencia)+kv('Motivo da venda',a.venda_motivo)+kv('Observações',a.venda_obs)
    +'<div class="ades-sec">Assinatura eletrônica</div>'
@@ -1746,6 +1799,7 @@ function fichaAdesao(id){
   $('#modal').style.display='flex';
   $('#mx').onclick=fecharCard;
   $('#mBaixa').onclick=()=>baixaTermo(a.id);
+  ligarFichaMarca(a);
 }
 function baixaTermo(id){
   const a=ADES.find(x=>x.id===id); if(!a) return;
