@@ -109,6 +109,13 @@
   .checkbox span{font-size:13.5px;color:var(--ink-2);line-height:1.5;}
   .checkbox.invalid{border-color:var(--err);box-shadow:0 0 0 3px rgba(180,72,63,.10);}
 
+  /* redes sociais da marca */
+  .redes{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:4px;}
+  @media (max-width:560px){.redes{grid-template-columns:1fr;}}
+  .rede{position:relative;display:flex;align-items:center;}
+  .rede .ri{position:absolute;left:8px;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+  .rede input{padding-left:42px;}
+
   /* autocomplete de cidades */
   .autocomp{position:relative;}
   .sug{position:absolute;top:calc(100% - 2px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:0 0 10px 10px;box-shadow:0 18px 34px -18px rgba(43,58,72,.35);max-height:225px;overflow:auto;z-index:30;display:none;}
@@ -360,8 +367,39 @@
           </div>
         </div>
         <div class="field full">
-          <label>Site, rede social ou material da marca (se houver)</label>
-          <input type="text" name="marca_links" placeholder="Ex.: @suamarca / www.suamarca.com.br">
+          <label>Site da marca (se houver)</label>
+          <input type="text" name="marca_site" placeholder="Ex.: www.suamarca.com.br">
+        </div>
+
+        <div class="field full">
+          <label>Redes sociais da marca (se houver)</label>
+          <span class="hint">Preencha as que existirem. Pode ser o @ ou o link completo.</span>
+          <div class="redes">
+            <div class="rede">
+              <span class="ri" style="background:#fdf0f6;color:#c13584" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg></span>
+              <input type="text" name="marca_instagram" placeholder="Instagram: @suamarca">
+            </div>
+            <div class="rede">
+              <span class="ri" style="background:#eef3fd;color:#1877f2" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg></span>
+              <input type="text" name="marca_facebook" placeholder="Facebook: /suamarca">
+            </div>
+            <div class="rede">
+              <span class="ri" style="background:#f2f2f4;color:#111" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 2h-3v13.2a2.7 2.7 0 1 1-2.2-2.7v-3a5.7 5.7 0 1 0 5.2 5.7V9.3a6.6 6.6 0 0 0 3.9 1.3v-3a3.7 3.7 0 0 1-3.9-3.6V2z"/></svg></span>
+              <input type="text" name="marca_tiktok" placeholder="TikTok: @suamarca">
+            </div>
+            <div class="rede">
+              <span class="ri" style="background:#fdeeee;color:#ff0000" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 7.2a2.7 2.7 0 0 0-1.9-1.9C18.9 4.8 12 4.8 12 4.8s-6.9 0-8.6.5A2.7 2.7 0 0 0 1.5 7.2 28 28 0 0 0 1 12a28 28 0 0 0 .5 4.8 2.7 2.7 0 0 0 1.9 1.9c1.7.5 8.6.5 8.6.5s6.9 0 8.6-.5a2.7 2.7 0 0 0 1.9-1.9A28 28 0 0 0 23 12a28 28 0 0 0-.5-4.8zM9.8 15.3V8.7l5.7 3.3z"/></svg></span>
+              <input type="text" name="marca_youtube" placeholder="YouTube: canal ou link">
+            </div>
+            <div class="rede">
+              <span class="ri" style="background:#eaf1f8;color:#0a66c2" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0zM.5 8h4V24h-4zM8 8h3.8v2.2h.05c.53-1 1.83-2.2 3.77-2.2 4.03 0 4.78 2.65 4.78 6.1V24h-4v-7.1c0-1.7-.03-3.9-2.38-3.9-2.38 0-2.75 1.86-2.75 3.78V24H8z"/></svg></span>
+              <input type="text" name="marca_linkedin" placeholder="LinkedIn: empresa ou perfil">
+            </div>
+            <div class="rede">
+              <span class="ri" style="background:var(--cream);color:var(--terra)" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></span>
+              <input type="text" name="marca_outras" placeholder="Outra rede, marketplace ou material">
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -508,13 +546,15 @@ const LABELS = {
   titular_email:"E-mail", titular_cidade:"Cidade/UF",
   marca_nome:"Nome da marca", marca_processo:"Processo INPI", marca_situacao:"Situação",
   marca_tipo:"Tipo", marca_classe:"Classe/Ramo", marca_uso:"Marca em uso",
-  marca_links:"Site/Redes",
+  marca_site:"Site", marca_instagram:"Instagram", marca_facebook:"Facebook",
+  marca_tiktok:"TikTok", marca_youtube:"YouTube", marca_linkedin:"LinkedIn", marca_outras:"Outros canais",
   venda_valor:"Valor pretendido", venda_urgencia:"Urgência", venda_motivo:"Motivo da venda",
   venda_obs:"Observações", decl_local:"Local e data"
 };
 const GROUPS = [
   { title:"Titular", keys:["titular_nome","titular_doc","titular_tel","titular_email","titular_cidade"] },
-  { title:"Marca",   keys:["marca_nome","marca_processo","marca_situacao","marca_tipo","marca_classe","marca_uso","marca_links"] },
+  { title:"Marca",   keys:["marca_nome","marca_processo","marca_situacao","marca_tipo","marca_classe","marca_uso"] },
+  { title:"Presença digital", keys:["marca_site","marca_instagram","marca_facebook","marca_tiktok","marca_youtube","marca_linkedin","marca_outras"] },
   { title:"Condições da venda", keys:["venda_valor","venda_urgencia","venda_motivo","venda_obs"] }
 ];
 
@@ -715,6 +755,14 @@ function toast(msg){
   toast._t = setTimeout(()=>toastEl.classList.remove('show'), 2600);
 }
 
+/* junta site + redes num resumo (coluna marca_links do banco) */
+function linksResumo(){
+  return [["Site","marca_site"],["Instagram","marca_instagram"],["Facebook","marca_facebook"],
+          ["TikTok","marca_tiktok"],["YouTube","marca_youtube"],["LinkedIn","marca_linkedin"],
+          ["Outros","marca_outras"]]
+    .map(([r,k])=>{const v=val(k);return v?`${r}: ${v}`:"";}).filter(Boolean).join(" · ");
+}
+
 /* Registro da adesão com a LIV (Supabase, tabela adesoes: o público só insere) */
 const SB_URL="https://fptkrfvbkxrzhvqgvime.supabase.co";
 const SB_KEY="sb_publishable_2ItWHYF3hao6aYP4SONG0A_DpGyAuR3"; // chave pública (publishable)
@@ -725,7 +773,7 @@ async function enviarAdesao(){
     titular_nome:val('titular_nome'), titular_doc:val('titular_doc'), titular_tel:val('titular_tel'),
     titular_email:val('titular_email'), titular_cidade:val('titular_cidade'),
     marca_nome:val('marca_nome'), marca_processo:val('marca_processo'), marca_situacao:val('marca_situacao'),
-    marca_tipo:val('marca_tipo'), marca_classe:val('marca_classe'), marca_uso:val('marca_uso'), marca_links:val('marca_links'),
+    marca_tipo:val('marca_tipo'), marca_classe:val('marca_classe'), marca_uso:val('marca_uso'), marca_links:linksResumo(),
     venda_valor:val('venda_valor'), venda_urgencia:val('venda_urgencia'), venda_motivo:val('venda_motivo'), venda_obs:val('venda_obs'),
     sig_nome:SIG.nome, sig_local:SIG.local, sig_stamp:SIG.stamp, sig_iso:SIG.iso, sig_ip:SIG.ip,
     sig_code:SIG.code, sig_hash:SIG.hash, sig_algo:SIG.algo,

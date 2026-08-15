@@ -226,7 +226,7 @@
     <div class="grp">Ferramentas</div>
     <button class="tab" data-tab="consulta"><span class="ic">🔍</span>Consulta INPI</button>
     <div class="grp">Financeiro</div>
-    <button class="tab soon" data-tab="financeiro"><span class="ic">💰</span>Financeiro<span class="badge">em breve</span></button>
+    <button class="tab" data-tab="financeiro"><span class="ic">💰</span>Financeiro</button>
     <div class="grp">Automação</div>
     <button class="tab soon" data-tab="automacao"><span class="ic">⚙️</span>Automação<span class="badge">em breve</span></button>
     <div class="sidefoot"><span class="who" id="who"></span><button class="sair" id="sair">Sair</button></div>
@@ -1767,6 +1767,55 @@ function baixaTermo(id){
 }
 
 // ===== TABS ===================================================================
+// ===== FINANCEIRO — precificação dos serviços + taxas oficiais do INPI ========
+let FIN_INIT=false;
+const PRECOS_LIV=[
+  { s:'Registro de marca', v:2600, parc:'até 10x sem juros', obs:'Valor por registro. Cada classe a mais no mesmo processo sai por 50% do valor do primeiro registro (R$ 1.300,00) e assim subsequentemente.' },
+  { s:'Oposição', v:980, parc:'até 6x sem juros (1+5)', obs:'' },
+  { s:'Recurso de indeferimento', v:980, parc:'até 6x sem juros (1+5)', obs:'' },
+  { s:'Apresentação de mérito', v:340, parc:'2x sem juros (1+1)', obs:'' },
+];
+// Tabela de retribuições do INPI (marcas) — valores VIGENTES extraídos do PDF oficial
+// gov.br "Comparativo de preços" (reajuste set/2025); conferida em 15/08/2026.
+const TAXAS_INPI=[
+  ['389','Pedido de registro de marca (especificação pré-aprovada) · por classe',360,1],
+  ['394','Pedido de registro de marca (especificação de livre preenchimento) · por classe',420,1],
+  ['332','Oposição · por classe',520,1],
+  ['3022','Oposição com restrição de alegações (marca registrada de terceiro)',360,0],
+  ['339','Manifestação (ex.: resposta a oposição)',180,1],
+  ['338','Cumprimento de exigência (exame formal)',180,0],
+  ['340','Cumprimento de exigência (petição)',180,0],
+  ['3000','Recurso contra indeferimento de pedido · por classe',700,1],
+  ['333','Demais recursos de marcas',700,0],
+  ['3015','Contrarrazões ao recurso / nulidade',180,0],
+  ['372','1º decênio de vigência + certificado (prazo ordinário)',750,1],
+  ['373','1º decênio de vigência + certificado (prazo extraordinário)',1120,0],
+  ['374','Prorrogação de registro (prazo ordinário)',1000,0],
+  ['375','Prorrogação de registro (prazo extraordinário)',2000,0],
+  ['427','Averbação de contrato de cessão de marca (transferência de titularidade)',3350,1],
+];
+const brl=v=>'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+function renderFinanceiro(){
+  const v=$('#view-financeiro'); v.className='';
+  const rowsLiv=PRECOS_LIV.map(p=>'<tr><td><b>'+esc(p.s)+'</b>'+(p.obs?('<div class="status" style="margin-top:3px;line-height:1.5">'+esc(p.obs)+'</div>'):'')+'</td>'
+    +'<td style="white-space:nowrap"><b>'+brl(p.v)+'</b></td>'
+    +'<td style="white-space:nowrap">'+brl(p.v*0.93)+'</td>'
+    +'<td>'+esc(p.parc)+'</td></tr>').join('');
+  const rowsTax=TAXAS_INPI.map(t=>'<tr'+(t[3]?' style="background:#fffdf6"':'')+'><td class="q">'+esc(t[0])+'</td><td>'+(t[3]?'<b>':'')+esc(t[1])+(t[3]?'</b>':'')+'</td><td style="white-space:nowrap">'+brl(t[2])+'</td></tr>').join('');
+  v.innerHTML='<div class="bar"><b style="font-size:15px">Financeiro</b><span class="status">precificação dos serviços e taxas do INPI</span></div>'
+    +'<div style="padding:0 20px 30px;max-width:960px">'
+    +'<div class="iblk"><div class="ih">Precificação dos serviços LIV</div>'
+    +'<table class="dett"><thead><tr><th>Serviço</th><th>Valor</th><th>À vista (7% desc.)</th><th>Parcelamento</th></tr></thead><tbody>'+rowsLiv+'</tbody></table>'
+    +'<div class="ib q">Os honorários não incluem as taxas oficiais do INPI (GRU), repassadas pelo valor vigente, sem acréscimo.</div></div>'
+    +'<div class="iblk" style="margin-top:14px"><div class="ih">Taxas oficiais do INPI (GRU) · marcas</div>'
+    +'<table class="dett"><thead><tr><th>Cód.</th><th>Serviço</th><th>Valor vigente</th></tr></thead><tbody>'+rowsTax+'</tbody></table>'
+    +'<div class="ib q">Valores da tabela de retribuições vigente (reajuste de set/2025), sem o desconto legal. Pessoa física, MEI e micro/pequenas empresas têm desconto (hoje 50%) na maior parte das taxas; o valor final aparece na emissão da GRU. Linhas destacadas = serviços que a LIV mais usa.</div>'
+    +'<div class="ib" style="padding-top:0"><div class="canais">'
+    +'<a class="canal" target="_blank" rel="noopener" href="https://www.gov.br/inpi/pt-br/inpi-data/precificacao-dos-servicos/comparativo-de-precos-tabela-de-retribuicoes-inpi-_-valor-atual-x-novo-valor.pdf">📄 Tabela oficial completa (PDF · gov.br)</a>'
+    +'<a class="canal" target="_blank" rel="noopener" href="https://gru.inpi.gov.br/">🧾 Emitir GRU (INPI)</a>'
+    +'<a class="canal" target="_blank" rel="noopener" href="https://manualdemarcas.inpi.gov.br/">📚 Manual de Marcas</a>'
+    +'</div></div></div></div>';
+}
 const VIEWS=['leads','adesoes','oportunidades','processos','movimentacoes','tarefas','pessoas','dashboard','carteira','consulta','financeiro','automacao'];
 document.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x===t));
@@ -1778,6 +1827,7 @@ document.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{
   if(v==='processos' && !PROC_INIT){ PROC_INIT=true; renderProcessos(); }
   if(v==='adesoes' && !ADES_INIT){ ADES_INIT=true; renderAdesoes(); }
   if(v==='oportunidades' && !OPO_INIT){ OPO_INIT=true; renderOportunidades(); }
+  if(v==='financeiro' && !FIN_INIT){ FIN_INIT=true; renderFinanceiro(); }
   if(MOD_INFO[v] && !$('#view-'+v).innerHTML.trim()){ $('#view-'+v).innerHTML=placeholderMod(v); }
 });
 
