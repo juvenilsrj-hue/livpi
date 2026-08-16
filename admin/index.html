@@ -1849,6 +1849,16 @@ const TAXAS_INPI=[
   ['427','Averbação de contrato de cessão de marca (transferência de titularidade)',3350,1],
 ];
 const brl=v=>'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+// Corretagem — compra e venda de marca registrada (comissão LIV por faixa de venda)
+const COMISSAO_LIV=[
+  { venda:'R$ 5.000',   com:'R$ 1.500 (mínimo)', pct:'30%' },
+  { venda:'R$ 7.500',   com:'R$ 1.875',          pct:'25%' },
+  { venda:'R$ 10.000',  com:'R$ 2.500',          pct:'25%' },
+  { venda:'R$ 20.000',  com:'R$ 4.000',          pct:'20%' },
+  { venda:'R$ 50.000',  com:'R$ 7.500',          pct:'15%' },
+  { venda:'R$ 100.000', com:'R$ 15.000',         pct:'15%' },
+  { venda:'R$ 200.000', com:'R$ 20.000 a R$ 24.000', pct:'10 a 12%' },
+];
 function renderFinanceiro(){
   const v=$('#view-financeiro'); v.className='';
   const rowsLiv=PRECOS_LIV.map(p=>'<tr><td><b>'+esc(p.s)+'</b>'+(p.obs?('<div class="status" style="margin-top:3px;line-height:1.5">'+esc(p.obs)+'</div>'):'')+'</td>'
@@ -1861,6 +1871,11 @@ function renderFinanceiro(){
     +'<div class="iblk"><div class="ih">Precificação dos serviços LIV</div>'
     +'<table class="dett"><thead><tr><th>Serviço</th><th>Valor</th><th>À vista (7% desc.)</th><th>Parcelamento</th></tr></thead><tbody>'+rowsLiv+'</tbody></table>'
     +'<div class="ib q">Os honorários não incluem as taxas oficiais do INPI (GRU), repassadas pelo valor vigente, sem acréscimo.</div></div>'
+    +'<div class="iblk" style="margin-top:14px"><div class="ih">Corretagem · compra e venda de marca registrada</div>'
+    +'<div class="ib"><b>Comissão padrão: 20% do valor da venda</b> · comissão mínima de <b>R$ 1.500,00</b>. Faixas de referência (exceções para operações maiores):</div>'
+    +'<table class="dett"><thead><tr><th>Valor da venda</th><th>Comissão LIV</th><th>%</th></tr></thead><tbody>'
+    +COMISSAO_LIV.map(c=>'<tr><td>'+c.venda+'</td><td><b>'+c.com+'</b></td><td class="q">'+c.pct+'</td></tr>').join('')
+    +'</tbody></table></div>'
     +'<div class="iblk" style="margin-top:14px"><div class="ih">Taxas oficiais do INPI (GRU) · marcas</div>'
     +'<table class="dett"><thead><tr><th>Cód.</th><th>Serviço</th><th>Valor vigente</th></tr></thead><tbody>'+rowsTax+'</tbody></table>'
     +'<div class="ib q">Valores da tabela de retribuições vigente (reajuste de set/2025), sem o desconto legal. Pessoa física, MEI e micro/pequenas empresas têm desconto (hoje 50%) na maior parte das taxas; o valor final aparece na emissão da GRU. Linhas destacadas = serviços que a LIV mais usa.</div>'
