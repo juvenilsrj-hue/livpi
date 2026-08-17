@@ -243,7 +243,7 @@
       <select id="fProblema"><option value="">Problema: todos</option><option value="indeferido">Problema: Indeferido</option><option value="oposicao">Problema: Oposição</option><option value="exigencia">Problema: Exigência</option></select>
       <select id="fAbord"><option value="">Abordagem: todos</option><option value="ok">✔ só abordáveis</option><option value="nao">⛔ não abordar</option><option value="naover">? não verificados</option></select>
       <select id="fRev"><option value="">Publicação: todas</option></select>
-      <input id="fTxt" placeholder="buscar titular…" style="min-width:150px">
+      <input id="fTxt" placeholder="buscar titular, empresa, marca, nº processo…" style="min-width:230px">
       <button class="ghost" id="btMais" title="mais filtros">⚙ Mais filtros</button>
       <button class="ghost" id="fLimpar" title="limpar filtros">Limpar</button>
       <span class="status" id="status"></span>
@@ -377,7 +377,7 @@ async function carregarTudo(){
 }
 
 // ===== RENDER BOARD ===========================================================
-function filtros(){ return { pessoa:$('#fPessoa').value, problema:$('#fProblema').value, abord:$('#fAbord').value, uf:$('#fUF').value, etq:$('#fEtq').value, rev:$('#fRev').value, canal:$('#fCanal').value, de:$('#fDe').value, ate:$('#fAte').value, txt:$('#fTxt').value.trim().toLowerCase() }; }
+function filtros(){ return { pessoa:$('#fPessoa').value, problema:$('#fProblema').value, abord:$('#fAbord').value, uf:$('#fUF').value, etq:$('#fEtq').value, rev:$('#fRev').value, canal:$('#fCanal').value, de:$('#fDe').value, ate:$('#fAte').value, txt:normTxt($('#fTxt').value.trim()) }; }
 // destaca os filtros ativos (valor != padrão) e indica no botão "Mais filtros" se há algum escondido ativo
 function marcarAtivos(){
   const defs={ fMostrar:'ativos' };
@@ -469,7 +469,12 @@ function passa(l,f){
   if(f.rev && String(l.revista||'')!==f.rev) return false;
   if(f.canal){ const c=canaisDoLead(l); if(f.canal==='qualquer'){ if(!(c.email||c.whatsapp)) return false; } else if(!c[f.canal]) return false; }
   if(f.de||f.ate){ const d=dataDoLead(l); if(!d) return false; if(f.de&&d<f.de) return false; if(f.ate&&d>f.ate) return false; }
-  if(f.txt && !(l.titular||'').toLowerCase().includes(f.txt)) return false;
+  if(f.txt){
+    const e=l.enriquecimento||{};
+    // busca em: titular, marca, razão social, nome fantasia, sócios e nº do processo (sem acentos)
+    const alvo=normTxt([l.titular,l.marca,e.razaoSocial,e.nomeFantasia,(Array.isArray(e.socios)?e.socios.join(' '):''),l.numero].filter(Boolean).join(' '));
+    if(!alvo.includes(f.txt)) return false;
+  }
   return true;
 }
 function montaPublicacoes(){
