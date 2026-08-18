@@ -1401,6 +1401,20 @@ function resumoInteligente(p){
 }
 const RESPONSAVEIS=['Juvenill Ribêiro','Camila de Liz'];
 let PROC_RESP={};                          // numero -> responsável (tabela processo_resp)
+let PROC_ALERTAS=[];                       // movimentações novas detectadas na leitura da RPI
+const ALERTA_ROT={ oposicao:'Oposição de terceiro', indeferido:'Indeferimento', exigencia:'Exigência', deferimento:'Deferimento' };
+function alertasHTML(){
+  if(!PROC_ALERTAS.length) return '';
+  const acao=t=>t!=='deferimento';
+  const linhas=PROC_ALERTAS.map(a=>'<tr><td style="white-space:nowrap"><span class="pill '+(acao(a.tipo)?'ruim':'bom')+'">'+(acao(a.tipo)?'⚠ ':'✓ ')+esc(ALERTA_ROT[a.tipo]||a.tipo)+'</span></td>'
+    +'<td><b>'+esc(a.marca||'(sem nome)')+'</b><div class="status">proc. '+esc(a.numero)+(a.titular?(' · '+esc(a.titular)):'')+(a.responsavel?(' · resp. '+esc(String(a.responsavel).split(' ')[0])):'')+'</div></td>'
+    +'<td class="q" style="white-space:nowrap">RPI '+esc(a.revista||'—')+'<br>'+esc(a.data_desp||'')+'</td>'
+    +'<td class="q" style="white-space:nowrap">'+(a.notificado_em?'✉ avisado':'<span style="color:var(--warn)">a avisar</span>')+'</td>'
+    +'<td style="white-space:nowrap"><button class="ghost alVisto" data-id="'+esc(a.id)+'">marcar como visto</button></td></tr>').join('');
+  const nAcao=PROC_ALERTAS.filter(a=>acao(a.tipo)).length;
+  return '<div class="iblk" style="margin:0 0 14px"><div class="ih" style="background:#f8e8e5;color:var(--bad)">🔔 Movimentações novas · '+PROC_ALERTAS.length+(nAcao?(' ('+nAcao+' exige ação)'):'')+'</div>'
+    +'<table class="dett"><tbody>'+linhas+'</tbody></table></div>';
+}
 // data da última movimentação (dd/mm/yyyy -> iso), p/ o filtro de período
 function ultMov(p){ const d=(p.despachos||[])[0]; if(!d||!d.data) return null; const x=d.data.split('/'); return x.length===3?(x[2]+'-'+x[1]+'-'+x[0]):null; }
 // situações que exigem atenção imediata (vermelho): oposição contra e indeferimento
@@ -1416,6 +1430,7 @@ async function renderProcessos(){
     +'<div id="pWrap" style="flex:1;min-height:0;overflow-y:auto;padding:0 20px 24px">carregando…</div>';
   PROCD=await snap('carteira:camila');
   if(!PROCD){ $('#pWrap').innerHTML='<div class="status" style="padding:20px">sem dados</div>'; return; }
+  try{ const { data }=await sb.from('proc_alertas').select('*').eq('visto',false).order('data_desp',{ascending:false}); PROC_ALERTAS=data||[]; }catch(e){ PROC_ALERTAS=[]; }
   try{ const { data }=await sb.from('processo_resp').select('numero,responsavel'); PROC_RESP={}; (data||[]).forEach(r=>PROC_RESP[r.numero]=r.responsavel); }catch(e){}
   $('#pArea').innerHTML='<option value="">Área: todas</option>'+(PROCD.areas||[]).map(a=>'<option>'+esc(a)+'</option>').join('');
   ['pArea','pTxt','pResp','pDe','pAte'].forEach(id=> $('#'+id).addEventListener('input', pintaProcessos));
@@ -1440,7 +1455,9 @@ function pintaProcessos(){
     const selR='<select class="pRespSel" data-num="'+esc(p.numero)+'" style="font-size:11px;padding:3px 6px;border:1px solid var(--line);border-radius:7px;background:#fff;max-width:110px"><option value=""'+(r?'':' selected')+'>—</option>'+RESPONSAVEIS.map(x=>'<option'+(x===r?' selected':'')+'>'+esc(x.split(' ')[0])+'</option>').join('')+'</select>';
     return '<tr data-i="'+i+'"'+(alerta?' style="background:#fdf1ef"':'')+'><td><b>'+esc(p.marca||'(nominativa)')+'</b><div class="status">'+esc(p.apresentacao||'')+'</div></td><td>'+esc(p.numero)+'</td><td>'+esc(p.titular||'—')+(p.uf?(' / '+esc(p.uf)):'')+'</td><td>'+esc((p.classes||[]).map(c=>c.codigo).join(', '))+'<div class="status">'+esc((p.areas||[])[0]||'')+'</div></td><td><span class="pill '+tomCls+'">'+esc(s.nome)+'</span>'+(alerta?'<div class="status" style="color:var(--bad);font-weight:700">⚠ requer ação</div>':'')+'</td><td>'+pzt+'</td><td>'+selR+'</td></tr>';
   }).join('');
-  $('#pWrap').innerHTML='<table class="grid"><thead><tr><th>Marca</th><th>Nº processo</th><th>Titular / Cliente</th><th>Classe · área</th><th>Situação (último despacho)</th><th>Próximo prazo</th><th>Resp.</th></tr></thead><tbody>'+(rows||'<tr><td colspan="7" class="status" style="padding:20px">nenhum processo</td></tr>')+'</tbody></table>';
+  $('#pWrap').innerHTML=alertasHTML()+'<table class="grid"><thead><tr><th>Marca</th><th>Nº processo</th><th>Titular / Cliente</th><th>Classe · área</th><th>Situação (último despacho)</th><th>Próximo prazo</th><th>Resp.</th></tr></thead><tbody>'+(rows||'<tr><td colspan="7" class="status" style="padding:20px">nenhum processo</td></tr>')+'</tbody></table>';
+  $('#pWrap').querySelectorAll('.alVisto').forEach(b=> b.onclick=async e=>{ e.stopPropagation();
+    try{ await sb.from('proc_alertas').update({visto:true}).eq('id',b.dataset.id); PROC_ALERTAS=PROC_ALERTAS.filter(a=>a.id!==b.dataset.id); pintaProcessos(); }catch(err){ alert('Erro: '+(err.message||err)); } });
   $('#pWrap').querySelectorAll('tbody tr[data-i]').forEach(tr=> tr.onclick=e=>{ if(e.target.closest('select')) return; abrirProcesso(vis[+tr.dataset.i]); });
   $('#pWrap').querySelectorAll('.pRespSel').forEach(s=>{
     s.addEventListener('click',e=>e.stopPropagation());
