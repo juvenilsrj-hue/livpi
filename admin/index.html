@@ -837,10 +837,49 @@ function ligar(){
   });
   document.querySelectorAll('.col').forEach(col=>{
     col.addEventListener('dragover',e=>e.preventDefault());
-    col.addEventListener('drop',async e=>{ e.preventDefault(); const id=e.dataTransfer.getData('text/plain'); const estagio=col.dataset.estagio; const l=LEADS.find(x=>x.id===id); if(!l||l.estagio===estagio) return; l.estagio=estagio; render(); await moverLead(id,estagio); });
+    col.addEventListener('drop',async e=>{ e.preventDefault(); const id=e.dataTransfer.getData('text/plain'); const estagio=col.dataset.estagio; const l=LEADS.find(x=>x.id===id); if(!l||l.estagio===estagio) return;
+      if(estagio==='ganho'){ const f=await pedirFechamento(l); if(!f){ render(); return; } await gravarFechamento(l,f); }
+      l.estagio=estagio; render(); await moverLead(id,estagio); });
   });
 }
 function leadDe(id){ return LEADS.find(l=>l.id===id); }
+
+// ===== FECHAMENTO (mover p/ "Fechado" exige data + valor) =====================
+function pedirFechamento(l){
+  return new Promise(res=>{
+    const hoje=new Date().toISOString().slice(0,10);
+    const inp='width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff';
+    let bg=document.getElementById('fechoBg');
+    if(bg) bg.remove();
+    bg=document.createElement('div'); bg.id='fechoBg';
+    bg.style.cssText='position:fixed;inset:0;background:rgba(34,32,28,.5);display:flex;align-items:center;justify-content:center;z-index:80;padding:16px';
+    bg.innerHTML='<div style="background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:380px;max-width:100%;padding:18px">'
+      +'<div style="font-weight:800;font-size:15px">Fechamento · '+esc((l.marca||l.titular||'').slice(0,40))+'</div>'
+      +'<div class="q" style="margin-top:3px">Para mover para <b>Fechado</b>, informe a data e o valor.</div>'
+      +'<label class="q" style="display:block;margin:12px 0 4px">Data do fechamento *</label><input type="date" id="fcData" value="'+hoje+'" style="'+inp+'">'
+      +'<label class="q" style="display:block;margin:10px 0 4px">Valor fechado (R$) *</label><input id="fcValor" placeholder="ex.: 980,00" inputmode="decimal" style="'+inp+'">'
+      +'<div class="q" id="fcErr" style="color:var(--bad);margin-top:6px"></div>'
+      +'<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="ghost" id="fcCanc">Cancelar</button><button id="fcOk">Confirmar fechamento</button></div></div>';
+    document.body.appendChild(bg);
+    const fecha=v=>{ bg.remove(); res(v); };
+    bg.querySelector('#fcCanc').onclick=()=>fecha(null);
+    bg.addEventListener('click',e=>{ if(e.target===bg) fecha(null); });
+    bg.querySelector('#fcOk').onclick=()=>{
+      const d=bg.querySelector('#fcData').value;
+      const v=parseFloat(String(bg.querySelector('#fcValor').value).replace(/\./g,'').replace(',','.'));
+      if(!d){ bg.querySelector('#fcErr').textContent='Informe a data do fechamento.'; return; }
+      if(!(v>0)){ bg.querySelector('#fcErr').textContent='Informe o valor fechado (maior que zero).'; return; }
+      fecha({ data:d, valor:v });
+    };
+    setTimeout(()=>{ const el=bg.querySelector('#fcValor'); if(el) el.focus(); },50);
+  });
+}
+async function gravarFechamento(l,f){
+  const patch={ fechado_em:f.data, fechado_valor:f.valor, atualizado_em:new Date().toISOString() };
+  await sb.from('leads').update(patch).eq('id',l.id); Object.assign(l,patch);
+  const dBR=f.data.split('-').reverse().join('/');
+  await comentar(l.id,'Fechamento registrado: '+brl(f.valor)+' em '+dBR+'.');
+}
 
 // ===== MUTAÇÕES (Supabase) ====================================================
 async function moverLead(id,estagio){ await sb.from('leads').update({estagio, atualizado_em:new Date().toISOString()}).eq('id',id); await sb.from('interacoes').insert({id:novoId(), lead_id:id, tipo:'mover', estagio, quando:new Date().toISOString()}); }
@@ -947,7 +986,10 @@ function renderModal(l){
     if(fone){ const b=document.createElement('button'); b.className='canal wa'; b.textContent='Enviar no WhatsApp'; b.onclick=()=>window.open('https://wa.me/55'+fone+'?text='+encodeURIComponent($('#mAbord').value),'_blank','noopener'); $('#mAbWa').replaceWith(b); }
     if(email){ const b=document.createElement('button'); b.className='canal em'; b.textContent='Enviar por e-mail'; b.onclick=()=>window.open('mailto:'+email+'?subject='+encodeURIComponent('Sobre a sua marca '+(l.marca||'')+' no INPI')+'&body='+encodeURIComponent($('#mAbord').value),'_blank','noopener'); $('#mAbMail').replaceWith(b); }
   })();
-  $('#mEst').onchange=async e=>{ l.estagio=e.target.value; await moverLead(l.id,l.estagio); l._int=await carregarInteracoes(l.id); render(); renderModal(l); };
+  $('#mEst').onchange=async e=>{
+    const novo=e.target.value;
+    if(novo==='ganho' && l.estagio!=='ganho'){ const f=await pedirFechamento(l); if(!f){ e.target.value=l.estagio; return; } await gravarFechamento(l,f); }
+    l.estagio=novo; await moverLead(l.id,l.estagio); l._int=await carregarInteracoes(l.id); render(); renderModal(l); };
   $('#mData').onchange=async e=>{ await setData(l.id,e.target.value); render(); renderModal(l); };
   $('#mPick').querySelectorAll('.et').forEach(el=> el.onclick=async ()=>{ await toggleEtq(l.id,el.dataset.et,!el.classList.contains('on')); render(); renderModal(l); });
   let comFile=null;
@@ -1056,8 +1098,9 @@ async function snap(chave){ const { data }=await sb.from('liv_snapshots').select
 
 let DASH_LOADED=false, DASH_ALL={}, DASH_REVS=[], CFGV=null;
 const fmtBRL=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
-const VAL_PADRAO={indeferido:800, oposicao:800, exigencia:800, outro:800, conversao:5};
-const TIPO_LABEL={indeferido:'Recurso contra indeferimento', oposicao:'Defesa em oposição', exigencia:'Cumprimento de exigência', outro:'Outros serviços (registro etc.)'};
+// valores OFICIAIS da precificação (aba Financeiro): recurso/defesa 980, mérito 340
+const VAL_PADRAO={indeferido:980, oposicao:980, exigencia:340, outro:980, conversao:5};
+const TIPO_LABEL={indeferido:'Recurso contra indeferimento (por classe)', oposicao:'Defesa em oposição (por classe)', exigencia:'Apresentação de mérito', outro:'Outros serviços (registro etc.)'};
 function hbar(label,val,max,cls){ const pct=max>0?Math.max(1,Math.round(val/max*100)):0; return '<div class="hbar"><span class="hl">'+esc(label)+'</span><span class="ht"><span class="hf'+(cls?(' '+cls):'')+'" style="width:'+pct+'%"></span></span><span class="hv">'+fmtN(val)+'</span></div>'; }
 async function carregarCfg(){ try{ const { data }=await sb.from('liv_config').select('valor').eq('chave','valores').maybeSingle(); CFGV=Object.assign({},VAL_PADRAO,(data&&data.valor)||{}); }catch(e){ CFGV=Object.assign({},VAL_PADRAO); } }
 async function salvarCfg(){ const { error }=await sb.from('liv_config').upsert({chave:'valores', valor:CFGV, atualizado_em:new Date().toISOString()}); if(error) throw error; }
@@ -1864,8 +1907,30 @@ const COMISSAO_LIV=[
   { venda:'R$ 100.000', com:'R$ 15.000',         pct:'15%' },
   { venda:'R$ 200.000', com:'R$ 20.000 a R$ 24.000', pct:'10 a 12%' },
 ];
-function renderFinanceiro(){
+// painel de fechamentos: leads na coluna Fechado, agrupados por mês
+function fechamentosHTML(){
+  const fechados=(LEADS||[]).filter(l=>l.estagio==='ganho');
+  if(!fechados.length) return '<div class="iblk" style="margin-bottom:14px"><div class="ih">Fechamentos · controle mensal</div><div class="ib q">Nenhum fechamento ainda. Ao mover um lead para <b>Fechado</b> no Kanban, ele entra aqui com a data e o valor.</div></div>';
+  const meses={};
+  for(const l of fechados){ const iso=l.fechado_em||String(l.atualizado_em||'').slice(0,10)||'s-d'; const m=iso.slice(0,7); (meses[m]=meses[m]||[]).push(l); }
+  const nomesM=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const mLabel=m=>{ const p=m.split('-'); return p.length===2?(nomesM[+p[1]-1]+' de '+p[0]):'sem data'; };
+  const mesAtual=new Date().toISOString().slice(0,7);
+  let total=0;
+  const blocos=Object.keys(meses).sort().reverse().map(m=>{
+    const rows=meses[m].sort((a,b)=>String(b.fechado_em||'').localeCompare(String(a.fechado_em||'')));
+    const sub=rows.reduce((s,l)=>s+(+l.fechado_valor||0),0); total+=sub;
+    const linhas=rows.map(l=>'<tr><td class="q" style="white-space:nowrap">'+(l.fechado_em?l.fechado_em.split('-').reverse().join('/'):'—')+'</td>'
+      +'<td><b>'+esc(l.titular||'—')+'</b><div class="status">'+esc(l.marca||'')+(l.numero?((l.marca?' · ':'')+'proc. '+esc(l.numero)):'')+(l.tipo_problema?(' · '+esc(l.tipo_problema)):'')+'</div></td>'
+      +'<td style="white-space:nowrap">'+(l.fechado_valor?('<b>'+brl(l.fechado_valor)+'</b>'):'<span class="q">sem valor</span>')+'</td></tr>').join('');
+    return '<div class="ib" style="padding-bottom:4px"><b style="text-transform:capitalize">'+mLabel(m)+'</b>'+(m===mesAtual?' <span class="pill bom">mês atual</span>':'')+' · '+rows.length+' fechamento(s) · <b>'+brl(sub)+'</b></div>'
+      +'<table class="dett"><tbody>'+linhas+'</tbody></table>';
+  }).join('');
+  return '<div class="iblk" style="margin-bottom:14px"><div class="ih">Fechamentos · controle mensal</div>'+blocos+'<div class="ib" style="background:var(--gelo)"><b>Total geral: '+brl(total)+'</b></div></div>';
+}
+async function renderFinanceiro(){
   const v=$('#view-financeiro'); v.className='';
+  try{ await LEADS_PRONTOS; }catch(e){}
   const rowsLiv=PRECOS_LIV.map(p=>'<tr><td><b>'+esc(p.s)+'</b>'+(p.obs?('<div class="status" style="margin-top:3px;line-height:1.5">'+esc(p.obs)+'</div>'):'')+'</td>'
     +'<td style="white-space:nowrap"><b>'+brl(p.v)+'</b></td>'
     +'<td style="white-space:nowrap">'+brl(p.v*0.93)+'</td>'
@@ -1873,6 +1938,7 @@ function renderFinanceiro(){
   const rowsTax=TAXAS_INPI.map(t=>'<tr'+(t[3]?' style="background:#fffdf6"':'')+'><td class="q">'+esc(t[0])+'</td><td>'+(t[3]?'<b>':'')+esc(t[1])+(t[3]?'</b>':'')+'</td><td style="white-space:nowrap">'+brl(t[2])+'</td></tr>').join('');
   v.innerHTML='<div class="bar"><b style="font-size:15px">Financeiro</b><span class="status">precificação dos serviços e taxas do INPI</span></div>'
     +'<div style="padding:0 20px 30px;max-width:960px">'
+    +fechamentosHTML()
     +'<div class="iblk"><div class="ih">Precificação dos serviços LIV</div>'
     +'<table class="dett"><thead><tr><th>Serviço</th><th>Valor</th><th>À vista (7% desc.)</th><th>Parcelamento</th></tr></thead><tbody>'+rowsLiv+'</tbody></table>'
     +'<div class="ib q">Os honorários não incluem as taxas oficiais do INPI (GRU), repassadas pelo valor vigente, sem acréscimo.</div></div>'
@@ -1901,7 +1967,7 @@ document.querySelectorAll('.tab').forEach(t=> t.onclick=()=>{
   if(v==='processos' && !PROC_INIT){ PROC_INIT=true; renderProcessos(); }
   if(v==='adesoes' && !ADES_INIT){ ADES_INIT=true; renderAdesoes(); }
   if(v==='oportunidades' && !OPO_INIT){ OPO_INIT=true; renderOportunidades(); }
-  if(v==='financeiro' && !FIN_INIT){ FIN_INIT=true; renderFinanceiro(); }
+  if(v==='financeiro'){ FIN_INIT=true; renderFinanceiro(); }   // sempre re-renderiza (fechamentos mudam)
   if(MOD_INFO[v] && !$('#view-'+v).innerHTML.trim()){ $('#view-'+v).innerHTML=placeholderMod(v); }
 });
 
