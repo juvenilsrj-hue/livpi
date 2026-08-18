@@ -629,7 +629,9 @@ function dadosDocs(l){
     : ('pessoa física, inscrita no CPF sob o nº '+doc+', residente e domiciliada à '+end);
   const t=l.tipo_problema;
   return {
-    CLIENTE: escXml(cli), CLIENTE_MAI: escXml(cli.toUpperCase()), QUALIFICACAO: escXml(qual), REPRESENTANTE: escXml(rep||'____________________'),
+    CLIENTE: escXml(cli), CLIENTE_MAI: escXml(cli.toUpperCase()), QUALIFICACAO: escXml(qual),
+    QUALIFICACAO_SEDE: escXml(qual.replace('com endereço à','com sede à')),
+    REPRESENTANTE: escXml(rep||'____________________'),
     MARCA: escXml(v('dMarca')||'____'), PROCESSO: escXml(v('dProc')||'____'),
     OBJETIVO: escXml(t==='oposicao'?'Manifestação a oposição':'Recurso ao indeferimento'),
     SERVICO: escXml(t==='oposicao'?'Defesa em oposição':'Recurso ao indeferimento'),
@@ -1070,7 +1072,7 @@ function renderModal(l){
   ['dValor','dForma','dNParc','dEntrada'].forEach(id=>{ const el=$('#'+id); if(el) el.addEventListener('input', recalcPgto); });
   if($('#dParcela')) $('#dParcela').addEventListener('input', ()=>{ const p=$('#dPgtoPrev'); if(p){ const c=condicaoPgto(); p.textContent=c.resumo; } });
   if($('#dValor')) recalcPgto();
-  if($('#mProcur')) $('#mProcur').onclick=e=>gerarDoc('tpl/procuracao.docx','Procuração', e.target);
+  if($('#mProcur')) $('#mProcur').onclick=e=>gerarDoc(l.tipo_problema==='oposicao'?'tpl/procuracao-oposicao.docx':'tpl/procuracao.docx','Procuração', e.target);
   // oposição usa o contrato completo de defesa; indeferimento segue o modelo geral
   if($('#mContr')) $('#mContr').onclick=e=>gerarDoc(l.tipo_problema==='oposicao'?'tpl/contrato-oposicao.docx':'tpl/contrato-servicos.docx','Contrato', e.target);
   // detalhe ao vivo no INPI: carrega AUTOMÁTICO ao abrir; botão só re-consulta
