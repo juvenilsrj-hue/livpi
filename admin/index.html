@@ -579,7 +579,7 @@ function docsHTML(l){
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dEntrada','Entrada (R$)','330,00')+campo('dParcela','Valor de cada parcela (R$)','325,00')+'</div>'
     +'<div class="q" id="dPgtoPrev" style="margin-top:5px"></div>'
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dValorExt','Valor por extenso','novecentos e oitenta reais')+campo('dData','Data',hoje)+'</div>'
-    +'<div class="mrow" style="margin-top:11px"><button id="mProcur">📑 Gerar procuração</button><button id="mContr">📄 Gerar contrato</button><span class="q" id="mDocMsg"></span></div>'
+    +'<div class="mrow" style="margin-top:11px"><button id="mProcur">📑 Gerar procuração</button><button id="mContr">📄 Gerar contrato</button><span class="q" id="mDocMsg">'+(t==='oposicao'?'contrato padrão de defesa de oposição':'contrato de recurso')+'</span></div>'
     +'</details>';
 }
 // condição de pagamento do contrato, montada conforme forma/nº de parcelas
@@ -625,11 +625,11 @@ function dadosDocs(l){
   const end=v('dEnd')||'____________________';
   const rep=v('dRep');
   const qual=pj
-    ? ('pessoa jurídica inscrita no CNPJ sob o nº '+doc+', situada à '+end+(rep?(', por seu representante legal '+rep):''))
-    : ('pessoa física inscrita no CPF sob o nº '+doc+', residente e domiciliada à '+end);
+    ? ('pessoa jurídica de direito privado, inscrita no CNPJ sob o nº '+doc+', com endereço à '+end+(rep?(', neste ato representada por '+rep):''))
+    : ('pessoa física, inscrita no CPF sob o nº '+doc+', residente e domiciliada à '+end);
   const t=l.tipo_problema;
   return {
-    CLIENTE: escXml(cli), CLIENTE_MAI: escXml(cli.toUpperCase()), QUALIFICACAO: escXml(qual),
+    CLIENTE: escXml(cli), CLIENTE_MAI: escXml(cli.toUpperCase()), QUALIFICACAO: escXml(qual), REPRESENTANTE: escXml(rep||'____________________'),
     MARCA: escXml(v('dMarca')||'____'), PROCESSO: escXml(v('dProc')||'____'),
     OBJETIVO: escXml(t==='oposicao'?'Manifestação a oposição':'Recurso ao indeferimento'),
     SERVICO: escXml(t==='oposicao'?'Defesa em oposição':'Recurso ao indeferimento'),
@@ -1071,7 +1071,8 @@ function renderModal(l){
   if($('#dParcela')) $('#dParcela').addEventListener('input', ()=>{ const p=$('#dPgtoPrev'); if(p){ const c=condicaoPgto(); p.textContent=c.resumo; } });
   if($('#dValor')) recalcPgto();
   if($('#mProcur')) $('#mProcur').onclick=e=>gerarDoc('tpl/procuracao.docx','Procuração', e.target);
-  if($('#mContr')) $('#mContr').onclick=e=>gerarDoc('tpl/contrato-servicos.docx','Contrato', e.target);
+  // oposição usa o contrato completo de defesa; indeferimento segue o modelo geral
+  if($('#mContr')) $('#mContr').onclick=e=>gerarDoc(l.tipo_problema==='oposicao'?'tpl/contrato-oposicao.docx':'tpl/contrato-servicos.docx','Contrato', e.target);
   // detalhe ao vivo no INPI: carrega AUTOMÁTICO ao abrir; botão só re-consulta
   const btDet=$('#mDet');
   if(btDet) btDet.onclick=()=>carregarDetalheINPI(l, true);
