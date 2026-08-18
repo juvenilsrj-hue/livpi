@@ -579,7 +579,7 @@ function docsHTML(l){
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dEntrada','Entrada (R$)','330,00')+campo('dParcela','Valor de cada parcela (R$)','325,00')+'</div>'
     +'<div class="q" id="dPgtoPrev" style="margin-top:5px"></div>'
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dValorExt','Valor por extenso','novecentos e oitenta reais')+campo('dData','Data',hoje)+'</div>'
-    +'<div class="mrow" style="margin-top:11px"><button id="mProcur">📑 Gerar procuração</button><button id="mContr">📄 Gerar contrato</button><span class="q" id="mDocMsg">'+(t==='oposicao'?'contrato padrão de defesa de oposição':'contrato de recurso')+'</span></div>'
+    +'<div class="mrow" style="margin-top:11px"><button id="mProcur">📑 Gerar procuração</button><button id="mContr">📄 Gerar contrato</button><span class="q" id="mDocMsg">'+esc((TPL_DOCS[t]||TPL_DOCS.outro).rotulo)+'</span></div>'
     +'</details>';
 }
 // condição de pagamento do contrato, montada conforme forma/nº de parcelas
@@ -1072,9 +1072,10 @@ function renderModal(l){
   ['dValor','dForma','dNParc','dEntrada'].forEach(id=>{ const el=$('#'+id); if(el) el.addEventListener('input', recalcPgto); });
   if($('#dParcela')) $('#dParcela').addEventListener('input', ()=>{ const p=$('#dPgtoPrev'); if(p){ const c=condicaoPgto(); p.textContent=c.resumo; } });
   if($('#dValor')) recalcPgto();
-  if($('#mProcur')) $('#mProcur').onclick=e=>gerarDoc(l.tipo_problema==='oposicao'?'tpl/procuracao-oposicao.docx':'tpl/procuracao.docx','Procuração', e.target);
-  // oposição usa o contrato completo de defesa; indeferimento segue o modelo geral
-  if($('#mContr')) $('#mContr').onclick=e=>gerarDoc(l.tipo_problema==='oposicao'?'tpl/contrato-oposicao.docx':'tpl/contrato-servicos.docx','Contrato', e.target);
+  // oposição e indeferimento têm modelos próprios; exigência/outro seguem o geral
+  const tplDoc=TPL_DOCS[l.tipo_problema]||TPL_DOCS.outro;
+  if($('#mProcur')) $('#mProcur').onclick=e=>gerarDoc(tplDoc.procuracao,'Procuração', e.target);
+  if($('#mContr')) $('#mContr').onclick=e=>gerarDoc(tplDoc.contrato,'Contrato', e.target);
   // detalhe ao vivo no INPI: carrega AUTOMÁTICO ao abrir; botão só re-consulta
   const btDet=$('#mDet');
   if(btDet) btDet.onclick=()=>carregarDetalheINPI(l, true);
@@ -1213,6 +1214,13 @@ let DASH_LOADED=false, DASH_ALL={}, DASH_REVS=[], CFGV=null;
 const fmtBRL=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
 // valores OFICIAIS da precificação (aba Financeiro): recurso/defesa 980, mérito 340
 const VAL_PADRAO={indeferido:980, oposicao:980, exigencia:340, outro:980, conversao:5};
+// modelos de documento por tipo de problema (oposição e indeferimento têm texto próprio)
+const TPL_DOCS={
+  oposicao:  {procuracao:'tpl/procuracao-oposicao.docx',     contrato:'tpl/contrato-oposicao.docx',     rotulo:'modelo padrão de defesa de oposição'},
+  indeferido:{procuracao:'tpl/procuracao-indeferimento.docx',contrato:'tpl/contrato-indeferimento.docx',rotulo:'modelo padrão de recurso contra indeferimento'},
+  exigencia: {procuracao:'tpl/procuracao.docx',              contrato:'tpl/contrato-servicos.docx',     rotulo:'modelo geral (exigência)'},
+  outro:     {procuracao:'tpl/procuracao.docx',              contrato:'tpl/contrato-servicos.docx',     rotulo:'modelo geral'}
+};
 const TIPO_LABEL={indeferido:'Recurso contra indeferimento (por classe)', oposicao:'Defesa em oposição (por classe)', exigencia:'Apresentação de mérito', outro:'Outros serviços (registro etc.)'};
 function hbar(label,val,max,cls){ const pct=max>0?Math.max(1,Math.round(val/max*100)):0; return '<div class="hbar"><span class="hl">'+esc(label)+'</span><span class="ht"><span class="hf'+(cls?(' '+cls):'')+'" style="width:'+pct+'%"></span></span><span class="hv">'+fmtN(val)+'</span></div>'; }
 async function carregarCfg(){ try{ const { data }=await sb.from('liv_config').select('valor').eq('chave','valores').maybeSingle(); CFGV=Object.assign({},VAL_PADRAO,(data&&data.valor)||{}); }catch(e){ CFGV=Object.assign({},VAL_PADRAO); } }
