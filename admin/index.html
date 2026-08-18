@@ -573,10 +573,49 @@ function docsHTML(l){
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dDoc','CNPJ / CPF',doc,'só números ou formatado')+campo('dRep','Representante legal (se PJ)',rep)+'</div>'
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dEnd','Endereço completo',e.endereco||'','rua, nº, bairro, cidade/UF, CEP')+'</div>'
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dMarca','Marca',l.marca||(l._det&&l._det.marca)||'')+campo('dProc','Processo',l.numero||'')+'</div>'
-    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dValor','Valor (R$)','980,00')+campo('dEntrada','Entrada (R$)','330,00')+campo('dParcela','2x de (R$)','325,00')+'</div>'
+    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dValor','Valor (R$)','980,00')
+    +'<div style="flex:0 0 150px"><label class="q" style="display:block;margin-bottom:3px">Forma</label><select id="dForma" style="'+i+'"><option value="entrada">Entrada + parcelas</option><option value="avista">À vista</option><option value="parcelado">Parcelado (sem entrada)</option></select></div>'
+    +'<div style="flex:0 0 110px"><label class="q" style="display:block;margin-bottom:3px">Nº parcelas</label><select id="dNParc" style="'+i+'">'+[1,2,3,4,5,6,7,8,9,10,11,12].map(n=>'<option'+(n===2?' selected':'')+'>'+n+'</option>').join('')+'</select></div></div>'
+    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dEntrada','Entrada (R$)','330,00')+campo('dParcela','Valor de cada parcela (R$)','325,00')+'</div>'
+    +'<div class="q" id="dPgtoPrev" style="margin-top:5px"></div>'
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dValorExt','Valor por extenso','novecentos e oitenta reais')+campo('dData','Data',hoje)+'</div>'
     +'<div class="mrow" style="margin-top:11px"><button id="mProcur">📑 Gerar procuração</button><button id="mContr">📄 Gerar contrato</button><span class="q" id="mDocMsg"></span></div>'
     +'</details>';
+}
+// condição de pagamento do contrato, montada conforme forma/nº de parcelas
+const NUM_EXT=['','uma','duas','três','quatro','cinco','seis','sete','oito','nove','dez','onze','doze'];
+function condicaoPgto(){
+  const num=s=>parseFloat(String(s||'').replace(/\./g,'').replace(',','.'))||0;
+  const g=id=>{ const el=$('#'+id); return el?el.value:''; };
+  const forma=g('dForma')||'entrada', n=+g('dNParc')||2;
+  const ent=g('dEntrada'), parc=g('dParcela');
+  const venc=(qtd)=>{ const ds=[]; for(let k=1;k<=qtd;k++) ds.push(k*28);
+    return qtd<=3 ? ('a vencer em '+ds.slice(0,-1).join(', ')+(qtd>1?' e ':'')+ds[ds.length-1]+' dias da data de assinatura do contrato')
+                  : ('a vencer a cada 28 dias, a primeira 28 dias após a data de assinatura do contrato'); };
+  if(forma==='avista') return { txt:'a ser pago à vista, na data de assinatura do contrato.', resumo:'à vista' };
+  if(forma==='parcelado') return { txt:'a ser pago em '+n+' ('+(NUM_EXT[n]||n)+') parcelas de R$ '+(parc||'____')+', '+venc(n)+'.',
+    resumo:n+'x de R$ '+(parc||'—') };
+  return { txt:'sendo uma entrada de R$ '+(ent||'____')+' mais '+n+' ('+(NUM_EXT[n]||n)+') vezes de R$ '+(parc||'____')+', '+venc(n)+'.',
+    resumo:'entrada R$ '+(ent||'—')+' + '+n+'x de R$ '+(parc||'—') };
+}
+// recalcula a parcela quando muda valor/entrada/nº e mostra o resumo
+function recalcPgto(){
+  const num=s=>parseFloat(String(s||'').replace(/\./g,'').replace(',','.'))||0;
+  const forma=($('#dForma')||{}).value||'entrada', n=+(($('#dNParc')||{}).value)||2;
+  const total=num(($('#dValor')||{}).value);
+  const eEnt=$('#dEntrada'), eParc=$('#dParcela'), ePrev=$('#dPgtoPrev'), eN=$('#dNParc');
+  if(!eEnt) return;
+  eEnt.parentElement.style.display=(forma==='entrada')?'':'none';
+  eParc.parentElement.style.display=(forma==='avista')?'none':'';
+  if(eN) eN.parentElement.style.display=(forma==='avista')?'none':'';
+  if(forma!=='avista' && total>0){
+    const ent=(forma==='entrada')?num(eEnt.value):0;
+    const resto=Math.max(0,total-ent);
+    if(n>0) eParc.value=(resto/n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+  if(ePrev){ const c=condicaoPgto();
+    const conf=(forma==='avista')?total:((forma==='entrada'?num(eEnt.value):0)+n*num(eParc.value));
+    ePrev.innerHTML=c.resumo+' · soma: '+brl(conf)+(Math.abs(conf-total)>0.05?(' <b style="color:var(--bad)">≠ valor total ('+brl(total)+')</b>'):' ✓'); }
 }
 function dadosDocs(l){
   const v=id=>{ const el=$('#'+id); return el?String(el.value||'').trim():''; };
@@ -595,6 +634,7 @@ function dadosDocs(l){
     OBJETIVO: escXml(t==='oposicao'?'Manifestação a oposição':'Recurso ao indeferimento'),
     SERVICO: escXml(t==='oposicao'?'Defesa em oposição':'Recurso ao indeferimento'),
     VALOR: escXml(v('dValor')||'980,00'), VALOR_EXTENSO: escXml(v('dValorExt')||'novecentos e oitenta reais'),
+    CONDICAO_PGTO: escXml(condicaoPgto().txt),
     ENTRADA: escXml(v('dEntrada')||'330,00'), PARCELA: escXml(v('dParcela')||'325,00'),
     DATA: escXml(v('dData')||dataExtenso(new Date().toISOString().slice(0,10))),
   };
@@ -1027,6 +1067,9 @@ function renderModal(l){
     }catch(e){ alert('Erro ao gerar: '+(e.message||e)); }
     bt.disabled=false; bt.textContent=rot;
   };
+  ['dValor','dForma','dNParc','dEntrada'].forEach(id=>{ const el=$('#'+id); if(el) el.addEventListener('input', recalcPgto); });
+  if($('#dParcela')) $('#dParcela').addEventListener('input', ()=>{ const p=$('#dPgtoPrev'); if(p){ const c=condicaoPgto(); p.textContent=c.resumo; } });
+  if($('#dValor')) recalcPgto();
   if($('#mProcur')) $('#mProcur').onclick=e=>gerarDoc('tpl/procuracao.docx','Procuração', e.target);
   if($('#mContr')) $('#mContr').onclick=e=>gerarDoc('tpl/contrato-servicos.docx','Contrato', e.target);
   // detalhe ao vivo no INPI: carrega AUTOMÁTICO ao abrir; botão só re-consulta
