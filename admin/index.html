@@ -570,7 +570,7 @@ function docsHTML(l){
     +'<div class="q" style="margin:8px 0">Confira os dados antes de gerar. São documentos jurídicos, então o que estiver em branco precisa ser preenchido aqui.</div>'
     +'<div class="mrow" style="gap:10px">'+campo('dCli','Cliente (razão social / nome)',cliente)
     +'<div style="flex:0 0 120px"><label class="q" style="display:block;margin-bottom:3px">Tipo</label><select id="dTipo" style="'+i+'"><option value="PJ"'+(pj?' selected':'')+'>PJ</option><option value="PF"'+(pj?'':' selected')+'>PF</option></select></div></div>'
-    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dDoc','CNPJ / CPF',doc,'só números ou formatado')+campo('dRep','Representante legal (se PJ)',rep)+'</div>'
+    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dDoc','CNPJ / CPF',doc,'só números ou formatado')+campo('dRep','Representante legal (se PJ)',rep)+campo('dCpfRep','CPF do representante','','usado na assinatura da procuração')+'</div>'
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dEnd','Endereço completo',e.endereco||'','rua, nº, bairro, cidade/UF, CEP')+'</div>'
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dMarca','Marca',l.marca||(l._det&&l._det.marca)||'')+campo('dProc','Processo',l.numero||'')+'</div>'
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dValor','Valor (R$)','980,00')
@@ -632,6 +632,7 @@ function dadosDocs(l){
     CLIENTE: escXml(cli), CLIENTE_MAI: escXml(cli.toUpperCase()), QUALIFICACAO: escXml(qual),
     QUALIFICACAO_SEDE: escXml(qual.replace('com endereço à','com sede à')),
     REPRESENTANTE: escXml(rep||'____________________'),
+    CPF_REP: escXml(v('dCpfRep')||(pj?'____________________':doc)),
     MARCA: escXml(v('dMarca')||'____'), PROCESSO: escXml(v('dProc')||'____'),
     OBJETIVO: escXml(t==='oposicao'?'Manifestação a oposição':'Recurso ao indeferimento'),
     SERVICO: escXml(t==='oposicao'?'Defesa em oposição':'Recurso ao indeferimento'),
