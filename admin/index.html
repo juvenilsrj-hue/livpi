@@ -1084,13 +1084,16 @@ async function garantirResponsavel(l, estagio){
 }
 
 // ===== FECHAMENTO (mover p/ "Fechado" exige data + valor + modalidade) ========
+// soma k meses a uma data ISO travando no último dia do mês (31/01 + 1 mês = 28/02, não 03/03)
+function mesMais(iso,k){
+  const p=iso.split('-').map(Number), t=p[1]-1+k;
+  const y=p[0]+Math.floor(t/12), m=t%12+1, ult=new Date(y,m,0).getDate();
+  return y+'-'+String(m).padStart(2,'0')+'-'+String(Math.min(p[2],ult)).padStart(2,'0');
+}
 // parcelas mensais a partir da data (entrada na data do fechamento); centavos na 1ª
 function gerarParcelas(dataISO, valor, n){
   const cents=Math.round(valor*100), q=Math.floor(cents/n), out=[];
-  for(let i=0;i<n;i++){
-    const d=new Date(dataISO+'T00:00:00'); d.setMonth(d.getMonth()+i);
-    out.push({ n:i+1, de:n, data:d.toISOString().slice(0,10), valor:(q+(i===0?cents-q*n:0))/100 });
-  }
+  for(let i=0;i<n;i++) out.push({ n:i+1, de:n, data:mesMais(dataISO,i), valor:(q+(i===0?cents-q*n:0))/100 });
   return out;
 }
 function pedirFechamento(l){
@@ -1099,7 +1102,8 @@ function pedirFechamento(l){
     const hoje=l.fechado_em||new Date().toISOString().slice(0,10);
     const valAtual=l.fechado_valor?String(l.fechado_valor).replace('.',','):'';
     const modAtual=pg?pg.modalidade:'avista';
-    const nAtual=(pg&&pg.parcelas&&pg.parcelas.length>1)?pg.parcelas.length:3;
+    const nAtual=(pg&&pg.parcelas&&pg.parcelas.length>1)?(pg.modalidade==='entrada'?pg.parcelas.length-1:pg.parcelas.length):3;
+    const entAtual=(pg&&pg.modalidade==='entrada'&&pg.parcelas&&pg.parcelas[0])?String(pg.parcelas[0].valor).replace('.',','):'';
     const inp='width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff';
     let bg=document.getElementById('fechoBg');
     if(bg) bg.remove();
@@ -1111,35 +1115,53 @@ function pedirFechamento(l){
       +'<label class="q" style="display:block;margin:12px 0 4px">Data do fechamento *</label><input type="date" id="fcData" value="'+hoje+'" style="'+inp+'">'
       +'<label class="q" style="display:block;margin:10px 0 4px">Valor fechado (R$) *</label><input id="fcValor" value="'+esc(valAtual)+'" placeholder="ex.: 980,00" inputmode="decimal" style="'+inp+'">'
       +'<label class="q" style="display:block;margin:10px 0 4px">Modalidade de pagamento *</label>'
-      +'<div style="display:flex;gap:8px"><select id="fcMod" style="'+inp+'"><option value="avista"'+(modAtual==='avista'?' selected':'')+'>À vista</option><option value="parcelado"'+(modAtual==='parcelado'?' selected':'')+'>Parcelado (sem juros)</option></select>'
-      +'<select id="fcParc" style="'+inp+';display:'+(modAtual==='parcelado'?'block':'none')+';width:140px">'+[2,3,4,5,6,7,8,9,10,11,12].map(n=>'<option value="'+n+'"'+(n===nAtual?' selected':'')+'>'+n+'x</option>').join('')+'</select></div>'
+      +'<div style="display:flex;gap:8px"><select id="fcMod" style="'+inp+'">'
+        +'<option value="avista"'+(modAtual==='avista'?' selected':'')+'>À vista</option>'
+        +'<option value="entrada"'+(modAtual==='entrada'?' selected':'')+'>Entrada + parcelas</option>'
+        +'<option value="parcelado"'+(modAtual==='parcelado'?' selected':'')+'>Parcelado (sem entrada)</option></select>'
+      +'<select id="fcParc" style="'+inp+';width:140px">'+[1,2,3,4,5,6,7,8,9,10,11,12].map(n=>'<option value="'+n+'"'+(n===nAtual?' selected':'')+'>'+n+'x</option>').join('')+'</select></div>'
+      +'<div id="fcEntBox" style="display:none"><label class="q" style="display:block;margin:10px 0 4px">Valor da entrada (R$) * <span style="font-weight:400">(paga na data do fechamento)</span></label><input id="fcEnt" value="'+esc(entAtual)+'" placeholder="ex.: 330,00" inputmode="decimal" style="'+inp+'"></div>'
       +'<div class="q" id="fcPrev" style="margin-top:6px"></div>'
       +'<div class="q" id="fcErr" style="color:var(--bad);margin-top:6px"></div>'
       +'<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="ghost" id="fcCanc">Cancelar</button><button id="fcOk">Confirmar fechamento</button></div></div>';
     document.body.appendChild(bg);
     const fecha=v=>{ bg.remove(); res(v); };
-    const preview=()=>{
-      const v=parseFloat(String(bg.querySelector('#fcValor').value).replace(/\./g,'').replace(',','.'));
-      const mod=bg.querySelector('#fcMod').value, d=bg.querySelector('#fcData').value;
-      bg.querySelector('#fcParc').style.display=(mod==='parcelado')?'block':'none';
-      const pv=bg.querySelector('#fcPrev');
-      if(!(v>0)||!d){ pv.textContent=''; return; }
-      if(mod==='avista'){ pv.textContent='1 lançamento: '+brl(v)+' em '+d.split('-').reverse().join('/'); }
-      else{ const n=+bg.querySelector('#fcParc').value; const ps=gerarParcelas(d,v,n);
-        pv.textContent=n+' lançamentos: '+brl(ps[0].valor)+' em '+ps[0].data.split('-').reverse().join('/')+' + '+(n-1)+'x de '+brl(ps[1].valor)+' (mensais)'; }
+    const num=s=>parseFloat(String(s||'').replace(/\./g,'').replace(',','.'))||0;
+    const dBR=d=>d.split('-').reverse().join('/');
+    // monta os lançamentos: entrada na data do fechamento, parcelas mensais na sequência
+    const plano=(d,v,mod,n,ent)=>{
+      if(mod==='avista') return [{n:1,de:1,data:d,valor:v}];
+      if(mod==='parcelado') return gerarParcelas(d,v,n);
+      const ps=gerarParcelas(d,v-ent,n).map((p,i)=>({n:i+2, de:n+1, data:mesMais(d,i+1), valor:p.valor}));
+      return [{n:1,de:n+1,data:d,valor:Math.round(ent*100)/100,rotulo:'entrada'}].concat(ps);
     };
-    ['fcValor','fcMod','fcParc','fcData'].forEach(id=> bg.querySelector('#'+id).addEventListener('input', preview));
+    const preview=()=>{
+      const v=num(bg.querySelector('#fcValor').value), mod=bg.querySelector('#fcMod').value, d=bg.querySelector('#fcData').value;
+      const ent=num(bg.querySelector('#fcEnt').value);
+      bg.querySelector('#fcParc').style.display=(mod==='avista')?'none':'block';
+      bg.querySelector('#fcEntBox').style.display=(mod==='entrada')?'block':'none';
+      const pv=bg.querySelector('#fcPrev');
+      if(!(v>0)||!d||(mod==='entrada'&&!(ent>0&&ent<v))){ pv.textContent=''; return; }
+      const n=+bg.querySelector('#fcParc').value;
+      const ps=plano(d,v,mod,n,ent);
+      if(mod==='avista') pv.textContent='1 lançamento: '+brl(v)+' em '+dBR(d);
+      else if(mod==='parcelado') pv.textContent=n+' lançamentos: '+brl(ps[0].valor)+' em '+dBR(ps[0].data)+(n>1?(' + '+(n-1)+'x de '+brl(ps[1].valor)+' (mensais)'):'');
+      else pv.textContent='entrada de '+brl(ent)+' em '+dBR(d)+' + '+n+'x de '+brl(ps[1].valor)+' (mensais) = '+brl(v);
+    };
+    ['fcValor','fcMod','fcParc','fcData','fcEnt'].forEach(id=> bg.querySelector('#'+id).addEventListener('input', preview));
     preview();
     bg.querySelector('#fcCanc').onclick=()=>fecha(null);
     bg.addEventListener('click',e=>{ if(e.target===bg) fecha(null); });
     bg.querySelector('#fcOk').onclick=()=>{
-      const d=bg.querySelector('#fcData').value;
-      const v=parseFloat(String(bg.querySelector('#fcValor').value).replace(/\./g,'').replace(',','.'));
-      const mod=bg.querySelector('#fcMod').value;
-      if(!d){ bg.querySelector('#fcErr').textContent='Informe a data do fechamento.'; return; }
-      if(!(v>0)){ bg.querySelector('#fcErr').textContent='Informe o valor fechado (maior que zero).'; return; }
-      const n=(mod==='parcelado')?+bg.querySelector('#fcParc').value:1;
-      fecha({ data:d, valor:v, modalidade:mod, parcelas:gerarParcelas(d,v,n) });
+      const d=bg.querySelector('#fcData').value, err=bg.querySelector('#fcErr');
+      const v=num(bg.querySelector('#fcValor').value), mod=bg.querySelector('#fcMod').value;
+      const ent=num(bg.querySelector('#fcEnt').value);
+      if(!d){ err.textContent='Informe a data do fechamento.'; return; }
+      if(!(v>0)){ err.textContent='Informe o valor fechado (maior que zero).'; return; }
+      if(mod==='entrada'&&!(ent>0)){ err.textContent='Informe o valor da entrada.'; return; }
+      if(mod==='entrada'&&ent>=v){ err.textContent='A entrada precisa ser menor que o valor fechado.'; return; }
+      const n=(mod==='avista')?1:+bg.querySelector('#fcParc').value;
+      fecha({ data:d, valor:v, modalidade:mod, parcelas:plano(d,v,mod,n,ent) });
     };
     setTimeout(()=>{ const el=bg.querySelector('#fcValor'); if(el) el.focus(); },50);
   });
@@ -1150,7 +1172,9 @@ async function gravarFechamento(l,f){
     atualizado_em:new Date().toISOString() };
   await sb.from('leads').update(patch).eq('id',l.id); Object.assign(l,patch);
   const dBR=f.data.split('-').reverse().join('/');
-  const modTxt=f.modalidade==='avista'?'à vista':('em '+f.parcelas.length+'x sem juros');
+  const modTxt=f.modalidade==='avista'?'à vista'
+    :f.modalidade==='entrada'?('entrada de '+brl(f.parcelas[0].valor)+' + '+(f.parcelas.length-1)+'x')
+    :('em '+f.parcelas.length+'x sem juros');
   await comentar(l.id,'Fechamento registrado: '+brl(f.valor)+' em '+dBR+' ('+modTxt+').');
 }
 
@@ -2273,7 +2297,9 @@ function fechamentosHTML(){
     const sub=rows.reduce((s,l)=>s+(+l.fechado_valor||0),0); total+=sub;
     const linhas=rows.map(l=>{
       const pg=l.fechado_pagamento||null;
-      const mod=pg?(pg.modalidade==='avista'?'à vista':((pg.parcelas||[]).length+'x sem juros')):'—';
+      const mod=!pg?'—':pg.modalidade==='avista'?'à vista'
+        :pg.modalidade==='entrada'?('entrada + '+((pg.parcelas||[]).length-1)+'x')
+        :((pg.parcelas||[]).length+'x sem juros');
       return '<tr><td class="q" style="white-space:nowrap">'+(l.fechado_em?l.fechado_em.split('-').reverse().join('/'):'<span style="color:var(--bad)">sem data</span>')+'</td>'
       +'<td><b>'+esc(l.titular||'—')+'</b><div class="status">'+esc(l.marca||'')+(l.numero?((l.marca?' · ':'')+'proc. '+esc(l.numero)):'')+(l.tipo_problema?(' · '+esc(l.tipo_problema)):'')+'</div></td>'
       +'<td class="q" style="white-space:nowrap">'+mod+'</td>'
@@ -2301,7 +2327,7 @@ function lancamentosHTML(fechados){
     const its=porMes[m].sort((a,b)=>String(a.p.data).localeCompare(String(b.p.data)));
     const sub=its.reduce((s,x)=>s+(+x.p.valor||0),0);
     const linhas=its.map(x=>'<tr><td class="q" style="white-space:nowrap">'+x.p.data.split('-').reverse().join('/')+'</td>'
-      +'<td>'+esc(x.l.titular||'—')+'<span class="q"> · parcela '+x.p.n+'/'+x.p.de+'</span></td>'
+      +'<td>'+esc(x.l.titular||'—')+'<span class="q"> · '+(x.p.rotulo?esc(x.p.rotulo):('parcela '+x.p.n+'/'+x.p.de))+'</span></td>'
       +'<td style="white-space:nowrap"><b>'+brl(x.p.valor)+'</b></td></tr>').join('');
     return '<div class="ib" style="padding-bottom:4px"><b style="text-transform:capitalize">'+mLabel(m)+'</b>'+(m===mesAtual?' <span class="pill bom">mês atual</span>':'')+' · a receber: <b>'+brl(sub)+'</b></div><table class="dett"><tbody>'+linhas+'</tbody></table>';
   }).join('');
