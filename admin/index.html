@@ -282,6 +282,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script>
 // ===== CONFIG (preencher com os dados do projeto Supabase) ====================
 const SUPABASE_URL = "https://fptkrfvbkxrzhvqgvime.supabase.co";
@@ -541,21 +542,172 @@ async function gerarProposta(l){
   catch(e){ alert('Erro ao gerar a proposta: '+(e.message||e)); }
   if(bt){ bt.disabled=false; bt.textContent='📄 Gerar proposta (DOCX)'; }
 }
-// preenche um template DOCX com {{CAMPOS}} e baixa
-async function baixarDocx(tpl, dados, nomeArquivo){
+// carrega um template DOCX e preenche os {{CAMPOS}}; retorna o zip + XML final
+async function xmlPreenchido(tpl, dados){
   if(typeof JSZip==='undefined') throw new Error('biblioteca de DOCX ainda carregando, tente de novo');
   const buf = await fetch(tpl).then(r=>{ if(!r.ok) throw new Error('modelo não encontrado no servidor'); return r.arrayBuffer(); });
   const zip = await JSZip.loadAsync(buf);
   let xml = await zip.file('word/document.xml').async('string');
   xml = xml.replace(/\{\{(\w+)\}\}/g, (m,k)=> (k in dados)?dados[k]:m);
+  return { zip, xml };
+}
+// preenche um template DOCX com {{CAMPOS}} e baixa
+async function baixarDocx(tpl, dados, nomeArquivo){
+  const { zip, xml } = await xmlPreenchido(tpl, dados);
   zip.file('word/document.xml', xml);
   const blob = await zip.generateAsync({ type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
   a.download=nomeArquivo; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),5000);
 }
+// ---- PDF no navegador: renderiza nossos templates DOCX (parágrafos, negrito,
+// centralizado/justificado, recuo, logo) para pré-visualizar e enviar p/ assinatura
+let LOGO_BUF=null;
+async function logoBytes(){ if(LOGO_BUF===null){ LOGO_BUF=await fetch('tpl/logo-camila.png').then(r=>r.ok?r.arrayBuffer():false).catch(()=>false); } return LOGO_BUF; }
+// pdf-lib com fontes padrão só aceita WinAnsi; troca o que não dá para desenhar
+function soWinAnsi(s){ return String(s).replace(/[^	 -ÿŒœŠšŸŽžƒˆ˜–—‘’‚“”„†‡•…‰‹›€™]/g,'?'); }
+async function docxParaPdfBytes(tpl, dados){
+  if(typeof PDFLib==='undefined') throw new Error('biblioteca de PDF ainda carregando, tente de novo');
+  const { xml } = await xmlPreenchido(tpl, dados);
+  const dom=new DOMParser().parseFromString(xml,'application/xml');
+  const { PDFDocument, StandardFonts }=PDFLib;
+  const pdf=await PDFDocument.create();
+  const fReg=await pdf.embedFont(StandardFonts.Helvetica), fBold=await pdf.embedFont(StandardFonts.HelveticaBold);
+  const PG=[595.28,841.89], M=71, W=PG[0]-2*M;
+  let page=pdf.addPage(PG), y=PG[1]-M, logoImg=null;
+  const nova=()=>{ page=pdf.addPage(PG); y=PG[1]-M; };
+  const font=b=>b?fBold:fReg;
+  const val=(el,tag,att)=>{ if(!el) return null; const n=el.getElementsByTagName(tag)[0]; return n?n.getAttribute(att||'w:val'):null; };
+  for(const p of Array.from(dom.getElementsByTagName('w:p'))){
+    if(p.getElementsByTagName('w:drawing').length){                 // parágrafo da logo
+      if(logoImg===null){ const b=await logoBytes(); logoImg=b?await pdf.embedPng(b):false; }
+      if(logoImg){ const lw=85, lh=lw*logoImg.height/logoImg.width; if(y-lh<M) nova();
+        page.drawImage(logoImg,{x:(PG[0]-lw)/2, y:y-lh, width:lw, height:lh}); y-=lh+11; }
+      continue;
+    }
+    const pr=p.getElementsByTagName('w:pPr')[0];
+    const jc=val(pr,'w:jc')||'left';
+    const after=(parseInt(val(pr,'w:spacing','w:after'))||140)/20;
+    const ind=(parseInt(val(pr,'w:ind','w:left'))||0)/20;
+    // divide em "átomos" (palavras, preservando estilo mesmo quando o negrito corta no meio)
+    const atoms=[]; let cur=null;
+    for(const r of Array.from(p.getElementsByTagName('w:r'))){
+      const rpr=r.getElementsByTagName('w:rPr')[0];
+      const bold=!!(rpr&&rpr.getElementsByTagName('w:b').length);
+      const size=(parseInt(val(rpr,'w:sz'))||22)/2;
+      for(const t of Array.from(r.getElementsByTagName('w:t'))){
+        for(const seg of soWinAnsi(t.textContent).split(/(\s+)/)){
+          if(!seg) continue;
+          if(/^\s+$/.test(seg)){ cur=null; continue; }
+          if(!cur){ cur={frags:[]}; atoms.push(cur); }
+          cur.frags.push({t:seg, bold, size});
+        }
+      }
+      if(!r.getElementsByTagName('w:t').length) cur=null;
+    }
+    if(!atoms.length){ y-=after; continue; }
+    for(const a of atoms){
+      a.w=a.frags.reduce((s,f)=>s+font(f.bold).widthOfTextAtSize(f.t,f.size),0);
+      a.size=Math.max.apply(null,a.frags.map(f=>f.size));
+    }
+    const maxW=W-ind, spW=s=>fReg.widthOfTextAtSize(' ',s);
+    const lines=[]; let line=[], lw=0;
+    for(const a of atoms){
+      const need=line.length?lw+spW(a.size)+a.w:a.w;
+      if(line.length && need>maxW){ lines.push({atoms:line,w:lw}); line=[a]; lw=a.w; }
+      else{ line.push(a); lw=need; }
+    }
+    if(line.length) lines.push({atoms:line,w:lw});
+    const lh=Math.max.apply(null,atoms.map(a=>a.size))*1.35;
+    for(let li=0; li<lines.length; li++){
+      const L=lines[li];
+      if(y-lh<M) nova();
+      y-=lh;
+      let x=M+ind, extra=0;
+      if(jc==='center') x=M+ind+(maxW-L.w)/2;
+      else if(jc==='both' && li<lines.length-1 && L.atoms.length>1) extra=(maxW-L.w)/(L.atoms.length-1);
+      for(const a of L.atoms){
+        for(const f of a.frags){ page.drawText(f.t,{x, y, size:f.size, font:font(f.bold)}); x+=font(f.bold).widthOfTextAtSize(f.t,f.size); }
+        x+=spW(a.size)+extra;
+      }
+    }
+    y-=after;
+  }
+  return await pdf.save();
+}
+function u8paraB64(bytes){ let s=''; for(let i=0;i<bytes.length;i+=0x8000) s+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000)); return btoa(s); }
+// ---- envio para assinatura (Assinafy, via Edge Function) --------------------
+function dialogoAssinafy(l){
+  const e=l.enriquecimento||{};
+  const tplDoc=TPL_DOCS[l.tipo_problema]||TPL_DOCS.outro;
+  const g=id=>{ const el=$('#'+id); return el?String(el.value||'').trim():''; };
+  const emailPre=g('dEmail')||e.email||'';
+  const fonePre=(e.telefone?String(e.telefone).replace(/\D/g,''):'');
+  const marca=g('dMarca')||l.marca||'';
+  const msgPre='Olá! Estamos enviando para assinatura digital os documentos referentes ao processo da marca '+(marca||l.numero||'')+' no INPI. É rápido: basta abrir o link, conferir e assinar. Qualquer dúvida, estamos à disposição.';
+  const inp='width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff';
+  let bg=document.getElementById('assBg'); if(bg) bg.remove();
+  bg=document.createElement('div'); bg.id='assBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(34,32,28,.5);display:flex;align-items:center;justify-content:center;z-index:80;padding:16px';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:460px;max-width:100%;padding:18px;max-height:92vh;overflow:auto">'
+    +'<div style="font-weight:800;font-size:15px">Enviar para assinatura · '+esc((g('dCli')||l.titular||'').slice(0,40))+'</div>'
+    +'<div class="q" style="margin-top:3px">Os PDFs são gerados com os dados do formulário acima. Confira antes em "Ver PDF".</div>'
+    +'<label class="q" style="display:block;margin:12px 0 4px">Documentos</label>'
+    +'<label style="display:block;font-size:13px"><input type="checkbox" id="asContr" checked> Contrato de prestação de serviços</label>'
+    +'<label style="display:block;font-size:13px;margin-top:3px"><input type="checkbox" id="asProc" checked> Procuração</label>'
+    +'<label class="q" style="display:block;margin:10px 0 4px">E-mail do cliente * <span style="font-weight:400">(a Assinafy envia o convite por e-mail)</span></label><input id="asEmail" type="email" value="'+esc(emailPre)+'" style="'+inp+'">'
+    +'<label class="q" style="display:block;margin:10px 0 4px">WhatsApp do cliente (DDD + número, opcional)</label><input id="asFone" value="'+esc(fonePre)+'" placeholder="ex.: 49999742477" style="'+inp+'">'
+    +'<label class="q" style="display:block;margin:10px 0 4px">Mensagem do convite</label><textarea id="asMsg" rows="4" style="'+inp+';resize:vertical">'+esc(msgPre)+'</textarea>'
+    +'<div class="q" id="asErr" style="color:var(--bad);margin-top:6px"></div>'
+    +'<div id="asResult" style="margin-top:6px"></div>'
+    +'<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="ghost" id="asCanc">Fechar</button><button id="asOk">📨 Enviar</button></div></div>';
+  document.body.appendChild(bg);
+  bg.querySelector('#asCanc').onclick=()=>bg.remove();
+  bg.addEventListener('click',ev=>{ if(ev.target===bg) bg.remove(); });
+  bg.querySelector('#asOk').onclick=async ()=>{
+    const err=bg.querySelector('#asErr'), bt=bg.querySelector('#asOk'), out=bg.querySelector('#asResult');
+    err.textContent='';
+    const email=bg.querySelector('#asEmail').value.trim();
+    const fone=bg.querySelector('#asFone').value.replace(/\D/g,'');
+    const docs=[];
+    if(bg.querySelector('#asContr').checked) docs.push({tpl:tplDoc.contrato, nome:'Contrato'});
+    if(bg.querySelector('#asProc').checked)  docs.push({tpl:tplDoc.procuracao, nome:'Procuração'});
+    if(!docs.length){ err.textContent='Escolha pelo menos um documento.'; return; }
+    if(!/.+@.+\..+/.test(email)){ err.textContent='Informe um e-mail válido do cliente.'; return; }
+    bt.disabled=true;
+    try{
+      const d=dadosDocs(l);
+      const cliNome=(($('#dCli')||{}).value||l.titular||'Cliente').trim();
+      const rotArq=((($('#dMarca')||{}).value)||l.numero||'LIV').trim();
+      const links=[];
+      for(const doc of docs){
+        bt.textContent='gerando '+doc.nome+'…';
+        const bytes=await docxParaPdfBytes(doc.tpl, d);
+        bt.textContent='enviando '+doc.nome+'…';
+        const { data, error }=await sb.functions.invoke('assinafy',{ body:{
+          action:'enviar', nomeArquivo:doc.nome+' - '+rotArq+'.pdf', pdfBase64:u8paraB64(bytes),
+          cliente:{ nome:cliNome, email, whatsapp:fone||null }, mensagem:bg.querySelector('#asMsg').value.trim() } });
+        if(error) throw new Error(error.message||'falha na função');
+        if(data&&data.error) throw new Error(data.error);
+        links.push({ nome:doc.nome, url:(data&&data.signingUrl)||'' });
+      }
+      const texto=bg.querySelector('#asMsg').value.trim()+'\n\n'+links.map(k=>k.nome+': '+k.url).join('\n');
+      out.innerHTML='<div class="msg ok">Enviado! O cliente recebe o convite por e-mail.</div>'
+        +links.map(k=>'<div style="font-size:12.5px;margin-top:4px"><b>'+esc(k.nome)+':</b> <a href="'+esc(k.url)+'" target="_blank" rel="noopener">link de assinatura</a></div>').join('')
+        +'<div style="display:flex;gap:8px;margin-top:8px">'
+        +(fone?'<button id="asWa" class="canal wa">Mandar os links no WhatsApp</button>':'')
+        +'<button id="asCopy" class="ghost">Copiar links</button></div>';
+      if(fone&&out.querySelector('#asWa')) out.querySelector('#asWa').onclick=()=>window.open('https://wa.me/55'+fone+'?text='+encodeURIComponent(texto),'_blank','noopener');
+      out.querySelector('#asCopy').onclick=()=>navigator.clipboard.writeText(texto);
+      await sb.from('interacoes').insert({ id:novoId(), lead_id:l.id, tipo:'nota',
+        nota:'📨 Documentos enviados para assinatura (Assinafy) para '+email+': '+links.map(k=>k.nome+' '+k.url).join(' · '), quando:new Date().toISOString() });
+      bt.textContent='enviado ✓';
+    }catch(ex){ err.textContent='Erro: '+(ex.message||ex); bt.disabled=false; bt.textContent='📨 Enviar'; }
+  };
+}
 // ---- DOCUMENTOS DO FECHAMENTO (procuração + contrato) -----------------------
 const fmtCNPJ=s=>{ const d=String(s||'').replace(/\D/g,''); return d.length===14?d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5'):(d.length===11?d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/,'$1.$2.$3-$4'):String(s||'')); };
+const fmtCEP=s=>{ const d=String(s||'').replace(/\D/g,''); return d.length===8?d.slice(0,5)+'-'+d.slice(5):String(s||''); };
 function docsHTML(l){
   const t=l.tipo_problema; if(t!=='indeferido'&&t!=='oposicao') return '';
   const e=l.enriquecimento||{};
@@ -566,12 +718,21 @@ function docsHTML(l){
   const hoje=dataExtenso(new Date().toISOString().slice(0,10));
   const i='width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;background:#fff';
   const campo=(id,rot,val,ph)=>'<div style="flex:1;min-width:150px"><label class="q" style="display:block;margin-bottom:3px">'+rot+'</label><input id="'+id+'" value="'+esc(val||'')+'" placeholder="'+(ph||'')+'" style="'+i+'"></div>';
+  // endereço em campos separados; leads antigos têm só a string junta → melhor esforço de separação
+  let pEnd=[e.logradouro,e.numero].filter(Boolean).join(', '), pBairro=e.bairro||'',
+      pCid=e.municipio?(e.municipio+(e.uf?'/'+e.uf:'')):'', pCep=fmtCEP(e.cep||'');
+  if(!pEnd && e.endereco){
+    const ps=String(e.endereco).split(', ');
+    if(ps.length===5){ pEnd=ps[0]+', '+ps[1]; pBairro=ps[2]; pCid=ps[3]+'/'+ps[4]; }
+    else pEnd=e.endereco;
+  }
   return '<details class="secd"><summary>Documentos do fechamento (procuração + contrato)</summary>'
     +'<div class="q" style="margin:8px 0">Confira os dados antes de gerar. São documentos jurídicos, então o que estiver em branco precisa ser preenchido aqui.</div>'
     +'<div class="mrow" style="gap:10px">'+campo('dCli','Cliente (razão social / nome)',cliente)
     +'<div style="flex:0 0 120px"><label class="q" style="display:block;margin-bottom:3px">Tipo</label><select id="dTipo" style="'+i+'"><option value="PJ"'+(pj?' selected':'')+'>PJ</option><option value="PF"'+(pj?'':' selected')+'>PF</option></select></div></div>'
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dDoc','CNPJ / CPF',doc,'só números ou formatado')+campo('dRep','Representante legal (se PJ)',rep)+campo('dCpfRep','CPF do representante','','usado na assinatura da procuração')+'</div>'
-    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dEnd','Endereço completo',e.endereco||'','rua, nº, bairro, cidade/UF, CEP')+'</div>'
+    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dEnd','Endereço (rua e nº)',pEnd,'ex.: Rua Thome de Souza, 550')+campo('dBairro','Bairro',pBairro)+'</div>'
+    +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dCidade','Cidade / UF',pCid,'ex.: São Miguel do Oeste/SC')+campo('dCep','CEP',pCep,'ex.: 89900-000')+campo('dEmail','E-mail do cliente',e.email||'','para envio dos documentos')+'</div>'
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dMarca','Marca',l.marca||(l._det&&l._det.marca)||'')+campo('dProc','Processo',l.numero||'')+'</div>'
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dValor','Valor (R$)','980,00')
     +'<div style="flex:0 0 150px"><label class="q" style="display:block;margin-bottom:3px">Forma</label><select id="dForma" style="'+i+'"><option value="entrada">Entrada + parcelas</option><option value="avista">À vista</option><option value="parcelado">Parcelado (sem entrada)</option></select></div>'
@@ -579,7 +740,11 @@ function docsHTML(l){
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dEntrada','Entrada (R$)','330,00')+campo('dParcela','Valor de cada parcela (R$)','325,00')+'</div>'
     +'<div class="q" id="dPgtoPrev" style="margin-top:5px"></div>'
     +'<div class="mrow" style="gap:10px;margin-top:8px">'+campo('dValorExt','Valor por extenso','novecentos e oitenta reais')+campo('dData','Data',hoje)+'</div>'
-    +'<div class="mrow" style="margin-top:11px"><button id="mProcur">📑 Gerar procuração</button><button id="mContr">📄 Gerar contrato</button><span class="q" id="mDocMsg">'+esc((TPL_DOCS[t]||TPL_DOCS.outro).rotulo)+'</span></div>'
+    +'<div class="mrow" style="margin-top:11px;align-items:center;flex-wrap:wrap;gap:6px">'
+      +'<span class="q" style="font-weight:700">Procuração:</span><button id="mProcurPdf">👁 Ver PDF</button><button id="mProcur">⬇ DOCX</button>'
+      +'<span class="q" style="font-weight:700;margin-left:12px">Contrato:</span><button id="mContrPdf">👁 Ver PDF</button><button id="mContr">⬇ DOCX</button>'
+      +'<span class="q" id="mDocMsg">'+esc((TPL_DOCS[t]||TPL_DOCS.outro).rotulo)+'</span></div>'
+    +'<div class="mrow" style="margin-top:9px;align-items:center;gap:8px"><button id="mAssinafy">📨 Enviar para assinatura</button><span class="q">confira no PDF antes; o cliente recebe por e-mail e você ganha o link para mandar no WhatsApp</span></div>'
     +'</details>';
 }
 // condição de pagamento do contrato, montada conforme forma/nº de parcelas
@@ -622,7 +787,7 @@ function dadosDocs(l){
   const pj=v('dTipo')==='PJ';
   const cli=v('dCli')||'____________________';
   const doc=v('dDoc')||'____________________';
-  const end=v('dEnd')||'____________________';
+  const end=[v('dEnd'), v('dBairro'), v('dCidade'), v('dCep')?('CEP '+v('dCep')):''].filter(Boolean).join(', ')||'____________________';
   const rep=v('dRep');
   const qual=pj
     ? ('pessoa jurídica de direito privado, inscrita no CNPJ sob o nº '+doc+', com endereço à '+end+(rep?(', neste ato representada por '+rep):''))
@@ -1077,6 +1242,20 @@ function renderModal(l){
   const tplDoc=TPL_DOCS[l.tipo_problema]||TPL_DOCS.outro;
   if($('#mProcur')) $('#mProcur').onclick=e=>gerarDoc(tplDoc.procuracao,'Procuração', e.target);
   if($('#mContr')) $('#mContr').onclick=e=>gerarDoc(tplDoc.contrato,'Contrato', e.target);
+  // pré-visualização em PDF (mesmo conteúdo do DOCX, gerado no navegador)
+  const verPdf=async (tpl, bt)=>{
+    const rot=bt.textContent; bt.disabled=true; bt.textContent='gerando…';
+    try{
+      const bytes=await docxParaPdfBytes(tpl, dadosDocs(l));
+      const url=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
+      window.open(url,'_blank','noopener');
+      setTimeout(()=>URL.revokeObjectURL(url),120000);
+    }catch(ex){ alert('Erro ao gerar o PDF: '+(ex.message||ex)); }
+    bt.disabled=false; bt.textContent=rot;
+  };
+  if($('#mProcurPdf')) $('#mProcurPdf').onclick=e=>verPdf(tplDoc.procuracao, e.target);
+  if($('#mContrPdf')) $('#mContrPdf').onclick=e=>verPdf(tplDoc.contrato, e.target);
+  if($('#mAssinafy')) $('#mAssinafy').onclick=()=>dialogoAssinafy(l);
   // detalhe ao vivo no INPI: carrega AUTOMÁTICO ao abrir; botão só re-consulta
   const btDet=$('#mDet');
   if(btDet) btDet.onclick=()=>carregarDetalheINPI(l, true);
@@ -1154,6 +1333,8 @@ function mapEnriq(d, cnpj){
     telefone:fone, email:(d.email||'').trim()||null, cnae:d.cnae_fiscal_descricao||null,
     situacao:d.descricao_situacao_cadastral||null, abertura:d.data_inicio_atividade||null,
     endereco:[d.logradouro,d.numero,d.bairro,d.municipio,d.uf].filter(Boolean).join(', ')||null,
+    logradouro:d.logradouro||null, numero:String(d.numero||'')||null, bairro:d.bairro||null,
+    municipio:d.municipio||null, uf:d.uf||null, cep:String(d.cep||'').replace(/\D/g,'')||null,
     socios:(d.qsa||[]).map(s=>s.nome_socio).filter(Boolean), fonte:'brasilapi', atualizadoEm:new Date().toISOString() };
 }
 async function enriquecerLote(){
