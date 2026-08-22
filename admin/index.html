@@ -353,6 +353,81 @@ async function entrar(){
   await LEADS_PRONTOS;
 }
 let LEADS_PRONTOS=null;
+// ===== VENDA / OPORTUNIDADE (cliente como núcleo: a venda é registro próprio) ====
+let SERVICOS=[], VENDAS=[];
+const ORIGENS=[['rpi','RPI (revista do INPI)'],['instagram','Instagram'],['google','Google'],['indicacao','Indicação'],['site','Site / adesão'],['manual','Manual'],['outro','Outro']];
+const origemCanon=o=>{ o=String(o||''); return o.startsWith('rpi')?'rpi':(o||'outro'); };
+function vendaDoLead(l){ return VENDAS.find(v=>v.lead_id===l.id)||null; }
+function servicoPadrao(l){ return SERVICOS.find(s=>s.ativo!==false && s.tipo_problema===l.tipo_problema)||null; }
+// honorários = preço × (1 + (classes−1) × % da classe adicional)  (registro: 50%; demais: 100%)
+function honorariosServ(s, classes){ if(!s) return 0; const n=Math.max(1,+classes||1); return Math.round((+s.preco||0)*(1+(n-1)*((+s.classe_adicional_pct||100)/100))*100)/100; }
+function vendaHTML(l){
+  const v=vendaDoLead(l)||{}, sp=servicoPadrao(l);
+  const sid=v.servico_id||(sp?sp.id:''), s=SERVICOS.find(x=>x.id===sid), classes=v.classes||1, st=v.status||'aberta';
+  const hon=v.honorarios||honorariosServ(s,classes);
+  const sel=(id,ops,val)=>'<select id="'+id+'" style="'+INP_CLI+'">'+ops.map(o=>'<option value="'+esc(o[0])+'"'+(String(o[0])===String(val)?' selected':'')+'>'+esc(o[1])+'</option>').join('')+'</select>';
+  const lab=(rot,inner,w)=>'<div style="flex:1;min-width:'+(w||150)+'px"><label class="q" style="display:block;margin-bottom:3px">'+rot+'</label>'+inner+'</div>';
+  const pill= st==='fechada'?'<span class="pill bom">fechada'+(v.fechada_em?(' · '+dataBRcurta(v.fechada_em)):'')+'</span>' : st==='perdida'?'<span class="pill ruim">perdida</span>' : '<span class="pill neutro">em aberto</span>';
+  return '<details class="secd" open><summary>Venda / oportunidade '+pill+'</summary>'
+    +'<div class="mrow" style="gap:10px;margin-top:8px">'+lab('Serviço de interesse', sel('vServ',[['','—']].concat(SERVICOS.filter(x=>x.ativo!==false).map(x=>[x.id,x.nome])),sid),200)
+    +lab('Classes','<input id="vClasses" type="number" min="1" max="45" value="'+classes+'" style="'+INP_CLI+'">',70)
+    +lab('Honorários estimados (R$)','<input id="vHon" value="'+esc(hon?Number(hon).toLocaleString('pt-BR',{minimumFractionDigits:2}):'')+'" style="'+INP_CLI+'">',130)
+    +lab('Origem do lead', sel('vOrigem',ORIGENS,origemCanon(v.origem||l.origem)),140)+'</div>'
+    +'<div class="mrow" style="gap:10px;margin-top:8px">'+lab('Probabilidade', sel('vProb',[['','—'],[10,'10%'],[25,'25%'],[50,'50%'],[75,'75%'],[90,'90%']],v.probabilidade||''),90)
+    +lab('Próxima ação','<input id="vAcao" value="'+esc(v.proxima_acao||'')+'" placeholder="ex.: ligar para confirmar a proposta" style="'+INP_CLI+'">',200)
+    +lab('Quando','<input id="vAcaoEm" type="date" value="'+esc(v.proxima_acao_em||'')+'" style="'+INP_CLI+'">',130)
+    +lab('Previsão de fechamento','<input id="vPrev" type="date" value="'+esc(v.previsao_fechamento||'')+'" style="'+INP_CLI+'">',140)+'</div>'
+    +(st==='perdida'?'<div class="q" style="margin-top:6px">Motivo da perda: <b>'+esc(v.motivo_perda||'—')+'</b></div>':'')
+    +(st==='fechada'?'<div class="q" style="margin-top:6px">Honorários <b>'+brl(v.honorarios||0)+'</b>'+(v.desconto?(' · desconto '+brl(v.desconto)):'')+' · taxa INPI <b>'+brl(v.taxa_inpi||0)+'</b> · total cobrado <b>'+brl(v.total||0)+'</b></div>':'')
+    +'<div class="q" id="vMsg" style="margin-top:6px">'+(v.id?'salvo':'preencha o que souber; salva sozinho')+'</div></details>';
+}
+function ligarVenda(l){
+  const ids=['vServ','vClasses','vHon','vOrigem','vProb','vAcao','vAcaoEm','vPrev']; let t=null;
+  const g=id=>{ const el=$('#'+id); return el?String(el.value||'').trim():''; };
+  const num=s=>parseFloat(String(s||'').replace(/\./g,'').replace(',','.'))||0;
+  const recalc=()=>{ const s=SERVICOS.find(x=>x.id===g('vServ')); const h=honorariosServ(s,+g('vClasses')||1); const el=$('#vHon'); if(el) el.value=h?Number(h).toLocaleString('pt-BR',{minimumFractionDigits:2}):''; };
+  const salvar=async()=>{
+    const patch={ servico_id:g('vServ')||null, classes:Math.max(1,+g('vClasses')||1), honorarios:num(g('vHon')), origem:g('vOrigem')||null, probabilidade:g('vProb')?+g('vProb'):null,
+      proxima_acao:g('vAcao')||null, proxima_acao_em:g('vAcaoEm')||null, previsao_fechamento:g('vPrev')||null, responsavel:l.responsavel||null, marca:l.marca||null, processo:l.numero||null, atualizado_em:new Date().toISOString() };
+    let v=vendaDoLead(l);
+    if(!v){ v={ id:novoId(), lead_id:l.id, status:'aberta', criado_em:new Date().toISOString() }; VENDAS.push(v); }
+    Object.assign(v,patch);
+    const {error}=await sb.from('vendas').upsert(v);
+    const m=$('#vMsg'); if(m) m.textContent=error?('erro ao salvar: '+error.message):'✓ salvo';
+    if(patch.origem && origemCanon(l.origem)!==patch.origem){ l.origem=patch.origem; await sb.from('leads').update({origem:patch.origem}).eq('id',l.id); }
+  };
+  ids.forEach(id=>{ const el=$('#'+id); if(!el) return; el.addEventListener((id==='vServ'||id==='vClasses')?'change':'input',()=>{ if(id==='vServ'||id==='vClasses') recalc(); clearTimeout(t); t=setTimeout(salvar,700); }); });
+}
+const MOTIVOS_PERDA=['Preço / sem orçamento','Sem resposta','Fechou com outro escritório','Desistiu do processo','Já tinha procurador / não abordável','Fora do prazo','Outro'];
+function pedirMotivoPerda(l){
+  return new Promise(res=>{
+    const bg=abrirDlg('perdaBg','<div style="font-weight:800;font-size:15px">Motivo da perda · '+esc((l.marca||l.titular||'').slice(0,40))+'</div><div class="q" style="margin-top:3px">Registra por que não fechou; alimenta o relatório de vendas.</div>'
+      +sDlg('pdMot','Motivo',MOTIVOS_PERDA.map(m=>[m,m]),'')+'<label class="q" style="display:block;margin:8px 0 3px">Detalhe (opcional)</label><textarea id="pdObs" rows="2" style="'+INP_DLG+';resize:vertical"></textarea>'
+      +'<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="ghost" id="pdCanc">Cancelar</button><button id="pdOk">Confirmar perda</button></div>',420);
+    const fecha=v=>{ bg.remove(); res(v); };
+    bg.querySelector('#pdCanc').onclick=()=>fecha(null);
+    bg.addEventListener('click',e=>{ if(e.target===bg) fecha(null); });
+    bg.querySelector('#pdOk').onclick=()=>{ const m=bg.querySelector('#pdMot').value, o=bg.querySelector('#pdObs').value.trim(); fecha(m+(o?(' · '+o):'')); };
+  });
+}
+async function gravarPerda(l,motivo){
+  let v=vendaDoLead(l);
+  if(!v){ v={ id:novoId(), lead_id:l.id, criado_em:new Date().toISOString(), origem:origemCanon(l.origem), responsavel:l.responsavel||null, marca:l.marca||null, processo:l.numero||null }; VENDAS.push(v); }
+  Object.assign(v,{ status:'perdida', perdida_em:hojeISO(), motivo_perda:motivo, atualizado_em:new Date().toISOString() });
+  const {error}=await sb.from('vendas').upsert(v); if(error) throw error;
+  await comentar(l.id,'Perda registrada: '+motivo);
+}
+function reabrirVenda(l){ const v=vendaDoLead(l); if(v&&v.status==='perdida'){ Object.assign(v,{status:'aberta',motivo_perda:null,perdida_em:null}); sb.from('vendas').update({status:'aberta',motivo_perda:null,perdida_em:null,atualizado_em:new Date().toISOString()}).eq('id',v.id).then(()=>{}); } }
+async function gravarVendaFechada(l,f){
+  let v=vendaDoLead(l); const s=SERVICOS.find(x=>x.id===f.servico_id);
+  if(!v){ v={ id:novoId(), lead_id:l.id, criado_em:new Date().toISOString() }; VENDAS.push(v); }
+  Object.assign(v,{ servico_id:f.servico_id||null, descricao:(s?s.nome:'Serviço')+(l.marca?(' · '+l.marca):''), marca:l.marca||null, processo:l.numero||null, classes:f.classes||1,
+    honorarios:f.honorarios, taxa_inpi:f.taxa||0, desconto:f.desconto||0, total:f.total, custo_previsto:s?(+s.custo||0)*(f.classes||1):0,
+    origem:origemCanon(v.origem||l.origem), responsavel:l.responsavel||null, status:'fechada', fechada_em:f.data, perdida_em:null, motivo_perda:null,
+    forma_pagamento:{ modalidade:f.modalidade, parcelas:f.parcelas }, atualizado_em:new Date().toISOString() });
+  const {error}=await sb.from('vendas').upsert(v); if(error) throw error;
+  return v;
+}
 
 // ===== DADOS ==================================================================
 async function selecTudo(tabela){
@@ -369,14 +444,16 @@ async function selecTudo(tabela){
 async function carregarTudo(){
   $('#status').textContent='carregando…';
   try{
-    const [st, et, lv] = await Promise.all([
+    const [st, et, lv, sv, vd] = await Promise.all([
       sb.from('liv_estagios').select('*').order('ordem'),
       sb.from('liv_etiquetas').select('*'),
       selecTudo('leads'),
+      sb.from('servicos').select('*').order('ordem'),
+      sb.from('vendas').select('*'),
     ]);
     STAGES=(st.data||[]).map(s=>({key:s.key,label:s.label,cor:s.cor}));
     ETIQ=(et.data||[]).map(e=>({id:e.id,nome:e.nome,cor:e.cor}));
-    LEADS=lv||[];
+    LEADS=lv||[]; SERVICOS=sv.data||[]; VENDAS=vd.data||[];
     $('#fEtq').innerHTML='<option value="">Etiqueta: todas</option>'+ETIQ.map(e=>'<option value="'+esc(e.id)+'">Etiqueta: '+esc(e.nome)+'</option>').join('');
     montaPublicacoes();
     render();
@@ -1083,6 +1160,8 @@ function ligar(){
     col.addEventListener('drop',async e=>{ e.preventDefault(); const id=e.dataTransfer.getData('text/plain'); const estagio=col.dataset.estagio; const l=LEADS.find(x=>x.id===id); if(!l||l.estagio===estagio) return;
       if(!(await garantirResponsavel(l,estagio))){ render(); return; }
       if(estagio==='ganho'){ const f=await pedirFechamento(l); if(!f){ render(); return; } await gravarFechamento(l,f); }
+      else if(estagio==='perdido'){ const m=await pedirMotivoPerda(l); if(!m){ render(); return; } await gravarPerda(l,m); }
+      else reabrirVenda(l);
       l.estagio=estagio; render(); await moverLead(id,estagio); });
   });
 }
@@ -1132,7 +1211,14 @@ function pedirFechamento(l){
   return new Promise(res=>{
     const pg=l.fechado_pagamento||null;
     const hoje=l.fechado_em||new Date().toISOString().slice(0,10);
-    const valAtual=l.fechado_valor?String(l.fechado_valor).replace('.',','):'';
+    const vd=vendaDoLead(l)||{}, sp=servicoPadrao(l);
+    const sidAtual=vd.servico_id||(sp?sp.id:''), sAtual=SERVICOS.find(x=>x.id===sidAtual), clAtual=vd.classes||1;
+    const fmtN=x=>(x||x===0)?Number(x).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'';
+    const honAtual=vd.honorarios||(l.fechado_valor?(+l.fechado_valor+(+vd.desconto||0)):0)||honorariosServ(sAtual,clAtual);
+    const valAtual=honAtual?fmtN(honAtual):'';
+    const taxaAtual=fmtN(vd.taxa_inpi!=null?vd.taxa_inpi:(sAtual?(+sAtual.taxa_inpi_valor||0)*clAtual:0));
+    const descAtual=vd.desconto?fmtN(vd.desconto):'';
+    const servOps=[['','— escolha o serviço —']].concat(SERVICOS.filter(x=>x.ativo!==false).map(x=>[x.id,x.nome])).map(o=>'<option value="'+esc(o[0])+'"'+(o[0]===sidAtual?' selected':'')+'>'+esc(o[1])+'</option>').join('');
     const modAtual=pg?pg.modalidade:'avista';
     const nAtual=(pg&&pg.parcelas&&pg.parcelas.length>1)?(pg.modalidade==='entrada'?pg.parcelas.length-1:pg.parcelas.length):3;
     const entAtual=(pg&&pg.modalidade==='entrada'&&pg.parcelas&&pg.parcelas[0])?String(pg.parcelas[0].valor).replace('.',','):'';
@@ -1141,11 +1227,15 @@ function pedirFechamento(l){
     if(bg) bg.remove();
     bg=document.createElement('div'); bg.id='fechoBg';
     bg.style.cssText='position:fixed;inset:0;background:rgba(34,32,28,.5);display:flex;align-items:center;justify-content:center;z-index:80;padding:16px';
-    bg.innerHTML='<div style="background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:400px;max-width:100%;padding:18px">'
+    bg.innerHTML='<div style="background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:480px;max-width:100%;padding:18px;max-height:92vh;overflow:auto">'
       +'<div style="font-weight:800;font-size:15px">Fechamento · '+esc((l.marca||l.titular||'').slice(0,40))+'</div>'
       +'<div class="q" style="margin-top:3px">Informe a data exata, o valor e a modalidade de pagamento.</div>'
       +'<label class="q" style="display:block;margin:12px 0 4px">Data do fechamento *</label><input type="date" id="fcData" value="'+hoje+'" style="'+inp+'">'
-      +'<label class="q" style="display:block;margin:10px 0 4px">Valor fechado (R$) *</label><input id="fcValor" value="'+esc(valAtual)+'" placeholder="ex.: 980,00" inputmode="decimal" style="'+inp+'">'
+      +'<label class="q" style="display:block;margin:10px 0 4px">Serviço vendido * <span style="font-weight:400">· classes</span></label><div style="display:flex;gap:8px"><select id="fcServ" style="'+inp+'">'+servOps+'</select><input id="fcClasses" type="number" min="1" max="45" value="'+clAtual+'" title="nº de classes" style="'+inp+';width:80px"></div>'
+      +'<div style="display:flex;gap:8px"><div style="flex:1"><label class="q" style="display:block;margin:10px 0 4px">Honorários LIV (R$) *</label><input id="fcValor" value="'+esc(valAtual)+'" placeholder="ex.: 980,00" inputmode="decimal" style="'+inp+'"></div>'
+      +'<div style="flex:1"><label class="q" style="display:block;margin:10px 0 4px">Taxa INPI (R$)</label><input id="fcTaxa" value="'+esc(taxaAtual)+'" inputmode="decimal" style="'+inp+'"></div>'
+      +'<div style="flex:1"><label class="q" style="display:block;margin:10px 0 4px">Desconto (R$)</label><input id="fcDesc" value="'+esc(descAtual)+'" inputmode="decimal" style="'+inp+'"></div></div>'
+      +'<div class="q" id="fcTotal" style="margin-top:6px"></div>'
       +'<label class="q" style="display:block;margin:10px 0 4px">Modalidade de pagamento *</label>'
       +'<div style="display:flex;gap:8px"><select id="fcMod" style="'+inp+'">'
         +'<option value="avista"'+(modAtual==='avista'?' selected':'')+'>À vista</option>'
@@ -1168,7 +1258,7 @@ function pedirFechamento(l){
       return [{n:1,de:n+1,data:d,valor:Math.round(ent*100)/100,rotulo:'entrada'}].concat(ps);
     };
     const preview=()=>{
-      const v=num(bg.querySelector('#fcValor').value), mod=bg.querySelector('#fcMod').value, d=bg.querySelector('#fcData').value;
+      const v=Math.round((num(bg.querySelector('#fcValor').value)-num(bg.querySelector('#fcDesc').value))*100)/100, mod=bg.querySelector('#fcMod').value, d=bg.querySelector('#fcData').value;
       const ent=num(bg.querySelector('#fcEnt').value);
       bg.querySelector('#fcParc').style.display=(mod==='avista')?'none':'block';
       bg.querySelector('#fcEntBox').style.display=(mod==='entrada')?'block':'none';
@@ -1180,20 +1270,30 @@ function pedirFechamento(l){
       else if(mod==='parcelado') pv.textContent=n+' lançamentos: '+brl(ps[0].valor)+' em '+dBR(ps[0].data)+(n>1?(' + '+(n-1)+'x de '+brl(ps[1].valor)+' (mensais)'):'');
       else pv.textContent='entrada de '+brl(ent)+' em '+dBR(d)+' + '+n+'x de '+brl(ps[1].valor)+' (mensais) = '+brl(v);
     };
-    ['fcValor','fcMod','fcParc','fcData','fcEnt'].forEach(id=> bg.querySelector('#'+id).addEventListener('input', preview));
-    preview();
+    ['fcValor','fcMod','fcParc','fcData','fcEnt','fcDesc'].forEach(id=> bg.querySelector('#'+id).addEventListener('input', preview));
+    // honorários × taxa INPI: a taxa é cobrada na data do fechamento e repassada; o parcelamento é só dos honorários
+    const totalPrev=()=>{ const h=num(bg.querySelector('#fcValor').value), tx=num(bg.querySelector('#fcTaxa').value), ds=num(bg.querySelector('#fcDesc').value); const el=bg.querySelector('#fcTotal');
+      el.innerHTML=h>0?('Total cobrado do cliente: <b>'+brl(h+tx-ds)+'</b> (honorários '+brl(h)+(ds?(' − desconto '+brl(ds)):'')+(tx?(' + taxa INPI '+brl(tx)):'')+'). A taxa do INPI é cobrada na data do fechamento e repassada; não entra no faturamento.'):''; };
+    const autoServ=()=>{ const s=SERVICOS.find(x=>x.id===bg.querySelector('#fcServ').value); const n=Math.max(1,+bg.querySelector('#fcClasses').value||1);
+      if(s){ bg.querySelector('#fcValor').value=fmtN(honorariosServ(s,n)); bg.querySelector('#fcTaxa').value=fmtN((+s.taxa_inpi_valor||0)*n); } preview(); totalPrev(); };
+    bg.querySelector('#fcServ').addEventListener('change',autoServ); bg.querySelector('#fcClasses').addEventListener('change',autoServ);
+    ['fcValor','fcTaxa','fcDesc'].forEach(id=> bg.querySelector('#'+id).addEventListener('input', totalPrev));
+    preview(); totalPrev();
     bg.querySelector('#fcCanc').onclick=()=>fecha(null);
     bg.addEventListener('click',e=>{ if(e.target===bg) fecha(null); });
     bg.querySelector('#fcOk').onclick=()=>{
       const d=bg.querySelector('#fcData').value, err=bg.querySelector('#fcErr');
-      const v=num(bg.querySelector('#fcValor').value), mod=bg.querySelector('#fcMod').value;
-      const ent=num(bg.querySelector('#fcEnt').value);
+      const hon=num(bg.querySelector('#fcValor').value), tx=num(bg.querySelector('#fcTaxa').value), ds=num(bg.querySelector('#fcDesc').value), mod=bg.querySelector('#fcMod').value;
+      const v=Math.round((hon-ds)*100)/100;                      // honorários líquidos = o que é parcelado e vira faturamento
+      const ent=num(bg.querySelector('#fcEnt').value), sid=bg.querySelector('#fcServ').value;
+      if(!sid){ err.textContent='Escolha o serviço vendido.'; return; }
       if(!d){ err.textContent='Informe a data do fechamento.'; return; }
-      if(!(v>0)){ err.textContent='Informe o valor fechado (maior que zero).'; return; }
+      if(!(hon>0)){ err.textContent='Informe os honorários (maior que zero).'; return; }
+      if(!(v>0)){ err.textContent='O desconto não pode ser maior ou igual aos honorários.'; return; }
       if(mod==='entrada'&&!(ent>0)){ err.textContent='Informe o valor da entrada.'; return; }
-      if(mod==='entrada'&&ent>=v){ err.textContent='A entrada precisa ser menor que o valor fechado.'; return; }
+      if(mod==='entrada'&&ent>=v){ err.textContent='A entrada precisa ser menor que os honorários líquidos ('+brl(v)+').'; return; }
       const n=(mod==='avista')?1:+bg.querySelector('#fcParc').value;
-      fecha({ data:d, valor:v, modalidade:mod, parcelas:plano(d,v,mod,n,ent) });
+      fecha({ data:d, valor:v, honorarios:hon, taxa:tx, desconto:ds, total:Math.round((hon+tx-ds)*100)/100, servico_id:sid, classes:Math.max(1,+bg.querySelector('#fcClasses').value||1), modalidade:mod, parcelas:plano(d,v,mod,n,ent) });
     };
     setTimeout(()=>{ const el=bg.querySelector('#fcValor'); if(el) el.focus(); },50);
   });
@@ -1207,10 +1307,15 @@ async function gravarFechamento(l,f){
   const modTxt=f.modalidade==='avista'?'à vista'
     :f.modalidade==='entrada'?('entrada de '+brl(f.parcelas[0].valor)+' + '+(f.parcelas.length-1)+'x')
     :('em '+f.parcelas.length+'x sem juros');
-  await comentar(l.id,'Fechamento registrado: '+brl(f.valor)+' em '+dBR+' ('+modTxt+').');
-  // cliente vai para o cadastro e as parcelas viram lançamentos (receitas) no Financeiro
-  try{ const pid=await upsertPessoaDoLead(l); await sincronizarLancamentosFechamento(l,f,pid); }
-  catch(e){ console.warn('financeiro:',e); alert('Fechamento salvo, mas não consegui gerar os lançamentos no Financeiro: '+(e.message||e)); }
+  await comentar(l.id,'Fechamento registrado: honorários '+brl(f.valor)+(f.taxa?(' + taxa INPI '+brl(f.taxa)):'')+' em '+dBR+' ('+modTxt+').');
+  // venda como registro próprio; cliente vai para o cadastro; parcelas e taxa viram lançamentos no Financeiro
+  let venda=null;
+  try{ venda=await gravarVendaFechada(l,f); }catch(e){ console.warn('venda:',e); alert('Fechamento salvo, mas não consegui registrar a venda: '+(e.message||e)); }
+  try{
+    const pid=await upsertPessoaDoLead(l);
+    if(venda && venda.pessoa_id!==pid){ venda.pessoa_id=pid; await sb.from('vendas').update({pessoa_id:pid}).eq('id',venda.id); }
+    await sincronizarLancamentosFechamento(l,f,pid,venda);
+  }catch(e){ console.warn('financeiro:',e); alert('Fechamento salvo, mas não consegui gerar os lançamentos no Financeiro: '+(e.message||e)); }
 }
 
 // ===== MUTAÇÕES (Supabase) ====================================================
@@ -1259,6 +1364,7 @@ function renderModal(l){
     +'<div class="mbody">'
     +'<div class="mrow"><label>Etapa</label><select id="mEst">'+stages+'</select><label>Prazo</label><input type="datetime-local" id="mData" value="'+dv+'"><label>Resp.</label><select id="mResp"><option value=""'+(l.responsavel?'':' selected')+'>—</option>'+RESPONSAVEIS.map(r=>'<option'+(r===l.responsavel?' selected':'')+'>'+esc(r)+'</option>').join('')+'</select>'+(atrasado(l)?'<span class="due atras">⚠ Em atraso</span>':'')+'</div>'+limiteBadge(l)
     +'<div class="sec"><h4>Etiquetas (tipo de lead)</h4><div id="mPick">'+picker+'</div></div>'
+    +vendaHTML(l)
     +'<div class="sec"><h4>Dados &amp; canais</h4>'+canaisHTML(l)+'</div>'
     +correlacaoHTML(l)
     +motivoHTML(l)
@@ -1317,6 +1423,7 @@ function renderModal(l){
   if($('#mContrPdf')) $('#mContrPdf').onclick=e=>verPdf(tplDoc.contrato, e.target);
   if($('#mAssinafy')) $('#mAssinafy').onclick=()=>dialogoAssinafy(l);
   ligarCadastroCliente(l);
+  ligarVenda(l);
   // detalhe ao vivo no INPI: carrega AUTOMÁTICO ao abrir; botão só re-consulta
   const btDet=$('#mDet');
   if(btDet) btDet.onclick=()=>carregarDetalheINPI(l, true);
@@ -1343,6 +1450,8 @@ function renderModal(l){
     const novo=e.target.value;
     if(!(await garantirResponsavel(l,novo))){ e.target.value=l.estagio; return; }
     if(novo==='ganho' && l.estagio!=='ganho'){ const f=await pedirFechamento(l); if(!f){ e.target.value=l.estagio; return; } await gravarFechamento(l,f); }
+    else if(novo==='perdido' && l.estagio!=='perdido'){ const m=await pedirMotivoPerda(l); if(!m){ e.target.value=l.estagio; return; } await gravarPerda(l,m); }
+    else if(novo!=='ganho' && novo!=='perdido') reabrirVenda(l);
     l.estagio=novo; await moverLead(l.id,l.estagio); l._int=await carregarInteracoes(l.id); render(); renderModal(l); };
   $('#mData').onchange=async e=>{ await setData(l.id,e.target.value); render(); renderModal(l); };
   $('#mResp').onchange=async e=>{ const v=e.target.value||null; await sb.from('leads').update({responsavel:v, atualizado_em:new Date().toISOString()}).eq('id',l.id); l.responsavel=v; render(); };
@@ -1366,10 +1475,10 @@ $('#btNovoCard').addEventListener('click', ()=>{
   $('#modalcard').innerHTML='<div class="mhead"><div><h3>Novo card</h3><div class="s">cadastro manual</div></div><button class="mx" id="mx">×</button></div><div class="mbody"><div class="sec">'
     +'<div class="mrow"><label style="width:90px">Nome/Titular</label><input id="nTit" style="flex:1;min-width:200px;'+inp+'"></div>'
     +'<div class="mrow" style="margin-top:8px"><label style="width:90px">Marca</label><input id="nMarca" style="flex:1;min-width:160px;'+inp+'"></div>'
-    +'<div class="mrow" style="margin-top:8px"><label>UF</label><input id="nUF" maxlength="2" style="width:60px;text-transform:uppercase;'+inp+'"><label>Classe</label><input id="nCls" style="width:90px;'+inp+'"><label>Coluna</label><select id="nEst" style="'+inp+'">'+stages+'</select></div>'
+    +'<div class="mrow" style="margin-top:8px"><label>UF</label><input id="nUF" maxlength="2" style="width:60px;text-transform:uppercase;'+inp+'"><label>Classe</label><input id="nCls" style="width:90px;'+inp+'"><label>Origem</label><select id="nOrigem" style="'+inp+'">'+ORIGENS.filter(o=>o[0]!=='rpi').map(o=>'<option value="'+o[0]+'"'+(o[0]==='manual'?' selected':'')+'>'+esc(o[1])+'</option>').join('')+'</select><label>Coluna</label><select id="nEst" style="'+inp+'">'+stages+'</select></div>'
     +'<div style="margin-top:12px"><button id="nSalvar">Criar card</button></div></div></div>';
   $('#mx').onclick=fecharCard;
-  $('#nSalvar').onclick=async ()=>{ const titular=$('#nTit').value.trim(); if(!titular){ $('#nTit').focus(); return; } const now=new Date().toISOString(); const lead={ id:'man-'+Date.now(), titular, marca:$('#nMarca').value.trim()||null, uf:$('#nUF').value.trim().toUpperCase()||null, classes:$('#nCls').value.trim()||null, despacho:'Cadastro manual', tipo_problema:'outro', tipo_pessoa:'?', origem:'manual', estagio:$('#nEst').value, etiquetas:[], anexos:[], criado_em:now, atualizado_em:now }; const { error }=await sb.from('leads').insert(lead); if(error){ alert(error.message); return; } fecharCard(); await carregarTudo(); };
+  $('#nSalvar').onclick=async ()=>{ const titular=$('#nTit').value.trim(); if(!titular){ $('#nTit').focus(); return; } const now=new Date().toISOString(); const lead={ id:'man-'+Date.now(), titular, marca:$('#nMarca').value.trim()||null, uf:$('#nUF').value.trim().toUpperCase()||null, classes:$('#nCls').value.trim()||null, despacho:'Cadastro manual', tipo_problema:'outro', tipo_pessoa:'?', origem:$('#nOrigem').value||'manual', estagio:$('#nEst').value, etiquetas:[], anexos:[], criado_em:now, atualizado_em:now }; const { error }=await sb.from('leads').insert(lead); if(error){ alert(error.message); return; } fecharCard(); await carregarTudo(); };
   $('#modal').style.display='flex';
 });
 $('#btNovaCol').addEventListener('click', async ()=>{
@@ -2513,7 +2622,7 @@ const FIN={ lanc:[], contas:[], cats:[], centros:[], tab:'lanc', f:{q:'',tipo:''
 async function carregarFin(){
   const [a,b,c,d]=await Promise.all([ sb.from('fin_lancamentos').select('*').order('vencimento'), sb.from('fin_contas').select('*').order('nome'), sb.from('fin_categorias').select('*').order('nome'), sb.from('fin_centros').select('*').order('nome') ]);
   for(const r of [a,b,c,d]) if(r.error) throw r.error;
-  FIN.lanc=a.data||[]; FIN.contas=b.data||[]; FIN.cats=c.data||[]; FIN.centros=d.data||[];
+  FIN.lanc=a.data||[]; FIN.contas=b.data||[]; FIN.cats=c.data||[]; FIN.centros=d.data||[]; FIN.servicos=SERVICOS;
   if(!PESSOAS){ try{ await carregarPessoas(); }catch(e){ PESSOAS=[]; } }
 }
 function lancStatus(x){
@@ -2548,7 +2657,7 @@ async function renderFinanceiro(){
   v.innerHTML='<div class="bar"><b style="font-size:15px">Financeiro</b><span class="status">carregando…</span></div>';
   try{ await LEADS_PRONTOS; }catch(e){}
   try{ await carregarFin(); }catch(e){ v.innerHTML='<div class="painel">Erro ao carregar o financeiro: '+esc(e.message||e)+'</div>'; return; }
-  const tabs=[['lanc','Lançamentos'],['fech','Fechamentos'],['contas','Contas'],['cats','Categorias'],['centros','Centros de custo'],['precos','Tabela de preços']];
+  const tabs=[['lanc','Lançamentos'],['vendas','Vendas'],['fech','Fechamentos'],['contas','Contas'],['cats','Categorias'],['centros','Centros de custo'],['servicos','Serviços e preços'],['aud','Auditoria']];
   v.innerHTML='<div class="bar"><b style="font-size:15px">Financeiro</b><span class="status">lançamentos, contas, categorias e centros de custo</span></div>'
     +'<div class="fintabs">'+tabs.map(t=>'<span class="ftab'+(FIN.tab===t[0]?' on':'')+'" data-t="'+t[0]+'">'+t[1]+'</span>').join('')+'</div>'
     +'<div id="finCorpo" style="padding:0 20px 30px"></div>';
@@ -2558,7 +2667,9 @@ async function renderFinanceiro(){
 function renderFinTab(){
   const c=$('#finCorpo'); if(!c) return;
   if(FIN.tab==='lanc') return renderLancamentos(c);
-  if(FIN.tab==='precos'){ c.innerHTML=precosHTML(); return; }
+  if(FIN.tab==='vendas') return renderVendas(c, true);
+  if(FIN.tab==='servicos') return renderCadastroFin(c, 'servicos');
+  if(FIN.tab==='aud') return renderAuditoria(c);
   if(FIN.tab==='fech'){
     c.innerHTML='<div style="max-width:960px">'+fechamentosHTML()+'</div>';
     c.querySelectorAll('.fcEdit').forEach(b=> b.onclick=async ()=>{ const l=leadDe(b.dataset.id); if(!l) return; const f=await pedirFechamento(l); if(!f) return; await gravarFechamento(l,f); try{ await carregarFin(); }catch(e){} renderFinTab(); });
@@ -2722,18 +2833,24 @@ async function importarLancamentos(file){
 // cadastros simples: contas, categorias, centros de custo
 function renderCadastroFin(c, tab){
   const cfg={ contas:{ tbl:'fin_contas', arr:'contas', tit:'Contas (bancos, caixa, PIX)', campos:[['nome','Nome',''],['tipo','Tipo','sel:banco=Banco,caixa=Caixa,pix=PIX,cartao=Cartão'],['saldo_inicial','Saldo inicial (R$)','num']] },
-               cats:{ tbl:'fin_categorias', arr:'cats', tit:'Categorias de receita e despesa', campos:[['nome','Nome',''],['tipo','Tipo','sel:receita=Receita,despesa=Despesa'],['cor','Cor','color']] },
-               centros:{ tbl:'fin_centros', arr:'centros', tit:'Centros de custo', campos:[['nome','Nome','']] } }[tab];
+               cats:{ tbl:'fin_categorias', arr:'cats', tit:'Categorias de receita e despesa', campos:[['nome','Nome',''],['tipo','Tipo','sel:receita=Receita,despesa=Despesa'],['natureza','Natureza','sel:propria=Própria (LIV),repasse=Repasse / terceiros'],['grupo_dre','Grupo na DRE','sel:=—,receita=Receita,repasse=Repasse,impostos=Impostos,custo_variavel=Custo variável,comissoes=Comissões,administrativo=Administrativo,marketing=Marketing,tecnologia=Tecnologia,pessoal=Pessoal,outros=Outros'],['cor','Cor','color']] },
+               centros:{ tbl:'fin_centros', arr:'centros', tit:'Centros de custo', campos:[['nome','Nome','']] },
+               servicos:{ tbl:'servicos', arr:'servicos', tit:'Serviços e preços · honorários LIV (a taxa do INPI fica separada)', extra:precosHTML,
+                 campos:[['nome','Serviço',''],['preco','Honorários (R$)','num'],['custo','Custo (R$)','num'],['margem','Margem','calc',r=>{ const p=+r.preco||0, c=+r.custo||0; return p?(Math.round((p-c)/p*100)+'%'):'—'; }],
+                   ['taxa_inpi_codigo','Cód. INPI','sel:=—,'+TAXAS_INPI.map(t=>t[0]+'='+t[0]).join(',')],['taxa_inpi_valor','Taxa INPI (R$)','num'],['prazo_dias','Prazo (dias)','int'],
+                   ['responsavel','Responsável','sel:=—,'+RESPONSAVEIS.map(r=>r+'='+r).join(',')],['comissao_pct','Comissão %','pct'],['classe_adicional_pct','Classe adicional %','pct'],['parcelamento','Parcelamento',''],
+                   ['tipo_problema','Sugerir p/ lead de','sel:=—,oposicao=Oposição,indeferido=Indeferimento,exigencia=Exigência']] } }[tab];
   const arr=FIN[cfg.arr];
-  const cel=(r,k)=>{ const t=k[2]; if(t==='num') return brl(+r[k[0]]||0); if(t==='color') return r.cor?('<span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:'+esc(r.cor)+';vertical-align:middle;margin-right:5px"></span>'+esc(r.cor)):'—';
+  const cel=(r,k)=>{ const t=k[2]; if(t==='calc') return k[3]?k[3](r):''; if(t==='pct') return (+r[k[0]]||0)+'%'; if(t==='int') return esc(r[k[0]]==null?'—':r[k[0]]); if(t==='num') return brl(+r[k[0]]||0); if(t==='color') return r.cor?('<span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:'+esc(r.cor)+';vertical-align:middle;margin-right:5px"></span>'+esc(r.cor)):'—';
     if(t&&t.startsWith('sel:')){ const m=Object.fromEntries(t.slice(4).split(',').map(p=>p.split('='))); return esc(m[r[k[0]]]||r[k[0]]||''); } return esc(r[k[0]]||''); };
   c.innerHTML='<div class="iblk" style="margin-top:10px"><div class="ih">'+cfg.tit+'</div><table class="dett" style="width:100%"><thead><tr>'+cfg.campos.map(k=>'<th>'+k[1]+'</th>').join('')+'<th>Status</th><th></th></tr></thead><tbody>'
     +(arr.map(r=>'<tr'+(r.ativo===false?' style="opacity:.55"':'')+'>'+cfg.campos.map(k=>'<td>'+cel(r,k)+'</td>').join('')+'<td><span class="pill '+(r.ativo!==false?'bom':'neutro')+'">'+(r.ativo!==false?'Ativo':'Inativo')+'</span></td>'
       +'<td style="white-space:nowrap"><button class="ghost cfEdit" data-id="'+esc(r.id)+'">✎</button> <button class="ghost cfTog" data-id="'+esc(r.id)+'">'+(r.ativo!==false?'desativar':'ativar')+'</button></td></tr>').join('')||'<tr><td colspan="9" class="q">nada cadastrado ainda</td></tr>')
-    +'</tbody></table><div class="ib"><button id="cfNovo">+ Novo</button></div></div>';
+    +'</tbody></table><div class="ib"><button id="cfNovo">+ Novo</button></div></div>'+(cfg.extra?cfg.extra():'');
   const dlg=r=>{
     const n=!r; r=r||{};
-    const campos=cfg.campos.map(k=>{ const t=k[2];
+    const campos=cfg.campos.filter(k=>k[2]!=='calc').map(k=>{ const t=k[2];
+      if(t==='pct'||t==='int') return fDlg('cf_'+k[0],k[1],r[k[0]]!=null?r[k[0]]:'','','number');
       if(t&&t.startsWith('sel:')) return sDlg('cf_'+k[0],k[1],t.slice(4).split(',').map(p=>p.split('=')),r[k[0]]||'');
       if(t==='color') return fDlg('cf_'+k[0],k[1],r[k[0]]||'#9a7b3f','', 'color');
       if(t==='num') return fDlg('cf_'+k[0],k[1],r[k[0]]!=null?Number(r[k[0]]).toLocaleString('pt-BR',{minimumFractionDigits:2}):'','0,00');
@@ -2744,7 +2861,8 @@ function renderCadastroFin(c, tab){
     if(!n) bg.querySelector('#cfDel').onclick=async()=>{ if(!confirm('Excluir "'+r.nome+'"? Lançamentos vinculados ficam sem esse vínculo.')) return; const {error}=await sb.from(cfg.tbl).delete().eq('id',r.id); if(error){ bg.querySelector('#cfErr').textContent='Erro: '+error.message; return; } FIN[cfg.arr]=FIN[cfg.arr].filter(x=>x.id!==r.id); bg.remove(); renderCadastroFin(c,tab); };
     bg.querySelector('#cfOk').onclick=async()=>{
       const row=Object.assign({}, r, { id:r.id||novoId(), ativo:r.ativo!==false });
-      for(const k of cfg.campos){ const v=bg.querySelector('#cf_'+k[0]).value.trim(); row[k[0]]=k[2]==='num'?(parseFloat(v.replace(/\./g,'').replace(',','.'))||0):v; }
+      for(const k of cfg.campos){ if(k[2]==='calc') continue; const v=bg.querySelector('#cf_'+k[0]).value.trim();
+        row[k[0]]= k[2]==='num' ? (parseFloat(v.replace(/\./g,'').replace(',','.'))||0) : k[2]==='pct' ? (v===''?0:+v) : k[2]==='int' ? (v===''?null:+v) : (v||null); }
       if(!row.nome){ bg.querySelector('#cfErr').textContent='Informe o nome.'; return; }
       const {error}=await sb.from(cfg.tbl).upsert(row); if(error){ bg.querySelector('#cfErr').textContent='Erro: '+error.message; return; }
       const i=FIN[cfg.arr].findIndex(x=>x.id===row.id); if(i>=0) FIN[cfg.arr][i]=row; else FIN[cfg.arr].push(row);
@@ -2756,7 +2874,7 @@ function renderCadastroFin(c, tab){
   c.querySelectorAll('.cfTog').forEach(b=>b.onclick=async()=>{ const r=arr.find(x=>x.id===b.dataset.id); r.ativo=(r.ativo===false); await sb.from(cfg.tbl).update({ativo:r.ativo}).eq('id',r.id); renderCadastroFin(c,tab); });
 }
 // fechamento → receitas no Financeiro (uma por parcela; não mexe em parcela já recebida)
-async function sincronizarLancamentosFechamento(l,f,pessoaId){
+async function sincronizarLancamentosFechamento(l,f,pessoaId,venda){
   const grupo='fech:'+l.id;
   const {data:ex,error}=await sb.from('fin_lancamentos').select('*').eq('grupo_id',grupo); if(error) throw error;
   const pagos=(ex||[]).filter(x=>x.status==='pago'||+x.valor_pago>0);
@@ -2764,10 +2882,71 @@ async function sincronizarLancamentosFechamento(l,f,pessoaId){
   if(apagar.length){ const r=await sb.from('fin_lancamentos').delete().in('id',apagar); if(r.error) throw r.error; }
   const nomeCli=(l.contato&&l.contato.nome)||String(l.titular||'').replace(/^\d[\d.\/-]*\s+/,'');
   const marca=l.marca||(l._det&&l._det.marca)||'';
-  const rows=f.parcelas.filter(p=>!pagos.some(x=>x.parcela_n===p.n)).map(p=>({ id:novoId(), tipo:'receita', descricao:'Honorários · '+(marca||('proc. '+l.numero))+(p.rotulo?' (entrada)':''),
-    pessoa_id:pessoaId||null, cliente_nome:nomeCli||null, lead_id:l.id, processo:l.numero||null, responsavel:l.responsavel||null, categoria_id:'cat-honorarios', centro_id:'cc-marcas', conta_id:null,
-    valor_total:p.valor, valor_pago:0, vencimento:p.data, status:'pendente', parcela_n:p.n, parcela_de:p.de, grupo_id:grupo, criado_em:new Date().toISOString(), atualizado_em:new Date().toISOString() }));
+  const agora=new Date().toISOString();
+  const base={ pessoa_id:pessoaId||null, cliente_nome:nomeCli||null, lead_id:l.id, processo:l.numero||null, responsavel:l.responsavel||null, centro_id:'cc-marcas', conta_id:null,
+    venda_id:venda?venda.id:null, servico_id:f.servico_id||null, valor_pago:0, status:'pendente', grupo_id:grupo, criado_em:agora, atualizado_em:agora };
+  const rot=marca||('proc. '+l.numero);
+  // honorários: uma receita por parcela (só as que ainda não foram recebidas)
+  const rows=f.parcelas.filter(p=>!pagos.some(x=>x.categoria_id==='cat-honorarios'&&x.parcela_n===p.n)).map(p=>Object.assign({}, base, { id:novoId(), tipo:'receita',
+    descricao:'Honorários · '+rot+(p.rotulo?' (entrada)':''), categoria_id:'cat-honorarios', valor_total:p.valor, vencimento:p.data, parcela_n:p.n, parcela_de:p.de }));
+  // taxa INPI: cobrada do cliente (receita de repasse) e paga ao INPI (despesa de repasse); zera na DRE
+  if(+f.taxa>0){
+    if(!pagos.some(x=>x.categoria_id==='cat-repasse-inpi')) rows.push(Object.assign({}, base, { id:novoId(), tipo:'receita', descricao:'Taxa INPI · '+rot+' (repasse)', categoria_id:'cat-repasse-inpi', valor_total:f.taxa, vencimento:f.data }));
+    if(!pagos.some(x=>x.categoria_id==='cat-taxas-inpi'))  rows.push(Object.assign({}, base, { id:novoId(), tipo:'despesa', descricao:'GRU INPI · '+rot, categoria_id:'cat-taxas-inpi', valor_total:f.taxa, vencimento:f.data }));
+  }
   if(rows.length){ const r=await sb.from('fin_lancamentos').insert(rows); if(r.error) throw r.error; }
+}
+// Vendas: o que fechou, o que está em aberto e o que se perdeu; por origem e por serviço
+async function renderVendas(c, recarrega){
+  if(recarrega){ c.innerHTML='<div class="q" style="margin-top:10px">carregando…</div>'; const {data}=await sb.from('vendas').select('*'); if(data) VENDAS=data; try{ await LEADS_PRONTOS; }catch(e){} }
+  const f=FIN.vf||(FIN.vf={q:'',status:'',origem:'',resp:''});
+  const nomeCli=v=>{ const p=(v.pessoa_id&&PESSOAS)?PESSOAS.find(x=>x.id===v.pessoa_id):null; if(p) return p.nome; const l=v.lead_id?leadDe(v.lead_id):null; return l?String(l.titular||'').replace(/^\d[\d.\/-]*\s+/,''):'—'; };
+  const serv=id=>(SERVICOS.find(s=>s.id===id)||{}).nome||'—';
+  const orgLbl=o=>(ORIGENS.find(x=>x[0]===origemCanon(o))||['','—'])[1];
+  const arr=VENDAS.filter(v=>{ if(f.status&&v.status!==f.status) return false; if(f.origem&&origemCanon(v.origem)!==f.origem) return false; if(f.resp&&(v.responsavel||'')!==f.resp) return false;
+      if(f.q&&![nomeCli(v),v.marca,v.processo,serv(v.servico_id),v.motivo_perda].join(' ').toLowerCase().includes(f.q)) return false; return true; })
+    .sort((a,b)=>String(b.fechada_em||b.atualizado_em||'').localeCompare(String(a.fechada_em||a.atualizado_em||'')));
+  const fech=arr.filter(v=>v.status==='fechada'), abertas=arr.filter(v=>v.status==='aberta'), perd=arr.filter(v=>v.status==='perdida');
+  const soma=(xs,k)=>xs.reduce((s,v)=>s+(+v[k]||0),0);
+  const pond=abertas.reduce((s,v)=>s+(+v.honorarios||0)*((+v.probabilidade||0)/100),0);
+  const kpi=(rot,val,sub)=>'<div class="kpi"><span class="q">'+rot+'</span><b>'+val+'</b>'+(sub?('<span class="q">'+sub+'</span>'):'')+'</div>';
+  const agrupa=lbl=>{ const m={}; for(const v of arr){ const k=lbl(v); m[k]=m[k]||{f:0,h:0,a:0,p:0}; if(v.status==='fechada'){ m[k].f++; m[k].h+=+v.honorarios||0; } else if(v.status==='aberta') m[k].a++; else m[k].p++; } return Object.entries(m).sort((a,b)=>b[1].h-a[1].h); };
+  const tab=(tit,rows,col)=>'<div class="iblk" style="flex:1;min-width:280px;margin-top:0"><div class="ih">'+tit+'</div><table class="dett" style="width:100%"><thead><tr><th>'+col+'</th><th>Fechadas</th><th>Honorários</th><th>Abertas</th><th>Perdidas</th></tr></thead><tbody>'
+    +(rows.map(x=>'<tr><td>'+esc(x[0])+'</td><td>'+x[1].f+'</td><td><b>'+brl(x[1].h)+'</b></td><td>'+x[1].a+'</td><td>'+x[1].p+'</td></tr>').join('')||'<tr><td colspan="5" class="q">nada ainda</td></tr>')+'</tbody></table></div>';
+  const sel=(id,rot,ops,val)=>'<select id="'+id+'"><option value="">'+rot+': todas</option>'+ops.map(o=>'<option value="'+esc(o[0])+'"'+(o[0]===val?' selected':'')+'>'+esc(o[1])+'</option>').join('')+'</select>';
+  const stPill={fechada:'bom',aberta:'neutro',perdida:'ruim'}, stLbl={fechada:'Fechada',aberta:'Em aberto',perdida:'Perdida'};
+  c.innerHTML='<div class="mrow" style="gap:8px;flex-wrap:wrap;margin-top:10px"><input id="vdQ" placeholder="buscar por cliente, marca, processo, serviço…" style="flex:1;min-width:240px" value="'+esc(f.q)+'">'
+    +sel('vdStatus','Situação',[['fechada','Fechadas'],['aberta','Em aberto'],['perdida','Perdidas']],f.status)+sel('vdOrigem','Origem',ORIGENS,f.origem)+sel('vdResp','Responsável',RESPONSAVEIS.map(r=>[r,r]),f.resp)+'</div>'
+    +'<div class="kpis">'+kpi('Vendas fechadas',fech.length,'honorários '+brl(soma(fech,'honorarios')-soma(fech,'desconto')))+kpi('Taxas INPI repassadas',brl(soma(fech,'taxa_inpi')),'não entram no faturamento')+kpi('Total cobrado',brl(soma(fech,'total')))
+    +kpi('Ticket médio',fech.length?brl((soma(fech,'honorarios')-soma(fech,'desconto'))/fech.length):'—','honorários por venda')+kpi('Em aberto',abertas.length,'ponderado pela probabilidade: '+brl(pond))+kpi('Perdidas',perd.length)+'</div>'
+    +'<div class="mrow" style="gap:10px;align-items:flex-start;margin-top:10px;flex-wrap:wrap">'+tab('Por origem do lead',agrupa(v=>orgLbl(v.origem)),'Origem')+tab('Por serviço',agrupa(v=>serv(v.servico_id)),'Serviço')+'</div>'
+    +'<table class="dett" style="width:100%;margin-top:12px"><thead><tr><th>Situação</th><th>Cliente</th><th>Serviço</th><th>Honorários</th><th>Taxa INPI</th><th>Total</th><th>Origem</th><th>Resp.</th><th>Data</th><th></th></tr></thead><tbody>'
+    +(arr.map(v=>'<tr><td><span class="pill '+(stPill[v.status]||'neutro')+'">'+(stLbl[v.status]||v.status)+'</span>'+(v.motivo_perda?('<div class="q">'+esc(v.motivo_perda)+'</div>'):'')+'</td>'
+      +'<td><b>'+esc(nomeCli(v))+'</b>'+(v.marca?('<div class="q">'+esc(v.marca)+(v.processo?(' · '+esc(v.processo)):'')+'</div>'):'')+'</td>'
+      +'<td>'+esc(serv(v.servico_id))+(v.classes>1?('<div class="q">'+v.classes+' classes</div>'):'')+'</td>'
+      +'<td style="white-space:nowrap"><b>'+brl(v.honorarios||0)+'</b>'+(v.desconto?('<div class="q">− '+brl(v.desconto)+'</div>'):'')+(v.status==='aberta'&&v.probabilidade?('<div class="q">'+v.probabilidade+'%</div>'):'')+'</td>'
+      +'<td style="white-space:nowrap">'+brl(v.taxa_inpi||0)+'</td><td style="white-space:nowrap">'+brl(v.total||0)+'</td><td class="q">'+esc(orgLbl(v.origem))+'</td><td class="q">'+esc((v.responsavel||'—').split(' ')[0])+'</td>'
+      +'<td class="q" style="white-space:nowrap">'+dataBRcurta(v.fechada_em||v.perdida_em||v.previsao_fechamento||String(v.criado_em||'').slice(0,10))+'</td>'
+      +'<td>'+(v.lead_id?'<button class="ghost vdAbrir" data-id="'+esc(v.lead_id)+'">abrir card</button>':'')+'</td></tr>').join('')
+      ||'<tr><td colspan="10" class="q">Nenhuma venda ainda. Elas nascem no card do lead (seção "Venda / oportunidade") e fecham ao mover para Fechado.</td></tr>')
+    +'</tbody></table>';
+  $('#vdQ').addEventListener('input',()=>{ f.q=$('#vdQ').value.trim().toLowerCase(); renderVendas(c,false); });
+  [['vdStatus','status'],['vdOrigem','origem'],['vdResp','resp']].forEach(p=>{ $('#'+p[0]).onchange=()=>{ f[p[1]]=$('#'+p[0]).value; renderVendas(c,false); }; });
+  c.querySelectorAll('.vdAbrir').forEach(b=>b.onclick=()=>abrirCard(b.dataset.id));
+}
+// Auditoria: gravada por trigger no banco (quem, o quê, quando, antes → depois)
+async function renderAuditoria(c){
+  c.innerHTML='<div class="q" style="margin-top:10px">carregando…</div>';
+  const {data,error}=await sb.from('auditoria').select('*').order('quando',{ascending:false}).limit(300);
+  if(error){ c.innerHTML='<div class="painel">Erro: '+esc(error.message)+'</div>'; return; }
+  const TB={fin_lancamentos:'Lançamento',vendas:'Venda',pessoas:'Pessoa',servicos:'Serviço',fin_categorias:'Categoria',fin_contas:'Conta',leads:'Lead'};
+  const fmtV=v=>{ if(v==null) return '—'; if(typeof v==='object') return esc(JSON.stringify(v)).slice(0,90); const s=String(v); return esc(/^-?\d+\.\d+$/.test(s)?Number(s).toLocaleString('pt-BR',{minimumFractionDigits:2}):s).slice(0,90); };
+  const nomeReg=a=>{ const d=Object.assign({},a.antes||{},a.depois||{}); return d.descricao||d.nome||d.titular||d.marca||a.registro_id||''; };
+  c.innerHTML='<div class="q" style="margin:10px 0">Últimos 300 eventos. O registro é feito pelo banco de dados a cada alteração; não dá para apagar pelo painel.</div>'
+    +'<table class="dett" style="width:100%"><thead><tr><th>Quando</th><th>Quem</th><th>O quê</th><th>Registro</th><th>Mudanças</th></tr></thead><tbody>'
+    +((data||[]).map(a=>{ const mud=a.acao==='update'?(a.campos||[]).map(k=>'<div><span class="q">'+esc(k)+':</span> '+fmtV((a.antes||{})[k])+' → <b>'+fmtV((a.depois||{})[k])+'</b></div>').join(''):(a.acao==='insert'?'<span class="pill bom">criado</span>':'<span class="pill ruim">excluído</span>');
+      return '<tr><td class="q" style="white-space:nowrap">'+fmtData(a.quando)+'</td><td>'+esc(a.usuario||'—')+'</td><td style="white-space:nowrap">'+esc(TB[a.tabela]||a.tabela)+'</td><td>'+esc(String(nomeReg(a)).slice(0,50))+'</td><td style="font-size:12.5px">'+mud+'</td></tr>'; }).join('')||'<tr><td colspan="5" class="q">nenhum evento ainda</td></tr>')
+    +'</tbody></table>';
 }
 function precosHTML(){
   const rowsLiv=PRECOS_LIV.map(p=>'<tr><td><b>'+esc(p.s)+'</b>'+(p.obs?('<div class="status" style="margin-top:3px;line-height:1.5">'+esc(p.obs)+'</div>'):'')+'</td>'
@@ -2776,9 +2955,7 @@ function precosHTML(){
     +'<td>'+esc(p.parc)+'</td></tr>').join('');
   const rowsTax=TAXAS_INPI.map(t=>'<tr'+(t[3]?' style="background:#fffdf6"':'')+'><td class="q">'+esc(t[0])+'</td><td>'+(t[3]?'<b>':'')+esc(t[1])+(t[3]?'</b>':'')+'</td><td style="white-space:nowrap">'+brl(t[2])+'</td></tr>').join('');
   return '<div style="max-width:960px">'
-    +'<div class="iblk"><div class="ih">Precificação dos serviços LIV</div>'
-    +'<table class="dett"><thead><tr><th>Serviço</th><th>Valor</th><th>À vista (7% desc.)</th><th>Parcelamento</th></tr></thead><tbody>'+rowsLiv+'</tbody></table>'
-    +'<div class="ib q">Os honorários não incluem as taxas oficiais do INPI (GRU), repassadas pelo valor vigente, sem acréscimo.</div></div>'
+    +'<div class="ib q" style="padding-left:0">Política: 7% de desconto à vista sobre os honorários. Os honorários não incluem as taxas oficiais do INPI (GRU), repassadas pelo valor vigente, sem acréscimo.</div>'
     +'<div class="iblk" style="margin-top:14px"><div class="ih">Corretagem · compra e venda de marca registrada</div>'
     +'<div class="ib"><b>Comissão padrão: 20% do valor da venda</b> · comissão mínima de <b>R$ 1.500,00</b>. Faixas de referência (exceções para operações maiores):</div>'
     +'<table class="dett"><thead><tr><th>Valor da venda</th><th>Comissão LIV</th><th>%</th></tr></thead><tbody>'
