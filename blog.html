@@ -147,5 +147,6 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 const nlBtn=document.getElementById('nlBtn');
 if(nlBtn)nlBtn.addEventListener('click',()=>{const email=(document.getElementById('nlEmail').value||'').trim();if(!/^\S+@\S+\.\S+$/.test(email)){alert('Confira o seu e-mail, por favor.');return;}document.getElementById('nlNote').textContent='Pronto! Em breve você recebe nossos conteúdos. 🎉';window.open(waBase('Olá! Quero receber os conteúdos da LIV no e-mail: '+email),'_blank');});
 </script>
+<script defer src="eventos.js"></script>
 </body>
 </html>

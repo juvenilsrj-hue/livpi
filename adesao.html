@@ -818,6 +818,7 @@ document.getElementById('gerar').addEventListener('click', async ()=>{
   result.classList.add('show');
   result.scrollIntoView({behavior:'smooth', block:'start'});
   btn.disabled=false; btn.textContent=prev;
+  if(window.livEvento) window.livEvento('adesao_assinada',{marca:val('marca_nome'),situacao:val('marca_situacao')});
   try{ await enviarAdesao(); toast('Adesão registrada com a LIV ✓'); }
   catch(e){ toast('Termo gerado. Envie o PDF pelo WhatsApp ou e-mail para concluir.'); }
 });
@@ -856,5 +857,6 @@ document.getElementById('footContacts').innerHTML =
   `<a href="https://${LIV.site}" target="_blank">${LIV.site}</a>`+
   `<span>Instagram ${LIV.instagram}</span>`;
 </script>
+<script defer src="eventos.js"></script>
 </body>
 </html>
